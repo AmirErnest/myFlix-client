@@ -21,7 +21,7 @@
 132C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\@nodelib\fs.scandir\out\providers\sync.js121436361000000000 0
 100C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\react-dom132717666120167051 1
 124C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\@nodelib\fs.scandir\out\providers132717980874486872 1
-82C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist132724114172742145 1
+82C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist132724900143616914 1
 81C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\src132719443372618697 1
 121C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\detect-libc\lib\detect-libc.js131558189670000000 0
 90C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules132724005739202972 1
@@ -33,7 +33,7 @@
 96C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\react132717666119987146 1
 116C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\src\components\main-view\main-view.jsx132724085802912959 0
 112C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\readdirp\package.json132717980948805053 0
-118C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\src\components\movie-view\movie-view.jsx132724114166363054 0
+118C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\src\components\movie-view\movie-view.jsx132724900133037979 0
 104C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\scheduler\cjs132717666114190476 1
 92C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\src\index.html132719757539227149 0
 122C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\fast-glob\out\utils\stream.d.ts121436361000000000 0
@@ -162,7 +162,7 @@
 128C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\axios\lib\helpers\deprecatedMethod.js121436361000000000 0
 126C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\@nodelib\fs.scandir\out\utils\fs.js121436361000000000 0
 140C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\scheduler\cjs\scheduler-tracing.production.min.js121436361000000000 0
-100C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist\index.055ec775.js132724114172202446 0
+100C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist\index.055ec775.js132724900142957286 0
 105C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\@parcel\plugin132717980960486459 1
 139C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\scheduler\cjs\scheduler-tracing.profiling.min.js121436361000000000 0
 143C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\scheduler\cjs\scheduler-unstable_mock.development.js121436361000000000 0
@@ -220,7 +220,7 @@
 115C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\react-dom\server.node.js121436361000000000 0
 136C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\fast-glob\out\providers\matchers\partial.d.ts121436361000000000 0
 114C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\react-dom\test-utils.js121436361000000000 0
-104C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist\index.055ec775.js.map132724114172702146 0
+104C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist\index.055ec775.js.map132724900143526938 0
 104C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\react-dom\umd132717666115979468 1
 144C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\react-dom\umd\react-dom-server.browser.development.js121436361000000000 0
 140C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\react-dom\umd\react-dom-test-utils.development.js121436361000000000 0
@@ -590,7 +590,7 @@
 128C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\@nodelib\fs.scandir\out\settings.d.ts121436361000000000 0
 126C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\@nodelib\fs.scandir\out\settings.js121436361000000000 0
 120C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\@nodelib\fs.scandir\out\utils132717980874406929 1
-93C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist\index.html132724114171230918 0
+93C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist\index.html132724900142177740 0
 128C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\@nodelib\fs.scandir\out\utils\fs.d.ts121436361000000000 0
 131C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\@nodelib\fs.scandir\out\utils\index.d.ts121436361000000000 0
 133C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\@nodelib\fs.scandir\out\providers\async.js121436361000000000 0
@@ -601,5 +601,5 @@
 112C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\.bin\loose-envify.cmd132717666120676749 0
 104C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\.bin\sass.cmd132717980966741004 0
 104C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\node_modules\.bin\sass.ps1132717980966741004 0
-101C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist\index.05075b2e.css132724114171240910 0
-105C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist\index.05075b2e.css.map132724114172012555 0
+101C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist\index.05075b2e.css132724900142187734 0
+105C:\Users\Amirkher\Downloads\CareerFoundery\Full-Stack Immersion\myFlix-client\dist\index.05075b2e.css.map132724900142787372 0
