@@ -22013,6 +22013,7 @@ var _axiosDefault = parcelHelpers.interopDefault(_axios);
 var _loginView = require("../login-view/login-view");
 var _movieCard = require("../movie-card/movie-card");
 var _movieView = require("../movie-view/movie-view");
+var _registrationView = require("../registration-view/registration-view");
 class MainView extends _reactDefault.default.Component {
     constructor(){
         super();
@@ -22020,7 +22021,8 @@ class MainView extends _reactDefault.default.Component {
         this.state = {
             movies: [],
             selectedMovie: null,
-            user: null
+            user: null,
+            register: null
         };
     }
     componentDidMount() {
@@ -22037,20 +22039,35 @@ class MainView extends _reactDefault.default.Component {
             selectedMovie: movie
         });
     }
+    onRegistration(register) {
+        this.setState({
+            register
+        });
+    }
     /* When a user successfully logs in, this function updates the `user` property in state to that *particular user*/ onLoggedIn(user) {
         this.setState({
             user
         });
     }
     render() {
-        const { movies , selectedMovie  } = this.state;
-        /* If there is no user, the LoginView is rendered. 
-    If there is a user logged in, the user details are *passed as a prop to the LoginView*/ if (!user) return(/*#__PURE__*/ _reactDefault.default.createElement(_loginView.LoginView, {
-            onLoggedIn: (user)=>this.onLoggedIn(user)
+        const { movies , selectedMovie , user , register  } = this.state;
+        /* If there is not registered user, the RegisterView is rendered. If there is a user registered,
+     the user details are *passed as a prop to the LoginView*/ if (!register) return(/*#__PURE__*/ _reactDefault.default.createElement(_registrationView.RegistrationView, {
+            onRegistration: (register1)=>this.onRegistration(register1)
             ,
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 50
+                lineNumber: 58
+            },
+            __self: this
+        }));
+        /* If there is no user, the LoginView is rendered. 
+    If there is a user logged in, the user details are *passed as a prop to the LoginView*/ if (!user) return(/*#__PURE__*/ _reactDefault.default.createElement(_loginView.LoginView, {
+            onLoggedIn: (user1)=>this.onLoggedIn(user1)
+            ,
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
+                lineNumber: 62
             },
             __self: this
         }));
@@ -22059,7 +22076,7 @@ class MainView extends _reactDefault.default.Component {
             className: "main-view",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 53
+                lineNumber: 65
             },
             __self: this
         }));
@@ -22067,7 +22084,7 @@ class MainView extends _reactDefault.default.Component {
             className: "main-view",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 56
+                lineNumber: 68
             },
             __self: this
         }, selectedMovie ? /*#__PURE__*/ _reactDefault.default.createElement(_movieView.MovieView, {
@@ -22077,7 +22094,7 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 59
+                lineNumber: 71
             },
             __self: this
         }) : movies.map((movie)=>/*#__PURE__*/ _reactDefault.default.createElement(_movieCard.MovieCard, {
@@ -22088,7 +22105,7 @@ class MainView extends _reactDefault.default.Component {
                 },
                 __source: {
                     fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                    lineNumber: 61
+                    lineNumber: 73
                 },
                 __self: this
             })
@@ -22101,7 +22118,7 @@ class MainView extends _reactDefault.default.Component {
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","../movie-card/movie-card":"2kqAF","../movie-view/movie-view":"5AIWW","axios":"7rA65","../login-view/login-view":"sGN9N"}],"2kqAF":[function(require,module,exports) {
+},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","../movie-card/movie-card":"2kqAF","../movie-view/movie-view":"5AIWW","axios":"7rA65","../login-view/login-view":"sGN9N","../registration-view/registration-view":"250pa"}],"2kqAF":[function(require,module,exports) {
 var helpers = require("../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -22131,7 +22148,7 @@ class MovieCard extends _reactDefault.default.Component {
         }, " ", movie.Title, " "));
     }
 }
-MovieCard.PropTypes = {
+MovieCard.propTypes = {
     movie: _propTypesDefault.default.shape({
         Title: _propTypesDefault.default.string.isRequired,
         Description: _propTypesDefault.default.string.isRequired,
@@ -24300,26 +24317,28 @@ parcelHelpers.export(exports, "LoginView", ()=>LoginView
 );
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
+var _propTypes = require("prop-types");
+var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
 var _s = $RefreshSig$();
 function LoginView(props) {
     _s();
     const [username, setUsername] = _react.useState('');
     const [password, setPassword] = _react.useState('');
-    const handleSubmit = ()=>{
+    const handleSubmit = (e)=>{
         e.preventDefault();
         console.log(username, password);
-    /* Send a request to the server for authentication */ /* then call props.onLoggedIn(username) */ // props.onLoggedIn(username);
+        /* Send a request to the server for authentication */ /* then call props.onLoggedIn(username) */ props.onLoggedIn(username);
     };
     return(/*#__PURE__*/ _reactDefault.default.createElement("form", {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 16
+            lineNumber: 17
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement("label", {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 17
+            lineNumber: 18
         },
         __self: this
     }, "Username:", /*#__PURE__*/ _reactDefault.default.createElement("input", {
@@ -24329,13 +24348,13 @@ function LoginView(props) {
         ,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 19
+            lineNumber: 20
         },
         __self: this
     })), /*#__PURE__*/ _reactDefault.default.createElement("label", {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 21
+            lineNumber: 26
         },
         __self: this
     }, "Password:", /*#__PURE__*/ _reactDefault.default.createElement("input", {
@@ -24345,7 +24364,7 @@ function LoginView(props) {
         ,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 23
+            lineNumber: 28
         },
         __self: this
     })), /*#__PURE__*/ _reactDefault.default.createElement("button", {
@@ -24353,13 +24372,20 @@ function LoginView(props) {
         onClick: handleSubmit,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 25
+            lineNumber: 34
         },
         __self: this
-    }, "Submit")));
+    }, " Submit ")));
 }
 _s(LoginView, "9FY2cPL9VBDmuhjwpF2ik6flsHs=");
 _c = LoginView;
+LoginView.propTypes = {
+    user: _propTypesDefault.default.shape({
+        username: _propTypesDefault.default.string.isRequired,
+        password: _propTypesDefault.default.string.isRequired
+    }),
+    onLoggedIn: _propTypesDefault.default.func.isRequired
+};
 var _c;
 $RefreshReg$(_c, "LoginView");
 
@@ -24368,6 +24394,132 @@ $RefreshReg$(_c, "LoginView");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH"}]},["1j6wU","4M3T8","55JMZ"], "55JMZ", "parcelRequire279c")
+},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","prop-types":"4dfy5"}],"250pa":[function(require,module,exports) {
+var helpers = require("../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+helpers.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "RegistrationView", ()=>RegistrationView
+);
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _propTypes = require("prop-types");
+var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
+var _s = $RefreshSig$();
+function RegistrationView(props) {
+    _s();
+    const [username, setUsername] = _react.useState('');
+    const [password, setPassword] = _react.useState('');
+    const [email, setEmail] = _react.useState('');
+    const [birthdate, setBirthdate] = _react.useState('');
+    const handleSubmit = (e)=>{
+        e.preventDefault();
+        console.log(username, password, email, birthdate);
+        props.onRegistration(username);
+    };
+    return(/*#__PURE__*/ _reactDefault.default.createElement("form", {
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 17
+        },
+        __self: this
+    }, /*#__PURE__*/ _reactDefault.default.createElement("label", {
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 18
+        },
+        __self: this
+    }, "Username:", /*#__PURE__*/ _reactDefault.default.createElement("input", {
+        type: "text",
+        value: username,
+        onChange: (e)=>setUsername(e.target.value)
+        ,
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 20
+        },
+        __self: this
+    })), /*#__PURE__*/ _reactDefault.default.createElement("label", {
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 26
+        },
+        __self: this
+    }, "Password:", /*#__PURE__*/ _reactDefault.default.createElement("input", {
+        type: "text",
+        value: password,
+        onChange: (e)=>setPassword(e.target.value)
+        ,
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 28
+        },
+        __self: this
+    })), /*#__PURE__*/ _reactDefault.default.createElement("label", {
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 34
+        },
+        __self: this
+    }, "E-mail:", /*#__PURE__*/ _reactDefault.default.createElement("input", {
+        type: "text",
+        value: email,
+        onChange: (e)=>setEmail(e.target.value)
+        ,
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 36
+        },
+        __self: this
+    })), /*#__PURE__*/ _reactDefault.default.createElement("label", {
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 42
+        },
+        __self: this
+    }, "Birth Date:", /*#__PURE__*/ _reactDefault.default.createElement("input", {
+        type: "text",
+        value: birthdate,
+        onChange: (e)=>setBirthdate(e.target.value)
+        ,
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 44
+        },
+        __self: this
+    })), /*#__PURE__*/ _reactDefault.default.createElement("button", {
+        type: "submit",
+        onClick: handleSubmit,
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 50
+        },
+        __self: this
+    }, " Register ")));
+}
+_s(RegistrationView, "iRScPs3R+ak5PViQdcLi1zdw7Wc=");
+_c = RegistrationView;
+RegistrationView.propTypes = {
+    register: _propTypesDefault.default.shape({
+        username: _propTypesDefault.default.string.isRequired,
+        password: _propTypesDefault.default.string.isRequired,
+        email: _propTypesDefault.default.string.isRequired,
+        birthdate: _propTypesDefault.default.string.isRequired
+    }),
+    onRegistration: _propTypesDefault.default.func.isRequired
+};
+var _c;
+$RefreshReg$(_c, "RegistrationView");
+
+  helpers.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react":"3b2NM","prop-types":"4dfy5","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH"}]},["1j6wU","4M3T8","55JMZ"], "55JMZ", "parcelRequire279c")
 
 //# sourceMappingURL=index.055ec775.js.map
