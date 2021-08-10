@@ -36818,7 +36818,7 @@ function RegistrationView(props) {
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Image, {
-        src: "./img/moviepic.jpg",
+        src: "./src/components/img/moviepic.jpg",
         thumbnail: true,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",

@@ -19,7 +19,7 @@ export function RegistrationView(props) {
 
   return (
     <div> 
-    <Image src="./img/moviepic.jpg" thumbnail/> 
+    <Image src="./src/components/img/moviepic.jpg" thumbnail/> 
       <Form style={{margin:"5%"}}>
         <Form.Group>
           <Form.Label>Username</Form.Label>
