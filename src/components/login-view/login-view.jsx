@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
-import { Image } from 'react-bootstrap';
-import { RegistrationView } from '../registration-view/registration-view';
+import { Row } from 'react-bootstrap';
+import {Col} from 'react-bootstrap';
 
 export function LoginView(props) {
   const [ username, setUsername ] = useState('');
@@ -18,31 +18,35 @@ export function LoginView(props) {
   };
 
   return (
-    <div> 
-      <Form style={{margin:"5%"}}>
-        <Form.Group>
-          <Form.Label>Username</Form.Label>
-            <Form.Control 
-              type="text"
-              value={username} 
-              onChange={e => setUsername(e.target.value)} />
-        </Form.Group>
+    <Row className="justify-content-md-center">
+      <Col md={6}>
+        <div> 
+          <Form style={{margin:"5%"}}>
+            <Form.Group>
+              <Form.Label>Username</Form.Label>
+                <Form.Control 
+                  type="text"
+                  value={username} 
+                  onChange={e => setUsername(e.target.value)} />
+            </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Password</Form.Label>
-            <Form.Control 
-              type="password"
-              value={password} 
-              onChange={e => setPassword(e.target.value)} />
-        </Form.Group>
-        
-        <br/>
+            <Form.Group>
+              <Form.Label>Password</Form.Label>
+                <Form.Control 
+                  type="password"
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} />
+            </Form.Group>
+            
+            <br/>
 
-        <div className="d-grid gap-2">
-          <Button type="submit" onClick={handleSubmit}> Log In </Button>
+            <div className="d-grid gap-2">
+              <Button type="submit" onClick={handleSubmit}> Log In </Button>
+            </div>
+          </Form>
         </div>
-      </Form>
-    </div>
+      </Col>
+    </Row>
   );
 }
 

@@ -36648,7 +36648,6 @@ var _reactDefault = parcelHelpers.interopDefault(_react);
 var _propTypes = require("prop-types");
 var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
 var _reactBootstrap = require("react-bootstrap");
-var _registrationView = require("../registration-view/registration-view");
 var _s = $RefreshSig$();
 function LoginView(props) {
     _s();
@@ -36659,10 +36658,24 @@ function LoginView(props) {
         console.log(username, password);
         /* Send a request to the server for authentication */ /* then call props.onLoggedIn(username) */ props.onLoggedIn(username);
     };
-    return(/*#__PURE__*/ _reactDefault.default.createElement("div", {
+    return(/*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Row, {
+        className: "justify-content-md-center",
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
             lineNumber: 21
+        },
+        __self: this
+    }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Col, {
+        md: 6,
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
+            lineNumber: 22
+        },
+        __self: this
+    }, /*#__PURE__*/ _reactDefault.default.createElement("div", {
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
+            lineNumber: 23
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form, {
@@ -36671,19 +36684,19 @@ function LoginView(props) {
         },
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 22
+            lineNumber: 24
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Group, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 23
+            lineNumber: 25
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Label, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 24
+            lineNumber: 26
         },
         __self: this
     }, "Username"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Control, {
@@ -36693,19 +36706,19 @@ function LoginView(props) {
         ,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 25
+            lineNumber: 27
         },
         __self: this
     })), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Group, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 31
+            lineNumber: 33
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Label, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 32
+            lineNumber: 34
         },
         __self: this
     }, "Password"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Control, {
@@ -36715,20 +36728,20 @@ function LoginView(props) {
         ,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 33
+            lineNumber: 35
         },
         __self: this
     })), /*#__PURE__*/ _reactDefault.default.createElement("br", {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 39
+            lineNumber: 41
         },
         __self: this
     }), /*#__PURE__*/ _reactDefault.default.createElement("div", {
         className: "d-grid gap-2",
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 41
+            lineNumber: 43
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Button, {
@@ -36736,10 +36749,10 @@ function LoginView(props) {
         onClick: handleSubmit,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\login-view\\login-view.jsx",
-            lineNumber: 42
+            lineNumber: 44
         },
         __self: this
-    }, " Log In ")))));
+    }, " Log In ")))))));
 }
 _s(LoginView, "9FY2cPL9VBDmuhjwpF2ik6flsHs=");
 _c = LoginView;
@@ -36758,7 +36771,7 @@ $RefreshReg$(_c, "LoginView");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"3b2NM","prop-types":"4dfy5","react-bootstrap":"4n7hB","../registration-view/registration-view":"250pa","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH"}],"250pa":[function(require,module,exports) {
+},{"react":"3b2NM","prop-types":"4dfy5","react-bootstrap":"4n7hB","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH"}],"250pa":[function(require,module,exports) {
 var helpers = require("../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -36773,7 +36786,6 @@ var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
 var _propTypes = require("prop-types");
 var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
-var _loginView = require("../login-view/login-view");
 var _reactBootstrap = require("react-bootstrap");
 var _s = $RefreshSig$();
 function RegistrationView(props) {
@@ -36787,10 +36799,24 @@ function RegistrationView(props) {
         console.log(username, password, email, birthdate);
         props.onRegistration(username);
     };
-    return(/*#__PURE__*/ _reactDefault.default.createElement("div", {
+    return(/*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Row, {
+        className: "justify-content-md-center",
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 21
+            lineNumber: 22
+        },
+        __self: this
+    }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Col, {
+        md: 6,
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 23
+        },
+        __self: this
+    }, /*#__PURE__*/ _reactDefault.default.createElement("div", {
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
+            lineNumber: 24
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form, {
@@ -36799,19 +36825,19 @@ function RegistrationView(props) {
         },
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 22
+            lineNumber: 25
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Group, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 23
+            lineNumber: 26
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Label, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 24
+            lineNumber: 27
         },
         __self: this
     }, "Username"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Control, {
@@ -36821,19 +36847,19 @@ function RegistrationView(props) {
         ,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 25
+            lineNumber: 28
         },
         __self: this
     })), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Group, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 31
+            lineNumber: 34
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Label, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 32
+            lineNumber: 35
         },
         __self: this
     }, "Password"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Control, {
@@ -36843,19 +36869,19 @@ function RegistrationView(props) {
         ,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 33
+            lineNumber: 36
         },
         __self: this
     })), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Group, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 39
+            lineNumber: 42
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Label, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 40
+            lineNumber: 43
         },
         __self: this
     }, "E-mail"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Control, {
@@ -36865,19 +36891,19 @@ function RegistrationView(props) {
         ,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 41
+            lineNumber: 44
         },
         __self: this
     })), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Group, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 47
+            lineNumber: 50
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Label, {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 48
+            lineNumber: 51
         },
         __self: this
     }, "Birth Date "), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Control, {
@@ -36887,20 +36913,20 @@ function RegistrationView(props) {
         ,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 49
+            lineNumber: 52
         },
         __self: this
     })), /*#__PURE__*/ _reactDefault.default.createElement("br", {
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 55
+            lineNumber: 58
         },
         __self: this
     }), /*#__PURE__*/ _reactDefault.default.createElement("div", {
         className: "d-grid gap-2",
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 57
+            lineNumber: 60
         },
         __self: this
     }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Button, {
@@ -36908,10 +36934,10 @@ function RegistrationView(props) {
         onClick: handleSubmit,
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\registration-view\\registration-view.jsx",
-            lineNumber: 58
+            lineNumber: 61
         },
         __self: this
-    }, " Register ")))));
+    }, " Register ")))))));
 }
 _s(RegistrationView, "iRScPs3R+ak5PViQdcLi1zdw7Wc=");
 _c = RegistrationView;
@@ -36932,6 +36958,6 @@ $RefreshReg$(_c, "RegistrationView");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"3b2NM","prop-types":"4dfy5","../login-view/login-view":"sGN9N","react-bootstrap":"4n7hB","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH"}]},["1j6wU","4M3T8","55JMZ"], "55JMZ", "parcelRequire279c")
+},{"react":"3b2NM","prop-types":"4dfy5","react-bootstrap":"4n7hB","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH"}]},["1j6wU","4M3T8","55JMZ"], "55JMZ", "parcelRequire279c")
 
 //# sourceMappingURL=index.055ec775.js.map
