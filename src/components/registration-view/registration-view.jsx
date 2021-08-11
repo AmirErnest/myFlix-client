@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { LoginView } from '../login-view/login-view';
 import { Form } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
-import { Image } from 'react-bootstrap';
+
 
 export function RegistrationView(props) {
   const [ username, setUsername ] = useState('');
@@ -19,7 +19,6 @@ export function RegistrationView(props) {
 
   return (
     <div> 
-    <Image src="./src/components/img/moviepic.jpg" thumbnail/> 
       <Form style={{margin:"5%"}}>
         <Form.Group>
           <Form.Label>Username</Form.Label>
@@ -57,8 +56,6 @@ export function RegistrationView(props) {
 
         <div className="d-grid gap-2">
           <Button type="submit" onClick={handleSubmit}> Register </Button>
-          <div className="d-inline-block text-center">Or</div>
-          <Button variant="success" type="submit" onClick={LoginView}> Log In </Button>
         </div>
       </Form>
     </div>
