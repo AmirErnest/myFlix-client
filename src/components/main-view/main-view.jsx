@@ -14,9 +14,7 @@ export class MainView extends React.Component {
     //initial state is set to null
     this.state = {
       movies: [],
-      selectedMovie: null,
-      user: null,
-      register: null,
+      user: null
     };
   }
 
@@ -45,10 +43,32 @@ export class MainView extends React.Component {
     });
   }
 
-  /* When a user successfully logs in, this function updates the `user` property in state to that *particular user*/
-  onLoggedIn(user) {
+  /* 
+  * The token and logged in username need to be stored in localStorage.
+  * When a user successfully logs in, this function updates the `user` property in state to that *particular user */
+  onLoggedIn(authData) {
+    console.log(authData);
     this.setState({
-      user,
+      user: authData.user.Username
+    });
+    localStorage.setItem('token', authData.token);
+    localStorage.setItem('user', authData.user.Username);
+    this.getMovies(authData.token);
+  }
+
+  /*gets the movies from the API once the user is logged in */
+  getMovies(token) {
+    axios.get('https://my-flix-1.herokuapp.com/movies', {
+      headers: {Authorization: `Bearer ${token}`}
+    })
+    .then(response => {
+      //assign the result to the state
+      this.setState({
+        movies: response.data
+      });
+    })
+    .catch(function (error) {
+      console.log(error);
     });
   }
 
