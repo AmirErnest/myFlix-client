@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 import { Form } from 'react-bootstrap';
 import { Button } from 'react-bootstrap';
@@ -66,5 +66,5 @@ LoginView.propTypes = {
     username: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
   }),
-  onLoggedIn: PropTypes.func.isRequired,
+  onLoggedIn: PropTypes.func.isRequired
 };
