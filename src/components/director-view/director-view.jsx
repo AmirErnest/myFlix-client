@@ -1,37 +1,41 @@
 import React from 'react';
 import propTypes from 'prop-types';
-import { Button } from 'react-bootstrap';
-
-
+import Button from 'react-bootstrap/Button';
 
 export class DirectorView extends React.Component {
+
   render() {
-    const {movie, onBackClick} = this.props;
+    const { movie, onBackClick } = this.props;
 
-    <div className="director-view">
+    return (
+      <div className="director-view">
 
-      <div className="director-name">
-        <h1><span className="value"> {movie.Director.Name}</span></h1>
+        <div className="director-name">
+          <h1>
+            <span className="value">{movie.Director.Name}</span>
+          </h1>
+        </div>
+        <div className="director-bio">
+          <span className="value">{movie.Director.Bio}</span>
+        </div>
+
+        <div className="director-birthdate">
+          <span className="value">{movie.Director.Birthdate}</span>
+        </div>
+
+        <Button variant="primary" onClick={() => { onBackClick(null); }}>Back</Button>
+
       </div>
-
-      <div className="director-birthdate">
-        <h2><span className="value"> {movie.Director.Birthdate} </span></h2>
-      </div>
-
-      <div className="director-bio">
-        <h3><span className="value"> {movie.Director.Bio} </span></h3>
-      </div>
-
-      <Button variant="primary" onClick={() => { onBackClick(null); }}> Back </Button>
-
-    </div>
+    );
   }
 }
 
 DirectorView.propTypes = {
   director: propTypes.shape({
-    Name: propTypes.string.isrequired,
-    Bio: propTypes.string.isrequired,
-    Birthdate: propTypes.string.isrequired
-  }).isrequired
+    Name: propTypes.string.isRequired,
+    Bio: propTypes.string.isRequired,
+    Birthdate: propTypes.instanceOf(Date),
+  }).isRequired
 };
+
+export default DirectorView;

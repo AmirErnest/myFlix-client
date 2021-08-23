@@ -1,36 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import PropTypes from 'prop-types';
-import { Form } from 'react-bootstrap';
-import { Button } from 'react-bootstrap';
-import { Row } from 'react-bootstrap';
-import { Col } from 'react-bootstrap';
 import axios from 'axios';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/row';
+import {Col} from 'react-bootstrap';
+import { Link } from "react-router-dom";
+
+
+import './registration-view.scss';
+
 
 
 export function RegistrationView(props) {
-  const [ username, setUsername ] = useState('');
-  const [ password, setPassword ] = useState('');
-  const [ email, setEmail ] = useState('');
-  const [ birthdate, setBirthdate ] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [birthdate, setBirthdate] = useState("");
+
+  const [usernameError, setUsernameError] = useState({});
+  const [passwordError, setPasswordError] = useState({});
+  const [emailError, setEmailError] = useState({});
+  const [birthdateError, setBirthdateError] = useState({});
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    /*console.log(username, password, email, birthdate);
-    props.onRegistration(username); */
-    axios.post('https://my-flix-1.herokuapp.com/users', {
-      Username: username,
-      Password: password,
-      Email: email,
-      Birthdate: birthdate
-    })
-    .then(response => {
-      const data = response.data;
-      console.log(data);
-      window.open('/', '_self'); // the second argument '_self' is necessary so that the page will open in the current tab
-    })
-    .catch(e => {
-      console.log('error registering the user')
-    });
+    let setisValid = formValidation();
+    if (setisValid) {
+      axios.post('https://my-flix-1.herokuapp.com/users', {
+        Username: username,
+        Password: password,
+        Email: email,
+        Birthdate: birthdate
+      })
+        .then(response => {
+          const data = response.data;
+          console.log(data);
+          window.open('/', '_self'); // the second argument '_self' is necessary so that the page will open in the current tab
+        })
+        .catch(e => {
+          console.log('error registering the user')
+        });
+    };
+  }
+
+  const formValidation = () => {
+    let usernameError = {};
+    let passwordError = {};
+    let emailError = {};
+    let birthdateError = {};
+    let isValid = true;
+
+
+    if (username.trim().length < 4) {
+      usernameError.usernameShort = "Username incorrect. Use at least 4 characters.";
+      isValid = false;
+    }
+    if (password.trim().length < 5) {
+      passwordError.passwordMissing = "Password incorrect. Use at least 5 characters.";
+      isValid = false;
+    }
+    if (!(email && email.includes(".") && email.includes("@"))) {
+      emailError.emailNotEmail = "Email address incorrect.";
+      isValid = false;
+    }
+    if (birthdate === '') {
+      birthdateError.birthdateEmpty = "Please enter your birthdate.";
+      isValid = false;
+    }
+    setUsernameError(usernameError);
+    setPasswordError(passwordError);
+    setEmailError(emailError);
+    setBirthdateError(birthdateError);
+    return isValid;
   };
 
   return (
@@ -75,6 +117,12 @@ export function RegistrationView(props) {
             <div className="d-grid gap-2">
               <Button type="submit" onClick={handleSubmit}> Register </Button>
             </div>
+
+          <Link to="/">
+          <div className="d-grid gap-2">
+            <Button variant="secondary" type="button">Log IN</Button>
+          </div>
+          </Link>
           </Form>
         </div>
       </Col>
@@ -84,9 +132,9 @@ export function RegistrationView(props) {
 
 RegistrationView.propTypes = {
   register: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    birthdate: PropTypes.string.isRequired,
+    Username: PropTypes.string.isRequired,
+    Password: PropTypes.string.isRequired,
+    Email: PropTypes.string.isRequired,
+    Birthdate: PropTypes.string.isRequired
   }),
 };

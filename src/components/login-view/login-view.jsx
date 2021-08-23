@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
-import { Form } from 'react-bootstrap';
-import { Button } from 'react-bootstrap';
-import { Row } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import {Row} from 'react-bootstrap';
 import {Col} from 'react-bootstrap';
+import { Link } from "react-router-dom";
+import './login-view.scss';
 
 export function LoginView(props) {
-  const [ username, setUsername ] = useState('');
-  const [ password, setPassword ] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,14 +20,13 @@ export function LoginView(props) {
       Username: username,
       Password: password
     })
-    .then(response =>  {
-      const data = response.data;
-      /* triggers the onLoggedIn method in “main-view.jsx”*/
-      props.onLoggedIn(data);
-    })
-    .catch(e => {
-      console.log('no such user')
-    });
+      .then(response => {
+        const data = response.data;
+        props.onLoggedIn(data);
+      })
+      .catch(e => {
+        console.log('no such user')
+      });
   };
 
   return (
@@ -54,12 +55,21 @@ export function LoginView(props) {
             <div className="d-grid gap-2">
               <Button type="submit" onClick={handleSubmit}> Log In </Button>
             </div>
+
+            
+              <Link to={`/register`}>
+              <div className="d-grid gap-2">
+                <Button variant="success link">Register</Button>
+              </div>
+              </Link>
+            
           </Form>
         </div>
       </Col>
     </Row>
   );
 }
+
 
 LoginView.propTypes = {
   user: PropTypes.shape({
