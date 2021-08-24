@@ -46,7 +46,7 @@ export class ProfileView extends React.Component {
     });
   }
 
-  removeFavoriteMovie() {
+  removeFavoriteMovie(movie) {
     let token = localStorage.getItem('token');
     let username = localStorage.getItem('user');
     //axios delete a movie
@@ -156,12 +156,12 @@ export class ProfileView extends React.Component {
                 movies.map((movie) => {
                   if (movie._id === FavoriteMovies.find((favMovie) => favMovie === movie._id)) {
                     return (
-                      <CardDeck className="movie-card-deck">
-                        <Card className="favorites-item card-content" style={{ width: '16rem' }} key={movie._id}>
+                      <CardDeck className="movie-card-deck" key={movie._id}>
+                        <Card className="favorites-item card-content" style={{ width: '16rem' }}>
                           <Card.Img style={{ width: '18rem' }} className="movieCard" variant="top" src={movie.ImagePath} />
                           <Card.Body>
                             <Card.Title className="movie-card-title">{movie.Title}</Card.Title>
-                            <Button size='sm' className='profile-button remove-favorite' variant='danger' value={movie._id} onClick={(e) => this.removeFavouriteMovie(e, movie)}>
+                            <Button size='sm' className='profile-button remove-favorite' variant='danger' value={movie._id} onClick={() => this.removeFavoriteMovie(movie)}>
                               Remove
                             </Button>
                           </Card.Body>
