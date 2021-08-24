@@ -1,8 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Card, CardDeck, Form, Row } from 'react-bootstrap';
-import { Button } from 'bootstrap';
+import { Card, CardDeck, Form, Row, Button } from 'react-bootstrap';
+
+import './profile-view.scss';
 
 export class ProfileView extends React.Component {
   constructor() {
@@ -141,17 +142,17 @@ export class ProfileView extends React.Component {
 
   render() {
     const { FavoriteMovies, validated } = this.state;
-    const { movie } = this.props;
+    const { movies } = this.props;
 
     return (
       <Row className="profile-view">
         <Card className="profile-card">
           <h2>Your Favorites Movies</h2>
           <Card.Body>
-            {FavoriteMovies.length === 0 && <div className="text-center">Empty.</div>}
+            {FavoriteMovies && FavoriteMovies.length === 0 && <div className="text-center">Empty.</div>}
 
             <div className="favorites-movies">
-              {FavoriteMovies.length > 0 &&
+              {FavoriteMovies && (FavoriteMovies.length > 0) && movies &&
                 movies.map((movie) => {
                   if (movie._id === FavoriteMovies.find((favMovie) => favMovie === movie._id)) {
                     return (
