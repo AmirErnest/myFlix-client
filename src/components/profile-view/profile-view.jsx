@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Card, CardDeck, Form, Row, Button } from 'react-bootstrap';
+import { Card, CardDeck, Form, Row, Button, Col } from 'react-bootstrap';
 
 import './profile-view.scss';
 
@@ -156,6 +156,7 @@ export class ProfileView extends React.Component {
                 movies.map((movie) => {
                   if (movie._id === FavoriteMovies.find((favMovie) => favMovie === movie._id)) {
                     return (
+
                       <CardDeck className="movie-card-deck" key={movie._id}>
                         <Card className="favorites-item card-content" style={{ width: '16rem' }}>
                           <Card.Img style={{ width: '18rem' }} className="movieCard" variant="top" src={movie.ImagePath} />
@@ -174,7 +175,8 @@ export class ProfileView extends React.Component {
           </Card.Body>
 
           <h1 className="section">Update Profile Information</h1>
-          <Card.Body>
+          <Card.Body className="justify-content-md-center">
+            <Col md={6}>
             <Form noValidate validated={validated} className="update-form" onSubmit={(e) => this.handleUpdate(e, this.Username, this.Password, this.Email, this.Birthdate)}>
               
               <Form.Group controlId="formBasicUsername">
@@ -210,6 +212,7 @@ export class ProfileView extends React.Component {
                 </Button>
               </Card.Body>
             </Form>
+            </Col>
           </Card.Body>
         </Card>
       </Row>
