@@ -1,8 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Card, CardDeck, Form, Row } from 'react-bootstrap';
-import { Button } from 'bootstrap';
+import { Card, CardDeck, Form, Row, Button, Col } from 'react-bootstrap';
+
+import './profile-view.scss';
 
 export class ProfileView extends React.Component {
   constructor() {
@@ -45,7 +46,7 @@ export class ProfileView extends React.Component {
     });
   }
 
-  removeFavoriteMovie() {
+  removeFavoriteMovie(movie) {
     let token = localStorage.getItem('token');
     let username = localStorage.getItem('user');
     //axios delete a movie
@@ -141,26 +142,27 @@ export class ProfileView extends React.Component {
 
   render() {
     const { FavoriteMovies, validated } = this.state;
-    const { movie } = this.props;
+    const { movies } = this.props;
 
     return (
       <Row className="profile-view">
         <Card className="profile-card">
           <h2>Your Favorites Movies</h2>
           <Card.Body>
-            {FavoriteMovies.length === 0 && <div className="text-center">Empty.</div>}
+            {FavoriteMovies && FavoriteMovies.length === 0 && <div className="text-center">Empty.</div>}
 
             <div className="favorites-movies">
-              {FavoriteMovies.length > 0 &&
+              {FavoriteMovies && (FavoriteMovies.length > 0) && movies &&
                 movies.map((movie) => {
                   if (movie._id === FavoriteMovies.find((favMovie) => favMovie === movie._id)) {
                     return (
-                      <CardDeck className="movie-card-deck">
-                        <Card className="favorites-item card-content" style={{ width: '16rem' }} key={movie._id}>
+
+                      <CardDeck className="movie-card-deck" key={movie._id}>
+                        <Card className="favorites-item card-content" style={{ width: '16rem' }}>
                           <Card.Img style={{ width: '18rem' }} className="movieCard" variant="top" src={movie.ImagePath} />
                           <Card.Body>
                             <Card.Title className="movie-card-title">{movie.Title}</Card.Title>
-                            <Button size='sm' className='profile-button remove-favorite' variant='danger' value={movie._id} onClick={(e) => this.removeFavouriteMovie(e, movie)}>
+                            <Button size='sm' className='profile-button remove-favorite' variant='danger' value={movie._id} onClick={() => this.removeFavoriteMovie(movie)}>
                               Remove
                             </Button>
                           </Card.Body>
@@ -173,7 +175,8 @@ export class ProfileView extends React.Component {
           </Card.Body>
 
           <h1 className="section">Update Profile Information</h1>
-          <Card.Body>
+          <Card.Body className="justify-content-md-center">
+            <Col md={6}>
             <Form noValidate validated={validated} className="update-form" onSubmit={(e) => this.handleUpdate(e, this.Username, this.Password, this.Email, this.Birthdate)}>
               
               <Form.Group controlId="formBasicUsername">
@@ -209,6 +212,7 @@ export class ProfileView extends React.Component {
                 </Button>
               </Card.Body>
             </Form>
+            </Col>
           </Card.Body>
         </Card>
       </Row>

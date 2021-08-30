@@ -1,6 +1,28 @@
 .my-flix {
   color: steelblue;
 }
+.d-grid {
+  margin-bottom: 20px;
+}
+
+.profile-view {
+  padding: 30px;
+  border: 0.3px solid grey;
+  box-shadow: 5px 5px 5px grey;
+  border-radius: 15px;
+}
+
+.app-container {
+  padding: 30px;
+}
+
+body {
+  padding-top: 40px;
+}
+
+.col-md-3 {
+  padding: 5px;
+}
 .image-container {
   position: relative;
   transition: transform 0.2s;
@@ -25,17 +47,5 @@
   font-size: 20px;
   padding: 20px;
   text-align: center;
-}
-.d-grid {
-  margin-bottom: 20px;
-}
-
-
-body {
-  padding-top: 40px;
-}
-
-.col-md-3 {
-  padding: 5px;
 }
 /*# sourceMappingURL=index.05075b2e.css.map */

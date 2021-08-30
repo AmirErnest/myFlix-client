@@ -870,18 +870,38 @@ var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
 var _reactDom = require("react-dom");
 var _reactDomDefault = parcelHelpers.interopDefault(_reactDom);
+var _reactBootstrap = require("react-bootstrap");
+var _redux = require("redux");
+var _reactRedux = require("react-redux");
+var _reducers = require("./reducers/reducers");
+var _reducersDefault = parcelHelpers.interopDefault(_reducers);
 var _mainView = require("./components/main-view/main-view");
+var _mainViewDefault = parcelHelpers.interopDefault(_mainView);
 var _indexScss = require("./index.scss");
+const store = _redux.createStore(_reducersDefault.default);
 //Main Component
 class MyFlixApplication extends _reactDefault.default.Component {
     render() {
-        return(/*#__PURE__*/ _reactDefault.default.createElement(_mainView.MainView, {
+        return(/*#__PURE__*/ _reactDefault.default.createElement(_reactRedux.Provider, {
+            store: store,
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\index.jsx",
-                lineNumber: 10
+                lineNumber: 17
             },
             __self: this
-        }));
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Container, {
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\index.jsx",
+                lineNumber: 18
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_mainViewDefault.default, {
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\index.jsx",
+                lineNumber: 19
+            },
+            __self: this
+        }))));
     }
 }
 //Finds the root of the app
@@ -894,7 +914,7 @@ _reactDomDefault.default.render(/*#__PURE__*/ _reactDefault.default.createElemen
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"3b2NM","react-dom":"2sg1U","./index.scss":"smjBJ","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","./components/main-view/main-view":"1dPj3"}],"3b2NM":[function(require,module,exports) {
+},{"react":"3b2NM","react-dom":"2sg1U","./index.scss":"smjBJ","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","./components/main-view/main-view":"1dPj3","react-bootstrap":"4n7hB","redux":"7panR","react-redux":"7GDa4","./reducers/reducers":"2736c"}],"3b2NM":[function(require,module,exports) {
 'use strict';
 module.exports = require('./cjs/react.development.js');
 
@@ -22004,18 +22024,21 @@ helpers.prelude(module);
 try {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "MainView", ()=>MainView
-);
 // Modules
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
+var _propTypes = require("prop-types");
+var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
+var _reactRedux = require("react-redux");
+var _actions = require("../../actions/actions");
 // React-Bootstrap Components
 var _loginView = require("../login-view/login-view");
 var _registrationView = require("../registration-view/registration-view");
 var _movieView = require("../movie-view/movie-view");
-var _movieCard = require("../movie-card/movie-card");
+var _moviesList = require("../movies-list/movies-list");
+//import { MovieCard } from '../movie-card/movie-card';
 var _directorView = require("../director-view/director-view");
 var _genreView = require("../genre-view/genre-view");
 var _profileView = require("../profile-view/profile-view");
@@ -22034,26 +22057,18 @@ var _mainViewScss = require("./main-view.scss");
 class MainView extends _reactDefault.default.Component {
     constructor(){
         super();
-        this.state = {
-            movies: [],
-            user: null
-        };
     }
     componentDidMount() {
         let accessToken = localStorage.getItem('token');
         if (accessToken !== null) {
-            this.setState({
-                user: localStorage.getItem('user')
-            });
+            this.props.setUser(localStorage.getItem('user'));
             this.getMovies(accessToken);
         }
     }
     // Log In
     onLoggedIn(authData) {
         console.log(authData);
-        this.setState({
-            user: authData.user.Username
-        });
+        this.props.setUser(authData.user);
         localStorage.setItem('token', authData.token);
         localStorage.setItem('user', authData.user.Username);
         this.getMovies(authData.token);
@@ -22065,11 +22080,7 @@ class MainView extends _reactDefault.default.Component {
                 Authorization: `Bearer ${token}`
             }
         }).then((response)=>{
-            // Assign the result to the state
-            this.setState({
-                users: response.data
-            });
-            console.log(response);
+            this.props.setUser(response.data);
         }).catch(function(error) {
             console.log(error);
         });
@@ -22081,40 +22092,34 @@ class MainView extends _reactDefault.default.Component {
                 Authorization: `Bearer ${token}`
             }
         }).then((response)=>{
-            // Assign the result to the state
-            this.setState({
-                movies: response.data
-            });
+            this.props.setMovies(response.data);
         }).catch(function(error) {
             console.log(error);
         });
     }
     onRegister(register) {
-        this.setState({
-            register: register
-        });
+        this.props.setUser(register.user.Username);
     }
     render() {
-        const { movies , user  } = this.state;
-        console.log("render", user);
+        let { movies , user  } = this.props;
         return(/*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.BrowserRouter, {
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 103
+                lineNumber: 89
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_navbarView.NavBar, {
             user: user,
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 104
+                lineNumber: 90
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_rowDefault.default, {
             className: "main-view justify-content-md-center",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 106
+                lineNumber: 92
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -22127,20 +22132,17 @@ class MainView extends _reactDefault.default.Component {
                 if (movies.length === 0) return(/*#__PURE__*/ _reactDefault.default.createElement("div", {
                     className: "main-view"
                 }));
-                return movies.map((m)=>/*#__PURE__*/ _reactDefault.default.createElement(_colDefault.default, {
-                        md: 3,
-                        key: m._id
-                    }, /*#__PURE__*/ _reactDefault.default.createElement(_movieCard.MovieCard, {
-                        movie: m
-                    }))
-                );
+                return(/*#__PURE__*/ _reactDefault.default.createElement(_moviesList.MoviesList, {
+                    movies: movies
+                }));
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 108
+                lineNumber: 94
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
+            exact: true,
             path: "/register",
             render: ()=>{
                 if (user) return(/*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Redirect, {
@@ -22150,20 +22152,22 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 120
+                lineNumber: 102
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
+            exact: true,
             path: "/profile",
             render: ()=>{
                 if (!user) return(/*#__PURE__*/ _reactDefault.default.createElement(_colDefault.default, null, /*#__PURE__*/ _reactDefault.default.createElement(_profileView.ProfileView, null)));
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 127
+                lineNumber: 109
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
+            exact: true,
             path: "/movies/:movieId",
             render: ({ match , history  })=>{
                 if (!user) return(/*#__PURE__*/ _reactDefault.default.createElement(_colDefault.default, null, /*#__PURE__*/ _reactDefault.default.createElement(_loginView.LoginView, {
@@ -22182,10 +22186,11 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 133
+                lineNumber: 115
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
+            exact: true,
             path: "/directors/:name",
             render: ({ match , history  })=>{
                 if (!user) return(/*#__PURE__*/ _reactDefault.default.createElement(_colDefault.default, null, /*#__PURE__*/ _reactDefault.default.createElement(_loginView.LoginView, {
@@ -22204,10 +22209,11 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 143
+                lineNumber: 125
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
+            exact: true,
             path: "/genres/:name",
             render: ({ match , history  })=>{
                 if (!user) return(/*#__PURE__*/ _reactDefault.default.createElement(_colDefault.default, null, /*#__PURE__*/ _reactDefault.default.createElement(_loginView.LoginView, {
@@ -22226,7 +22232,7 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 154
+                lineNumber: 136
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -22244,20 +22250,30 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 164
+                lineNumber: 146
             },
             __self: this
         }))));
     }
 }
-exports.default = MainView;
+//get the state from the store & pass it as props to that component that is connected to the store.
+let mapStateToProps = (state)=>{
+    return {
+        movies: state.movies,
+        user: state.user
+    };
+};
+exports.default = _reactRedux.connect(mapStateToProps, {
+    setMovies: _actions.setMovies,
+    setUser: _actions.setUser
+})(MainView);
 
   helpers.postlude(module);
 } finally {
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","../movie-card/movie-card":"2kqAF","../movie-view/movie-view":"5AIWW","axios":"7rA65","../login-view/login-view":"sGN9N","../registration-view/registration-view":"250pa","react-router-dom":"1PMSK","../director-view/director-view":"7oiM1","../genre-view/genre-view":"12t2z","../profile-view/profile-view":"32oCX","../navbar-view/navbar-view":"39pvM","react-bootstrap/Col":"2D0r8","react-bootstrap/Row":"3fzwD","react-bootstrap/Container":"3Mt3t","./main-view.scss":"2Fm7j"}],"2kqAF":[function(require,module,exports) {
+},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","../movie-view/movie-view":"5AIWW","axios":"7rA65","../login-view/login-view":"sGN9N","../registration-view/registration-view":"250pa","react-router-dom":"1PMSK","../director-view/director-view":"7oiM1","../genre-view/genre-view":"12t2z","../profile-view/profile-view":"32oCX","../navbar-view/navbar-view":"39pvM","react-bootstrap/Col":"2D0r8","react-bootstrap/Row":"3fzwD","react-bootstrap/Container":"3Mt3t","./main-view.scss":"2Fm7j","react-redux":"7GDa4","../../actions/actions":"5S6cN","../movies-list/movies-list":"4ceqd","prop-types":"4dfy5"}],"5AIWW":[function(require,module,exports) {
 var helpers = require("../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -22266,87 +22282,199 @@ helpers.prelude(module);
 try {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "MovieCard", ()=>MovieCard
+parcelHelpers.export(exports, "MovieView", ()=>MovieView
 );
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
-var _propTypes = require("prop-types");
-var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
 var _button = require("react-bootstrap/Button");
 var _buttonDefault = parcelHelpers.interopDefault(_button);
-var _card = require("react-bootstrap/Card");
-var _cardDefault = parcelHelpers.interopDefault(_card);
-var _movieCardScss = require("./movie-card.scss");
+var _badge = require("react-bootstrap/Badge");
+var _badgeDefault = parcelHelpers.interopDefault(_badge);
+var _propTypes = require("prop-types");
+var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
 var _reactRouterDom = require("react-router-dom");
-class MovieCard extends _reactDefault.default.Component {
+var _axios = require("axios");
+var _axiosDefault = parcelHelpers.interopDefault(_axios);
+class MovieView extends _reactDefault.default.Component {
+    keypressCallback(event) {
+        console.log(event.key);
+    }
+    componentDidMount() {
+        document.addEventListener('keypress', this.keypressCallback);
+    }
+    componentWillUnmount() {
+        document.removeEventListener('keypress', this.keypressCallback);
+    }
+    addFavorite() {
+        const token = localStorage.getItem('token');
+        const username = localStorage.getItem('user');
+        _axiosDefault.default.post(`https://my-flix-1.herokuapp.com/users/${username}/movies/${this.props.movie._id}`, {
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then((response)=>{
+            alert(`Added to Favorites List`);
+        }).catch(function(error) {
+            console.log(error);
+        });
+    }
     render() {
-        const { movie  } = this.props;
-        return(/*#__PURE__*/ _reactDefault.default.createElement(_cardDefault.default, {
-            className: "text-center",
-            border: "warning",
-            style: {
-                margin: '5%'
-            },
+        const { movie , onBackClick  } = this.props;
+        return(/*#__PURE__*/ _reactDefault.default.createElement("div", {
+            className: "movie-view",
             __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
-                lineNumber: 15
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 42
             },
             __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement(_cardDefault.default.Img, {
-            variant: "top",
+        }, /*#__PURE__*/ _reactDefault.default.createElement("div", {
+            className: "movie-poster",
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 43
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement("img", {
             src: movie.ImagePath,
             __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
-                lineNumber: 16
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 44
             },
             __self: this
-        }), /*#__PURE__*/ _reactDefault.default.createElement(_cardDefault.default.Body, {
+        })), /*#__PURE__*/ _reactDefault.default.createElement("div", {
+            className: "movie-title",
             __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
-                lineNumber: 17
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 46
             },
             __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement(_cardDefault.default.Title, {
+        }, /*#__PURE__*/ _reactDefault.default.createElement("h1", {
             __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
-                lineNumber: 18
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 47
             },
             __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement("h2", {
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_badgeDefault.default, {
+            bg: "success",
             __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
-                lineNumber: 18
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 48
             },
             __self: this
-        }, movie.Title)), /*#__PURE__*/ _reactDefault.default.createElement(_cardDefault.default.Text, {
+        }, /*#__PURE__*/ _reactDefault.default.createElement("span", {
+            className: "value",
             __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
-                lineNumber: 19
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 49
             },
             __self: this
-        }, movie.Description), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Link, {
-            to: `/movies/${movie._id}`,
+        }, movie.Title)))), /*#__PURE__*/ _reactDefault.default.createElement("div", {
+            className: "movie-description",
             __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
-                lineNumber: 20
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 52
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement("span", {
+            className: "value",
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 53
+            },
+            __self: this
+        }, movie.Description)), /*#__PURE__*/ _reactDefault.default.createElement("div", {
+            className: "movie-genre",
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 55
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Link, {
+            to: `/genres/${movie.Genre.Name}`,
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 56
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
-            variant: "warning",
+            variant: "link",
             __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
-                lineNumber: 21
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 57
             },
             __self: this
-        }, "Open")))));
+        }, "Genre: ")), /*#__PURE__*/ _reactDefault.default.createElement("span", {
+            className: "value",
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 59
+            },
+            __self: this
+        }, movie.Genre.Name)), /*#__PURE__*/ _reactDefault.default.createElement("div", {
+            className: "movie-director",
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 61
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Link, {
+            to: `/directors/${movie.Director.Name}`,
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 62
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
+            variant: "link",
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 63
+            },
+            __self: this
+        }, "Director: ")), /*#__PURE__*/ _reactDefault.default.createElement("span", {
+            className: "value",
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 65
+            },
+            __self: this
+        }, movie.Director.Name)), /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
+            variant: "danger",
+            className: "fav-button",
+            value: movie._id,
+            onClick: (e)=>this.addFavorite(e, movie)
+            ,
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 67
+            },
+            __self: this
+        }, "Add to Favorites"), /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
+            variant: "primary",
+            onClick: ()=>{
+                onBackClick(null);
+            },
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
+                lineNumber: 70
+            },
+            __self: this
+        }, "Back")));
     }
 }
-MovieCard.propTypes = {
+MovieView.propTypes = {
     movie: _propTypesDefault.default.shape({
         Title: _propTypesDefault.default.string.isRequired,
         Description: _propTypesDefault.default.string.isRequired,
         ImagePath: _propTypesDefault.default.string.isRequired,
-        Featured: _propTypesDefault.default.bool.isRequired
+        Featured: _propTypesDefault.default.bool,
+        Genre: _propTypesDefault.default.shape({
+            Name: _propTypesDefault.default.string.isRequired
+        }),
+        Director: _propTypesDefault.default.shape({
+            Name: _propTypesDefault.default.string.isRequired
+        })
     }).isRequired
 };
 
@@ -22355,7 +22483,7 @@ MovieCard.propTypes = {
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","prop-types":"4dfy5","react-bootstrap/Button":"1ru0l","react-bootstrap/Card":"1CZWQ","react-router-dom":"1PMSK","./movie-card.scss":"2OCFK"}],"4dfy5":[function(require,module,exports) {
+},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","prop-types":"4dfy5","react-router-dom":"1PMSK","react-bootstrap/Button":"1ru0l","react-bootstrap/Badge":"2aFSj","axios":"7rA65"}],"4dfy5":[function(require,module,exports) {
 var ReactIs = require('react-is');
 // By explicitly using `prop-types` you are opting into new development behavior.
 // http://fb.me/prop-types-in-prod
@@ -23034,524 +23162,7 @@ printWarning = function(text) {
 };
 module.exports = checkPropTypes;
 
-},{"./lib/ReactPropTypesSecret":"3OVnw"}],"1ru0l":[function(require,module,exports) {
-"use strict";
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-exports.__esModule = true;
-exports.default = void 0;
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
-var _classnames = _interopRequireDefault(require("classnames"));
-var _react = _interopRequireDefault(require("react"));
-var _ThemeProvider = require("./ThemeProvider");
-var _SafeAnchor = _interopRequireDefault(require("./SafeAnchor"));
-var _excluded = [
-    "bsPrefix",
-    "variant",
-    "size",
-    "active",
-    "className",
-    "block",
-    "type",
-    "as"
-];
-var defaultProps = {
-    variant: 'primary',
-    active: false,
-    disabled: false
-};
-var Button = /*#__PURE__*/ _react.default.forwardRef(function(_ref, ref) {
-    var bsPrefix = _ref.bsPrefix, variant = _ref.variant, size = _ref.size, active = _ref.active, className = _ref.className, block = _ref.block, type = _ref.type, as = _ref.as, props = _objectWithoutPropertiesLoose2.default(_ref, _excluded);
-    var prefix = _ThemeProvider.useBootstrapPrefix(bsPrefix, 'btn');
-    var classes = _classnames.default(className, prefix, active && 'active', variant && prefix + "-" + variant, block && prefix + "-block", size && prefix + "-" + size);
-    if (props.href) return(/*#__PURE__*/ _react.default.createElement(_SafeAnchor.default, _extends2.default({
-    }, props, {
-        as: as,
-        ref: ref,
-        className: _classnames.default(classes, props.disabled && 'disabled')
-    })));
-    if (ref) props.ref = ref;
-    if (type) props.type = type;
-    else if (!as) props.type = 'button';
-    var Component = as || 'button';
-    return(/*#__PURE__*/ _react.default.createElement(Component, _extends2.default({
-    }, props, {
-        className: classes
-    })));
-});
-Button.displayName = 'Button';
-Button.defaultProps = defaultProps;
-var _default = Button;
-exports.default = _default;
-module.exports = exports["default"];
-
-},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","classnames":"5aJRc","react":"3b2NM","./ThemeProvider":"4rz1S","./SafeAnchor":"5VP5o"}],"4ttVj":[function(require,module,exports) {
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-        "default": obj
-    };
-}
-module.exports = _interopRequireDefault;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
-
-},{}],"3krLJ":[function(require,module,exports) {
-function _extends() {
-    module.exports = _extends = Object.assign || function(target) {
-        for(var i = 1; i < arguments.length; i++){
-            var source = arguments[i];
-            for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
-        }
-        return target;
-    };
-    module.exports["default"] = module.exports, module.exports.__esModule = true;
-    return _extends.apply(this, arguments);
-}
-module.exports = _extends;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
-
-},{}],"3Yx9V":[function(require,module,exports) {
-function _objectWithoutPropertiesLoose(source, excluded) {
-    if (source == null) return {
-    };
-    var target = {
-    };
-    var sourceKeys = Object.keys(source);
-    var key, i;
-    for(i = 0; i < sourceKeys.length; i++){
-        key = sourceKeys[i];
-        if (excluded.indexOf(key) >= 0) continue;
-        target[key] = source[key];
-    }
-    return target;
-}
-module.exports = _objectWithoutPropertiesLoose;
-module.exports["default"] = module.exports, module.exports.__esModule = true;
-
-},{}],"5aJRc":[function(require,module,exports) {
-(function() {
-    var hasOwn = {
-    }.hasOwnProperty;
-    function classNames() {
-        var classes = [];
-        for(var i = 0; i < arguments.length; i++){
-            var arg = arguments[i];
-            if (!arg) continue;
-            var argType = typeof arg;
-            if (argType === 'string' || argType === 'number') classes.push(arg);
-            else if (Array.isArray(arg)) {
-                if (arg.length) {
-                    var inner = classNames.apply(null, arg);
-                    if (inner) classes.push(inner);
-                }
-            } else if (argType === 'object') {
-                if (arg.toString === Object.prototype.toString) {
-                    for(var key in arg)if (hasOwn.call(arg, key) && arg[key]) classes.push(key);
-                } else classes.push(arg.toString());
-            }
-        }
-        return classes.join(' ');
-    }
-    if (typeof module !== 'undefined' && module.exports) {
-        classNames.default = classNames;
-        module.exports = classNames;
-    } else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) // register as 'classnames', consistent with npm package name
-    define('classnames', [], function() {
-        return classNames;
-    });
-    else window.classNames = classNames;
-})();
-
-},{}],"4rz1S":[function(require,module,exports) {
-"use strict";
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-exports.__esModule = true;
-exports.useBootstrapPrefix = useBootstrapPrefix;
-exports.createBootstrapComponent = createBootstrapComponent;
-exports.default = exports.ThemeConsumer = void 0;
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-var _react = _interopRequireWildcard(require("react"));
-function _getRequireWildcardCache(nodeInterop) {
-    if (typeof WeakMap !== "function") return null;
-    var cacheBabelInterop = new WeakMap();
-    var cacheNodeInterop = new WeakMap();
-    return (_getRequireWildcardCache = function _getRequireWildcardCache1(nodeInterop1) {
-        return nodeInterop1 ? cacheNodeInterop : cacheBabelInterop;
-    })(nodeInterop);
-}
-function _interopRequireWildcard(obj, nodeInterop) {
-    if (!nodeInterop && obj && obj.__esModule) return obj;
-    if (obj === null || typeof obj !== "object" && typeof obj !== "function") return {
-        default: obj
-    };
-    var cache = _getRequireWildcardCache(nodeInterop);
-    if (cache && cache.has(obj)) return cache.get(obj);
-    var newObj = {
-    };
-    var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
-    for(var key in obj)if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
-        var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-        if (desc && (desc.get || desc.set)) Object.defineProperty(newObj, key, desc);
-        else newObj[key] = obj[key];
-    }
-    newObj.default = obj;
-    if (cache) cache.set(obj, newObj);
-    return newObj;
-}
-var ThemeContext = /*#__PURE__*/ _react.default.createContext({
-});
-var Consumer = ThemeContext.Consumer, Provider = ThemeContext.Provider;
-exports.ThemeConsumer = Consumer;
-function ThemeProvider(_ref) {
-    var prefixes = _ref.prefixes, children = _ref.children;
-    var copiedPrefixes = _react.useMemo(function() {
-        return _extends2.default({
-        }, prefixes);
-    }, [
-        prefixes
-    ]);
-    return(/*#__PURE__*/ _react.default.createElement(Provider, {
-        value: copiedPrefixes
-    }, children));
-}
-function useBootstrapPrefix(prefix, defaultPrefix) {
-    var prefixes = _react.useContext(ThemeContext);
-    return prefix || prefixes[defaultPrefix] || defaultPrefix;
-}
-function createBootstrapComponent(Component, opts) {
-    if (typeof opts === 'string') opts = {
-        prefix: opts
-    };
-    var isClassy = Component.prototype && Component.prototype.isReactComponent; // If it's a functional component make sure we don't break it with a ref
-    var _opts = opts, prefix = _opts.prefix, _opts$forwardRefAs = _opts.forwardRefAs, forwardRefAs = _opts$forwardRefAs === void 0 ? isClassy ? 'ref' : 'innerRef' : _opts$forwardRefAs;
-    var Wrapped = /*#__PURE__*/ _react.default.forwardRef(function(_ref2, ref) {
-        var props = _extends2.default({
-        }, _ref2);
-        props[forwardRefAs] = ref;
-        var bsPrefix = useBootstrapPrefix(props.bsPrefix, prefix);
-        return(/*#__PURE__*/ _react.default.createElement(Component, _extends2.default({
-        }, props, {
-            bsPrefix: bsPrefix
-        })));
-    });
-    Wrapped.displayName = "Bootstrap(" + (Component.displayName || Component.name) + ")";
-    return Wrapped;
-}
-var _default = ThemeProvider;
-exports.default = _default;
-
-},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","react":"3b2NM"}],"5VP5o":[function(require,module,exports) {
-"use strict";
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-exports.__esModule = true;
-exports.default = void 0;
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
-var _react = _interopRequireDefault(require("react"));
-var _createChainedFunction = _interopRequireDefault(require("./createChainedFunction"));
-var _excluded = [
-    "as",
-    "disabled",
-    "onKeyDown"
-];
-function isTrivialHref(href) {
-    return !href || href.trim() === '#';
-}
-/**
- * There are situations due to browser quirks or Bootstrap CSS where
- * an anchor tag is needed, when semantically a button tag is the
- * better choice. SafeAnchor ensures that when an anchor is used like a
- * button its accessible. It also emulates input `disabled` behavior for
- * links, which is usually desirable for Buttons, NavItems, DropdownItems, etc.
- */ var SafeAnchor = /*#__PURE__*/ _react.default.forwardRef(function(_ref, ref) {
-    var _ref$as = _ref.as, Component = _ref$as === void 0 ? 'a' : _ref$as, disabled = _ref.disabled, onKeyDown = _ref.onKeyDown, props = _objectWithoutPropertiesLoose2.default(_ref, _excluded);
-    var handleClick = function handleClick1(event) {
-        var href = props.href, onClick = props.onClick;
-        if (disabled || isTrivialHref(href)) event.preventDefault();
-        if (disabled) {
-            event.stopPropagation();
-            return;
-        }
-        if (onClick) onClick(event);
-    };
-    var handleKeyDown = function handleKeyDown1(event) {
-        if (event.key === ' ') {
-            event.preventDefault();
-            handleClick(event);
-        }
-    };
-    if (isTrivialHref(props.href)) {
-        props.role = props.role || 'button'; // we want to make sure there is a href attribute on the node
-        // otherwise, the cursor incorrectly styled (except with role='button')
-        props.href = props.href || '#';
-    }
-    if (disabled) {
-        props.tabIndex = -1;
-        props['aria-disabled'] = true;
-    }
-    return(/*#__PURE__*/ _react.default.createElement(Component, _extends2.default({
-        ref: ref
-    }, props, {
-        onClick: handleClick,
-        onKeyDown: _createChainedFunction.default(handleKeyDown, onKeyDown)
-    })));
-});
-SafeAnchor.displayName = 'SafeAnchor';
-var _default = SafeAnchor;
-exports.default = _default;
-module.exports = exports["default"];
-
-},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","react":"3b2NM","./createChainedFunction":"4RHiz"}],"4RHiz":[function(require,module,exports) {
-"use strict";
-exports.__esModule = true;
-exports.default = void 0;
-/**
- * Safe chained function
- *
- * Will only create a new function if needed,
- * otherwise will pass back existing functions or null.
- *
- * @param {function} functions to chain
- * @returns {function|null}
- */ function createChainedFunction() {
-    for(var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++)funcs[_key] = arguments[_key];
-    return funcs.filter(function(f) {
-        return f != null;
-    }).reduce(function(acc, f) {
-        if (typeof f !== 'function') throw new Error('Invalid Argument Type, must only provide functions, undefined, or null.');
-        if (acc === null) return f;
-        return function chainedFunction() {
-            for(var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++)args[_key2] = arguments[_key2];
-            // @ts-ignore
-            acc.apply(this, args); // @ts-ignore
-            f.apply(this, args);
-        };
-    }, null);
-}
-var _default = createChainedFunction;
-exports.default = _default;
-module.exports = exports["default"];
-
-},{}],"1CZWQ":[function(require,module,exports) {
-"use strict";
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-exports.__esModule = true;
-exports.default = void 0;
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
-var _classnames = _interopRequireDefault(require("classnames"));
-var _react = _interopRequireWildcard(require("react"));
-var _ThemeProvider = require("./ThemeProvider");
-var _createWithBsPrefix = _interopRequireDefault(require("./createWithBsPrefix"));
-var _divWithClassName = _interopRequireDefault(require("./divWithClassName"));
-var _CardContext = _interopRequireDefault(require("./CardContext"));
-var _CardImg = _interopRequireDefault(require("./CardImg"));
-var _excluded = [
-    "bsPrefix",
-    "className",
-    "bg",
-    "text",
-    "border",
-    "body",
-    "children",
-    "as"
-];
-function _getRequireWildcardCache(nodeInterop) {
-    if (typeof WeakMap !== "function") return null;
-    var cacheBabelInterop = new WeakMap();
-    var cacheNodeInterop = new WeakMap();
-    return (_getRequireWildcardCache = function _getRequireWildcardCache1(nodeInterop1) {
-        return nodeInterop1 ? cacheNodeInterop : cacheBabelInterop;
-    })(nodeInterop);
-}
-function _interopRequireWildcard(obj, nodeInterop) {
-    if (!nodeInterop && obj && obj.__esModule) return obj;
-    if (obj === null || typeof obj !== "object" && typeof obj !== "function") return {
-        default: obj
-    };
-    var cache = _getRequireWildcardCache(nodeInterop);
-    if (cache && cache.has(obj)) return cache.get(obj);
-    var newObj = {
-    };
-    var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
-    for(var key in obj)if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
-        var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
-        if (desc && (desc.get || desc.set)) Object.defineProperty(newObj, key, desc);
-        else newObj[key] = obj[key];
-    }
-    newObj.default = obj;
-    if (cache) cache.set(obj, newObj);
-    return newObj;
-}
-var DivStyledAsH5 = _divWithClassName.default('h5');
-var DivStyledAsH6 = _divWithClassName.default('h6');
-var CardBody = _createWithBsPrefix.default('card-body');
-var CardTitle = _createWithBsPrefix.default('card-title', {
-    Component: DivStyledAsH5
-});
-var CardSubtitle = _createWithBsPrefix.default('card-subtitle', {
-    Component: DivStyledAsH6
-});
-var CardLink = _createWithBsPrefix.default('card-link', {
-    Component: 'a'
-});
-var CardText = _createWithBsPrefix.default('card-text', {
-    Component: 'p'
-});
-var CardHeader = _createWithBsPrefix.default('card-header');
-var CardFooter = _createWithBsPrefix.default('card-footer');
-var CardImgOverlay = _createWithBsPrefix.default('card-img-overlay');
-var defaultProps = {
-    body: false
-};
-var Card = /*#__PURE__*/ _react.default.forwardRef(function(_ref, ref) {
-    var bsPrefix = _ref.bsPrefix, className = _ref.className, bg = _ref.bg, text = _ref.text, border = _ref.border, body = _ref.body, children = _ref.children, _ref$as = _ref.as, Component = _ref$as === void 0 ? 'div' : _ref$as, props = _objectWithoutPropertiesLoose2.default(_ref, _excluded);
-    var prefix = _ThemeProvider.useBootstrapPrefix(bsPrefix, 'card');
-    var cardContext = _react.useMemo(function() {
-        return {
-            cardHeaderBsPrefix: prefix + "-header"
-        };
-    }, [
-        prefix
-    ]);
-    return(/*#__PURE__*/ _react.default.createElement(_CardContext.default.Provider, {
-        value: cardContext
-    }, /*#__PURE__*/ _react.default.createElement(Component, _extends2.default({
-        ref: ref
-    }, props, {
-        className: _classnames.default(className, prefix, bg && "bg-" + bg, text && "text-" + text, border && "border-" + border)
-    }), body ? /*#__PURE__*/ // @ts-ignore
-    _react.default.createElement(CardBody, null, children) : children)));
-});
-Card.displayName = 'Card';
-Card.defaultProps = defaultProps;
-Card.Img = _CardImg.default;
-Card.Title = CardTitle;
-Card.Subtitle = CardSubtitle;
-Card.Body = CardBody;
-Card.Link = CardLink;
-Card.Text = CardText;
-Card.Header = CardHeader;
-Card.Footer = CardFooter;
-Card.ImgOverlay = CardImgOverlay;
-var _default = Card;
-exports.default = _default;
-module.exports = exports["default"];
-
-},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","classnames":"5aJRc","react":"3b2NM","./ThemeProvider":"4rz1S","./createWithBsPrefix":"2oVVc","./divWithClassName":"27J3S","./CardContext":"71yot","./CardImg":"68LPL"}],"2oVVc":[function(require,module,exports) {
-"use strict";
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-exports.__esModule = true;
-exports.default = createWithBsPrefix;
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
-var _classnames = _interopRequireDefault(require("classnames"));
-var _camelize = _interopRequireDefault(require("dom-helpers/camelize"));
-var _react = _interopRequireDefault(require("react"));
-var _ThemeProvider = require("./ThemeProvider");
-var _excluded = [
-    "className",
-    "bsPrefix",
-    "as"
-];
-var pascalCase = function pascalCase1(str) {
-    return str[0].toUpperCase() + _camelize.default(str).slice(1);
-};
-// TODO: emstricten & fix the typing here! `createWithBsPrefix<TElementType>...`
-function createWithBsPrefix(prefix, _temp) {
-    var _ref = _temp === void 0 ? {
-    } : _temp, _ref$displayName = _ref.displayName, displayName = _ref$displayName === void 0 ? pascalCase(prefix) : _ref$displayName, Component = _ref.Component, defaultProps = _ref.defaultProps;
-    var BsComponent = /*#__PURE__*/ _react.default.forwardRef(function(_ref2, ref) {
-        var className = _ref2.className, bsPrefix = _ref2.bsPrefix, _ref2$as = _ref2.as, Tag = _ref2$as === void 0 ? Component || 'div' : _ref2$as, props = _objectWithoutPropertiesLoose2.default(_ref2, _excluded);
-        var resolvedPrefix = _ThemeProvider.useBootstrapPrefix(bsPrefix, prefix);
-        return(/*#__PURE__*/ _react.default.createElement(Tag, _extends2.default({
-            ref: ref,
-            className: _classnames.default(className, resolvedPrefix)
-        }, props)));
-    });
-    BsComponent.defaultProps = defaultProps;
-    BsComponent.displayName = displayName;
-    return BsComponent;
-}
-module.exports = exports["default"];
-
-},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","classnames":"5aJRc","dom-helpers/camelize":"7AXwA","react":"3b2NM","./ThemeProvider":"4rz1S"}],"7AXwA":[function(require,module,exports) {
-"use strict";
-exports.__esModule = true;
-exports.default = camelize;
-var rHyphen = /-(.)/g;
-function camelize(string) {
-    return string.replace(rHyphen, function(_, chr) {
-        return chr.toUpperCase();
-    });
-}
-module.exports = exports["default"];
-
-},{}],"27J3S":[function(require,module,exports) {
-"use strict";
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-exports.__esModule = true;
-exports.default = void 0;
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-var _react = _interopRequireDefault(require("react"));
-var _classnames = _interopRequireDefault(require("classnames"));
-var _default = function _default1(className) {
-    return(/*#__PURE__*/ _react.default.forwardRef(function(p, ref) {
-        return(/*#__PURE__*/ _react.default.createElement("div", _extends2.default({
-        }, p, {
-            ref: ref,
-            className: _classnames.default(p.className, className)
-        })));
-    }));
-};
-exports.default = _default;
-module.exports = exports["default"];
-
-},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","react":"3b2NM","classnames":"5aJRc"}],"71yot":[function(require,module,exports) {
-"use strict";
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-exports.__esModule = true;
-exports.default = void 0;
-var _react = _interopRequireDefault(require("react"));
-var context = /*#__PURE__*/ _react.default.createContext(null);
-context.displayName = 'CardContext';
-var _default = context;
-exports.default = _default;
-module.exports = exports["default"];
-
-},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","react":"3b2NM"}],"68LPL":[function(require,module,exports) {
-"use strict";
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-exports.__esModule = true;
-exports.default = void 0;
-var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
-var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
-var _classnames = _interopRequireDefault(require("classnames"));
-var _react = _interopRequireDefault(require("react"));
-var _ThemeProvider = require("./ThemeProvider");
-var _excluded = [
-    "bsPrefix",
-    "className",
-    "variant",
-    "as"
-];
-var defaultProps = {
-    variant: null
-};
-var CardImg = /*#__PURE__*/ _react.default.forwardRef(function(_ref, ref) {
-    var bsPrefix = _ref.bsPrefix, className = _ref.className, variant = _ref.variant, _ref$as = _ref.as, Component = _ref$as === void 0 ? 'img' : _ref$as, props = _objectWithoutPropertiesLoose2.default(_ref, _excluded);
-    var prefix = _ThemeProvider.useBootstrapPrefix(bsPrefix, 'card-img');
-    return(/*#__PURE__*/ _react.default.createElement(Component, _extends2.default({
-        ref: ref,
-        className: _classnames.default(variant ? prefix + "-" + variant : prefix, className)
-    }, props)));
-});
-CardImg.displayName = 'CardImg';
-CardImg.defaultProps = defaultProps;
-var _default = CardImg;
-exports.default = _default;
-module.exports = exports["default"];
-
-},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","classnames":"5aJRc","react":"3b2NM","./ThemeProvider":"4rz1S"}],"1PMSK":[function(require,module,exports) {
+},{"./lib/ReactPropTypesSecret":"3OVnw"}],"1PMSK":[function(require,module,exports) {
 "use strict";
 module.exports = require("./cjs/react-router-dom.js");
 
@@ -25951,217 +25562,304 @@ function hoistNonReactStatics(targetComponent, sourceComponent, blacklist) {
 }
 module.exports = hoistNonReactStatics;
 
-},{"react-is":"68QIU"}],"2OCFK":[function() {},{}],"5AIWW":[function(require,module,exports) {
-var helpers = require("../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-helpers.prelude(module);
-
-try {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "MovieView", ()=>MovieView
-);
-var _react = require("react");
-var _reactDefault = parcelHelpers.interopDefault(_react);
-var _button = require("react-bootstrap/Button");
-var _buttonDefault = parcelHelpers.interopDefault(_button);
-var _badge = require("react-bootstrap/Badge");
-var _badgeDefault = parcelHelpers.interopDefault(_badge);
-var _propTypes = require("prop-types");
-var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
-var _reactRouterDom = require("react-router-dom");
-var _axios = require("axios");
-var _axiosDefault = parcelHelpers.interopDefault(_axios);
-class MovieView extends _reactDefault.default.Component {
-    keypressCallback(event) {
-        console.log(event.key);
-    }
-    componentDidMount() {
-        document.addEventListener('keypress', this.keypressCallback);
-    }
-    componentWillUnmount() {
-        document.removeEventListener('keypress', this.keypressCallback);
-    }
-    addFavorite() {
-        const token = localStorage.getItem('token');
-        const username = localStorage.getItem('user');
-        _axiosDefault.default.post(`https://my-flix-1.herokuapp.com/users/${username}/movies/${this.props.movie._id}`, {
-        }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }).then((response)=>{
-            alert(`Added to Favorites List`);
-        }).catch(function(error) {
-            console.log(error);
-        });
-    }
-    render() {
-        const { movie , onBackClick  } = this.props;
-        return(/*#__PURE__*/ _reactDefault.default.createElement("div", {
-            className: "movie-view",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 42
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement("div", {
-            className: "movie-poster",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 43
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement("img", {
-            src: movie.ImagePath,
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 44
-            },
-            __self: this
-        })), /*#__PURE__*/ _reactDefault.default.createElement("div", {
-            className: "movie-title",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 46
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement("h1", {
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 47
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement(_badgeDefault.default, {
-            bg: "success",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 48
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement("span", {
-            className: "value",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 49
-            },
-            __self: this
-        }, movie.Title)))), /*#__PURE__*/ _reactDefault.default.createElement("div", {
-            className: "movie-description",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 52
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement("span", {
-            className: "value",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 53
-            },
-            __self: this
-        }, movie.Description)), /*#__PURE__*/ _reactDefault.default.createElement("div", {
-            className: "movie-genre",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 55
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Link, {
-            to: `/movies/${movie.Genre.Name}`,
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 56
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
-            variant: "link",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 57
-            },
-            __self: this
-        }, "Genre: ")), /*#__PURE__*/ _reactDefault.default.createElement("span", {
-            className: "value",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 59
-            },
-            __self: this
-        }, movie.Genre.Name)), /*#__PURE__*/ _reactDefault.default.createElement("div", {
-            className: "movie-director",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 61
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Link, {
-            to: `/movies/${movie.Director.Name}`,
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 62
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
-            variant: "link",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 63
-            },
-            __self: this
-        }, "Director: ")), /*#__PURE__*/ _reactDefault.default.createElement("span", {
-            className: "value",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 65
-            },
-            __self: this
-        }, movie.Director.Name)), /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
-            variant: "danger",
-            className: "fav-button",
-            value: movie._id,
-            onClick: (e)=>this.addFavorite(e, movie)
-            ,
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 67
-            },
-            __self: this
-        }, "Add to Favorites"), /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
-            variant: "primary",
-            onClick: ()=>{
-                onBackClick(null);
-            },
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
-                lineNumber: 70
-            },
-            __self: this
-        }, "Back")));
-    }
-}
-MovieView.propTypes = {
-    movie: _propTypesDefault.default.shape({
-        Title: _propTypesDefault.default.string.isRequired,
-        Description: _propTypesDefault.default.string.isRequired,
-        ImagePath: _propTypesDefault.default.string.isRequired,
-        Featured: _propTypesDefault.default.bool,
-        Genre: _propTypesDefault.default.shape({
-            Name: _propTypesDefault.default.string.isRequired
-        }),
-        Director: _propTypesDefault.default.shape({
-            Name: _propTypesDefault.default.string.isRequired
-        })
-    }).isRequired
+},{"react-is":"68QIU"}],"1ru0l":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.default = void 0;
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
+var _classnames = _interopRequireDefault(require("classnames"));
+var _react = _interopRequireDefault(require("react"));
+var _ThemeProvider = require("./ThemeProvider");
+var _SafeAnchor = _interopRequireDefault(require("./SafeAnchor"));
+var _excluded = [
+    "bsPrefix",
+    "variant",
+    "size",
+    "active",
+    "className",
+    "block",
+    "type",
+    "as"
+];
+var defaultProps = {
+    variant: 'primary',
+    active: false,
+    disabled: false
 };
+var Button = /*#__PURE__*/ _react.default.forwardRef(function(_ref, ref) {
+    var bsPrefix = _ref.bsPrefix, variant = _ref.variant, size = _ref.size, active = _ref.active, className = _ref.className, block = _ref.block, type = _ref.type, as = _ref.as, props = _objectWithoutPropertiesLoose2.default(_ref, _excluded);
+    var prefix = _ThemeProvider.useBootstrapPrefix(bsPrefix, 'btn');
+    var classes = _classnames.default(className, prefix, active && 'active', variant && prefix + "-" + variant, block && prefix + "-block", size && prefix + "-" + size);
+    if (props.href) return(/*#__PURE__*/ _react.default.createElement(_SafeAnchor.default, _extends2.default({
+    }, props, {
+        as: as,
+        ref: ref,
+        className: _classnames.default(classes, props.disabled && 'disabled')
+    })));
+    if (ref) props.ref = ref;
+    if (type) props.type = type;
+    else if (!as) props.type = 'button';
+    var Component = as || 'button';
+    return(/*#__PURE__*/ _react.default.createElement(Component, _extends2.default({
+    }, props, {
+        className: classes
+    })));
+});
+Button.displayName = 'Button';
+Button.defaultProps = defaultProps;
+var _default = Button;
+exports.default = _default;
+module.exports = exports["default"];
 
-  helpers.postlude(module);
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","classnames":"5aJRc","react":"3b2NM","./ThemeProvider":"4rz1S","./SafeAnchor":"5VP5o"}],"4ttVj":[function(require,module,exports) {
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+        "default": obj
+    };
 }
-},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","prop-types":"4dfy5","react-router-dom":"1PMSK","react-bootstrap/Button":"1ru0l","react-bootstrap/Badge":"2aFSj","axios":"7rA65"}],"2aFSj":[function(require,module,exports) {
+module.exports = _interopRequireDefault;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
+
+},{}],"3krLJ":[function(require,module,exports) {
+function _extends() {
+    module.exports = _extends = Object.assign || function(target) {
+        for(var i = 1; i < arguments.length; i++){
+            var source = arguments[i];
+            for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
+        }
+        return target;
+    };
+    module.exports["default"] = module.exports, module.exports.__esModule = true;
+    return _extends.apply(this, arguments);
+}
+module.exports = _extends;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
+
+},{}],"3Yx9V":[function(require,module,exports) {
+function _objectWithoutPropertiesLoose(source, excluded) {
+    if (source == null) return {
+    };
+    var target = {
+    };
+    var sourceKeys = Object.keys(source);
+    var key, i;
+    for(i = 0; i < sourceKeys.length; i++){
+        key = sourceKeys[i];
+        if (excluded.indexOf(key) >= 0) continue;
+        target[key] = source[key];
+    }
+    return target;
+}
+module.exports = _objectWithoutPropertiesLoose;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
+
+},{}],"5aJRc":[function(require,module,exports) {
+(function() {
+    var hasOwn = {
+    }.hasOwnProperty;
+    function classNames() {
+        var classes = [];
+        for(var i = 0; i < arguments.length; i++){
+            var arg = arguments[i];
+            if (!arg) continue;
+            var argType = typeof arg;
+            if (argType === 'string' || argType === 'number') classes.push(arg);
+            else if (Array.isArray(arg)) {
+                if (arg.length) {
+                    var inner = classNames.apply(null, arg);
+                    if (inner) classes.push(inner);
+                }
+            } else if (argType === 'object') {
+                if (arg.toString === Object.prototype.toString) {
+                    for(var key in arg)if (hasOwn.call(arg, key) && arg[key]) classes.push(key);
+                } else classes.push(arg.toString());
+            }
+        }
+        return classes.join(' ');
+    }
+    if (typeof module !== 'undefined' && module.exports) {
+        classNames.default = classNames;
+        module.exports = classNames;
+    } else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) // register as 'classnames', consistent with npm package name
+    define('classnames', [], function() {
+        return classNames;
+    });
+    else window.classNames = classNames;
+})();
+
+},{}],"4rz1S":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.useBootstrapPrefix = useBootstrapPrefix;
+exports.createBootstrapComponent = createBootstrapComponent;
+exports.default = exports.ThemeConsumer = void 0;
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+var _react = _interopRequireWildcard(require("react"));
+function _getRequireWildcardCache(nodeInterop) {
+    if (typeof WeakMap !== "function") return null;
+    var cacheBabelInterop = new WeakMap();
+    var cacheNodeInterop = new WeakMap();
+    return (_getRequireWildcardCache = function _getRequireWildcardCache1(nodeInterop1) {
+        return nodeInterop1 ? cacheNodeInterop : cacheBabelInterop;
+    })(nodeInterop);
+}
+function _interopRequireWildcard(obj, nodeInterop) {
+    if (!nodeInterop && obj && obj.__esModule) return obj;
+    if (obj === null || typeof obj !== "object" && typeof obj !== "function") return {
+        default: obj
+    };
+    var cache = _getRequireWildcardCache(nodeInterop);
+    if (cache && cache.has(obj)) return cache.get(obj);
+    var newObj = {
+    };
+    var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+    for(var key in obj)if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+        var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+        if (desc && (desc.get || desc.set)) Object.defineProperty(newObj, key, desc);
+        else newObj[key] = obj[key];
+    }
+    newObj.default = obj;
+    if (cache) cache.set(obj, newObj);
+    return newObj;
+}
+var ThemeContext = /*#__PURE__*/ _react.default.createContext({
+});
+var Consumer = ThemeContext.Consumer, Provider = ThemeContext.Provider;
+exports.ThemeConsumer = Consumer;
+function ThemeProvider(_ref) {
+    var prefixes = _ref.prefixes, children = _ref.children;
+    var copiedPrefixes = _react.useMemo(function() {
+        return _extends2.default({
+        }, prefixes);
+    }, [
+        prefixes
+    ]);
+    return(/*#__PURE__*/ _react.default.createElement(Provider, {
+        value: copiedPrefixes
+    }, children));
+}
+function useBootstrapPrefix(prefix, defaultPrefix) {
+    var prefixes = _react.useContext(ThemeContext);
+    return prefix || prefixes[defaultPrefix] || defaultPrefix;
+}
+function createBootstrapComponent(Component, opts) {
+    if (typeof opts === 'string') opts = {
+        prefix: opts
+    };
+    var isClassy = Component.prototype && Component.prototype.isReactComponent; // If it's a functional component make sure we don't break it with a ref
+    var _opts = opts, prefix = _opts.prefix, _opts$forwardRefAs = _opts.forwardRefAs, forwardRefAs = _opts$forwardRefAs === void 0 ? isClassy ? 'ref' : 'innerRef' : _opts$forwardRefAs;
+    var Wrapped = /*#__PURE__*/ _react.default.forwardRef(function(_ref2, ref) {
+        var props = _extends2.default({
+        }, _ref2);
+        props[forwardRefAs] = ref;
+        var bsPrefix = useBootstrapPrefix(props.bsPrefix, prefix);
+        return(/*#__PURE__*/ _react.default.createElement(Component, _extends2.default({
+        }, props, {
+            bsPrefix: bsPrefix
+        })));
+    });
+    Wrapped.displayName = "Bootstrap(" + (Component.displayName || Component.name) + ")";
+    return Wrapped;
+}
+var _default = ThemeProvider;
+exports.default = _default;
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","react":"3b2NM"}],"5VP5o":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.default = void 0;
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
+var _react = _interopRequireDefault(require("react"));
+var _createChainedFunction = _interopRequireDefault(require("./createChainedFunction"));
+var _excluded = [
+    "as",
+    "disabled",
+    "onKeyDown"
+];
+function isTrivialHref(href) {
+    return !href || href.trim() === '#';
+}
+/**
+ * There are situations due to browser quirks or Bootstrap CSS where
+ * an anchor tag is needed, when semantically a button tag is the
+ * better choice. SafeAnchor ensures that when an anchor is used like a
+ * button its accessible. It also emulates input `disabled` behavior for
+ * links, which is usually desirable for Buttons, NavItems, DropdownItems, etc.
+ */ var SafeAnchor = /*#__PURE__*/ _react.default.forwardRef(function(_ref, ref) {
+    var _ref$as = _ref.as, Component = _ref$as === void 0 ? 'a' : _ref$as, disabled = _ref.disabled, onKeyDown = _ref.onKeyDown, props = _objectWithoutPropertiesLoose2.default(_ref, _excluded);
+    var handleClick = function handleClick1(event) {
+        var href = props.href, onClick = props.onClick;
+        if (disabled || isTrivialHref(href)) event.preventDefault();
+        if (disabled) {
+            event.stopPropagation();
+            return;
+        }
+        if (onClick) onClick(event);
+    };
+    var handleKeyDown = function handleKeyDown1(event) {
+        if (event.key === ' ') {
+            event.preventDefault();
+            handleClick(event);
+        }
+    };
+    if (isTrivialHref(props.href)) {
+        props.role = props.role || 'button'; // we want to make sure there is a href attribute on the node
+        // otherwise, the cursor incorrectly styled (except with role='button')
+        props.href = props.href || '#';
+    }
+    if (disabled) {
+        props.tabIndex = -1;
+        props['aria-disabled'] = true;
+    }
+    return(/*#__PURE__*/ _react.default.createElement(Component, _extends2.default({
+        ref: ref
+    }, props, {
+        onClick: handleClick,
+        onKeyDown: _createChainedFunction.default(handleKeyDown, onKeyDown)
+    })));
+});
+SafeAnchor.displayName = 'SafeAnchor';
+var _default = SafeAnchor;
+exports.default = _default;
+module.exports = exports["default"];
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","react":"3b2NM","./createChainedFunction":"4RHiz"}],"4RHiz":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports.default = void 0;
+/**
+ * Safe chained function
+ *
+ * Will only create a new function if needed,
+ * otherwise will pass back existing functions or null.
+ *
+ * @param {function} functions to chain
+ * @returns {function|null}
+ */ function createChainedFunction() {
+    for(var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++)funcs[_key] = arguments[_key];
+    return funcs.filter(function(f) {
+        return f != null;
+    }).reduce(function(acc, f) {
+        if (typeof f !== 'function') throw new Error('Invalid Argument Type, must only provide functions, undefined, or null.');
+        if (acc === null) return f;
+        return function chainedFunction() {
+            for(var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++)args[_key2] = arguments[_key2];
+            // @ts-ignore
+            acc.apply(this, args); // @ts-ignore
+            f.apply(this, args);
+        };
+    }, null);
+}
+var _default = createChainedFunction;
+exports.default = _default;
+module.exports = exports["default"];
+
+},{}],"2aFSj":[function(require,module,exports) {
 "use strict";
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 exports.__esModule = true;
@@ -28824,7 +28522,56 @@ var _default = Switch;
 exports.default = _default;
 module.exports = exports["default"];
 
-},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","react":"3b2NM","./FormCheck":"6WcKM"}],"1xZab":[function() {},{}],"4n7hB":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","react":"3b2NM","./FormCheck":"6WcKM"}],"2oVVc":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.default = createWithBsPrefix;
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
+var _classnames = _interopRequireDefault(require("classnames"));
+var _camelize = _interopRequireDefault(require("dom-helpers/camelize"));
+var _react = _interopRequireDefault(require("react"));
+var _ThemeProvider = require("./ThemeProvider");
+var _excluded = [
+    "className",
+    "bsPrefix",
+    "as"
+];
+var pascalCase = function pascalCase1(str) {
+    return str[0].toUpperCase() + _camelize.default(str).slice(1);
+};
+// TODO: emstricten & fix the typing here! `createWithBsPrefix<TElementType>...`
+function createWithBsPrefix(prefix, _temp) {
+    var _ref = _temp === void 0 ? {
+    } : _temp, _ref$displayName = _ref.displayName, displayName = _ref$displayName === void 0 ? pascalCase(prefix) : _ref$displayName, Component = _ref.Component, defaultProps = _ref.defaultProps;
+    var BsComponent = /*#__PURE__*/ _react.default.forwardRef(function(_ref2, ref) {
+        var className = _ref2.className, bsPrefix = _ref2.bsPrefix, _ref2$as = _ref2.as, Tag = _ref2$as === void 0 ? Component || 'div' : _ref2$as, props = _objectWithoutPropertiesLoose2.default(_ref2, _excluded);
+        var resolvedPrefix = _ThemeProvider.useBootstrapPrefix(bsPrefix, prefix);
+        return(/*#__PURE__*/ _react.default.createElement(Tag, _extends2.default({
+            ref: ref,
+            className: _classnames.default(className, resolvedPrefix)
+        }, props)));
+    });
+    BsComponent.defaultProps = defaultProps;
+    BsComponent.displayName = displayName;
+    return BsComponent;
+}
+module.exports = exports["default"];
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","classnames":"5aJRc","dom-helpers/camelize":"7AXwA","react":"3b2NM","./ThemeProvider":"4rz1S"}],"7AXwA":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports.default = camelize;
+var rHyphen = /-(.)/g;
+function camelize(string) {
+    return string.replace(rHyphen, function(_, chr) {
+        return chr.toUpperCase();
+    });
+}
+module.exports = exports["default"];
+
+},{}],"1xZab":[function() {},{}],"4n7hB":[function(require,module,exports) {
 "use strict";
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 exports.__esModule = true;
@@ -30947,7 +30694,27 @@ var _default = CloseButton;
 exports.default = _default;
 module.exports = exports["default"];
 
-},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","prop-types":"4dfy5","react":"3b2NM","classnames":"5aJRc"}],"hcZkb":[function(require,module,exports) {
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","prop-types":"4dfy5","react":"3b2NM","classnames":"5aJRc"}],"27J3S":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.default = void 0;
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+var _react = _interopRequireDefault(require("react"));
+var _classnames = _interopRequireDefault(require("classnames"));
+var _default = function _default1(className) {
+    return(/*#__PURE__*/ _react.default.forwardRef(function(p, ref) {
+        return(/*#__PURE__*/ _react.default.createElement("div", _extends2.default({
+        }, p, {
+            ref: ref,
+            className: _classnames.default(p.className, className)
+        })));
+    }));
+};
+exports.default = _default;
+module.exports = exports["default"];
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","react":"3b2NM","classnames":"5aJRc"}],"hcZkb":[function(require,module,exports) {
 "use strict";
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 exports.__esModule = true;
@@ -31110,6 +30877,157 @@ var ButtonToolbar = /*#__PURE__*/ _react.default.forwardRef(function(_ref, ref) 
 ButtonToolbar.displayName = 'ButtonToolbar';
 ButtonToolbar.defaultProps = defaultProps;
 var _default = ButtonToolbar;
+exports.default = _default;
+module.exports = exports["default"];
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","classnames":"5aJRc","react":"3b2NM","./ThemeProvider":"4rz1S"}],"1CZWQ":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.default = void 0;
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
+var _classnames = _interopRequireDefault(require("classnames"));
+var _react = _interopRequireWildcard(require("react"));
+var _ThemeProvider = require("./ThemeProvider");
+var _createWithBsPrefix = _interopRequireDefault(require("./createWithBsPrefix"));
+var _divWithClassName = _interopRequireDefault(require("./divWithClassName"));
+var _CardContext = _interopRequireDefault(require("./CardContext"));
+var _CardImg = _interopRequireDefault(require("./CardImg"));
+var _excluded = [
+    "bsPrefix",
+    "className",
+    "bg",
+    "text",
+    "border",
+    "body",
+    "children",
+    "as"
+];
+function _getRequireWildcardCache(nodeInterop) {
+    if (typeof WeakMap !== "function") return null;
+    var cacheBabelInterop = new WeakMap();
+    var cacheNodeInterop = new WeakMap();
+    return (_getRequireWildcardCache = function _getRequireWildcardCache1(nodeInterop1) {
+        return nodeInterop1 ? cacheNodeInterop : cacheBabelInterop;
+    })(nodeInterop);
+}
+function _interopRequireWildcard(obj, nodeInterop) {
+    if (!nodeInterop && obj && obj.__esModule) return obj;
+    if (obj === null || typeof obj !== "object" && typeof obj !== "function") return {
+        default: obj
+    };
+    var cache = _getRequireWildcardCache(nodeInterop);
+    if (cache && cache.has(obj)) return cache.get(obj);
+    var newObj = {
+    };
+    var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor;
+    for(var key in obj)if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) {
+        var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null;
+        if (desc && (desc.get || desc.set)) Object.defineProperty(newObj, key, desc);
+        else newObj[key] = obj[key];
+    }
+    newObj.default = obj;
+    if (cache) cache.set(obj, newObj);
+    return newObj;
+}
+var DivStyledAsH5 = _divWithClassName.default('h5');
+var DivStyledAsH6 = _divWithClassName.default('h6');
+var CardBody = _createWithBsPrefix.default('card-body');
+var CardTitle = _createWithBsPrefix.default('card-title', {
+    Component: DivStyledAsH5
+});
+var CardSubtitle = _createWithBsPrefix.default('card-subtitle', {
+    Component: DivStyledAsH6
+});
+var CardLink = _createWithBsPrefix.default('card-link', {
+    Component: 'a'
+});
+var CardText = _createWithBsPrefix.default('card-text', {
+    Component: 'p'
+});
+var CardHeader = _createWithBsPrefix.default('card-header');
+var CardFooter = _createWithBsPrefix.default('card-footer');
+var CardImgOverlay = _createWithBsPrefix.default('card-img-overlay');
+var defaultProps = {
+    body: false
+};
+var Card = /*#__PURE__*/ _react.default.forwardRef(function(_ref, ref) {
+    var bsPrefix = _ref.bsPrefix, className = _ref.className, bg = _ref.bg, text = _ref.text, border = _ref.border, body = _ref.body, children = _ref.children, _ref$as = _ref.as, Component = _ref$as === void 0 ? 'div' : _ref$as, props = _objectWithoutPropertiesLoose2.default(_ref, _excluded);
+    var prefix = _ThemeProvider.useBootstrapPrefix(bsPrefix, 'card');
+    var cardContext = _react.useMemo(function() {
+        return {
+            cardHeaderBsPrefix: prefix + "-header"
+        };
+    }, [
+        prefix
+    ]);
+    return(/*#__PURE__*/ _react.default.createElement(_CardContext.default.Provider, {
+        value: cardContext
+    }, /*#__PURE__*/ _react.default.createElement(Component, _extends2.default({
+        ref: ref
+    }, props, {
+        className: _classnames.default(className, prefix, bg && "bg-" + bg, text && "text-" + text, border && "border-" + border)
+    }), body ? /*#__PURE__*/ // @ts-ignore
+    _react.default.createElement(CardBody, null, children) : children)));
+});
+Card.displayName = 'Card';
+Card.defaultProps = defaultProps;
+Card.Img = _CardImg.default;
+Card.Title = CardTitle;
+Card.Subtitle = CardSubtitle;
+Card.Body = CardBody;
+Card.Link = CardLink;
+Card.Text = CardText;
+Card.Header = CardHeader;
+Card.Footer = CardFooter;
+Card.ImgOverlay = CardImgOverlay;
+var _default = Card;
+exports.default = _default;
+module.exports = exports["default"];
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","classnames":"5aJRc","react":"3b2NM","./ThemeProvider":"4rz1S","./createWithBsPrefix":"2oVVc","./divWithClassName":"27J3S","./CardContext":"71yot","./CardImg":"68LPL"}],"71yot":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.default = void 0;
+var _react = _interopRequireDefault(require("react"));
+var context = /*#__PURE__*/ _react.default.createContext(null);
+context.displayName = 'CardContext';
+var _default = context;
+exports.default = _default;
+module.exports = exports["default"];
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","react":"3b2NM"}],"68LPL":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.default = void 0;
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
+var _classnames = _interopRequireDefault(require("classnames"));
+var _react = _interopRequireDefault(require("react"));
+var _ThemeProvider = require("./ThemeProvider");
+var _excluded = [
+    "bsPrefix",
+    "className",
+    "variant",
+    "as"
+];
+var defaultProps = {
+    variant: null
+};
+var CardImg = /*#__PURE__*/ _react.default.forwardRef(function(_ref, ref) {
+    var bsPrefix = _ref.bsPrefix, className = _ref.className, variant = _ref.variant, _ref$as = _ref.as, Component = _ref$as === void 0 ? 'img' : _ref$as, props = _objectWithoutPropertiesLoose2.default(_ref, _excluded);
+    var prefix = _ThemeProvider.useBootstrapPrefix(bsPrefix, 'card-img');
+    return(/*#__PURE__*/ _react.default.createElement(Component, _extends2.default({
+        ref: ref,
+        className: _classnames.default(variant ? prefix + "-" + variant : prefix, className)
+    }, props)));
+});
+CardImg.displayName = 'CardImg';
+CardImg.defaultProps = defaultProps;
+var _default = CardImg;
 exports.default = _default;
 module.exports = exports["default"];
 
@@ -39715,7 +39633,7 @@ var _button = require("react-bootstrap/Button");
 var _buttonDefault = parcelHelpers.interopDefault(_button);
 class DirectorView extends _reactDefault.default.Component {
     render() {
-        const { movie , onBackClick  } = this.props;
+        const { director , onBackClick  } = this.props;
         return(/*#__PURE__*/ _reactDefault.default.createElement("div", {
             className: "director-view",
             __source: {
@@ -39743,7 +39661,7 @@ class DirectorView extends _reactDefault.default.Component {
                 lineNumber: 15
             },
             __self: this
-        }, movie.Director.Name))), /*#__PURE__*/ _reactDefault.default.createElement("div", {
+        }, director.Name))), /*#__PURE__*/ _reactDefault.default.createElement("div", {
             className: "director-bio",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\director-view\\director-view.jsx",
@@ -39757,7 +39675,7 @@ class DirectorView extends _reactDefault.default.Component {
                 lineNumber: 19
             },
             __self: this
-        }, movie.Director.Bio)), /*#__PURE__*/ _reactDefault.default.createElement("div", {
+        }, director.Bio)), /*#__PURE__*/ _reactDefault.default.createElement("div", {
             className: "director-birthdate",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\director-view\\director-view.jsx",
@@ -39771,7 +39689,7 @@ class DirectorView extends _reactDefault.default.Component {
                 lineNumber: 23
             },
             __self: this
-        }, movie.Director.Birthdate)), /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
+        }, director.Birthdate)), /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
             variant: "primary",
             onClick: ()=>{
                 onBackClick(null);
@@ -39814,52 +39732,52 @@ var _reactDefault = parcelHelpers.interopDefault(_react);
 var _propTypes = require("prop-types");
 var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
 var _reactBootstrap = require("react-bootstrap");
-var _reactBootstrapDefault = parcelHelpers.interopDefault(_reactBootstrap);
 class GenreView extends _reactDefault.default.Component {
     render() {
-        const { movie , onBackClick  } = this.props;
+        const { genre , onBackClick  } = this.props;
+        console.log("genre!!", genre.Genre);
         return(/*#__PURE__*/ _reactDefault.default.createElement("div", {
             className: "genre-view",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\genre-view\\genre-view.jsx",
-                lineNumber: 13
+                lineNumber: 15
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement("div", {
             className: "genre-name",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\genre-view\\genre-view.jsx",
-                lineNumber: 15
+                lineNumber: 16
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement("h1", {
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\genre-view\\genre-view.jsx",
-                lineNumber: 16
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement("span", {
-            className: "value",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\genre-view\\genre-view.jsx",
                 lineNumber: 17
             },
             __self: this
-        }, movie.Genre.Name))), /*#__PURE__*/ _reactDefault.default.createElement("div", {
-            className: "genre-description",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\genre-view\\genre-view.jsx",
-                lineNumber: 20
-            },
-            __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement("span", {
             className: "value",
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\genre-view\\genre-view.jsx",
+                lineNumber: 18
+            },
+            __self: this
+        }, genre.Name))), /*#__PURE__*/ _reactDefault.default.createElement("div", {
+            className: "genre-description",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\genre-view\\genre-view.jsx",
                 lineNumber: 21
             },
             __self: this
-        }, movie.Genre.Description)), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrapDefault.default, {
+        }, /*#__PURE__*/ _reactDefault.default.createElement("span", {
+            className: "value",
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\genre-view\\genre-view.jsx",
+                lineNumber: 22
+            },
+            __self: this
+        }, genre.Description)), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Button, {
             variant: "primary",
             onClick: ()=>{
                 onBackClick(null);
@@ -39878,7 +39796,6 @@ GenreView.propTypes = {
         Description: _propTypesDefault.default.string.isRequired
     }).isRequired
 };
-exports.default = GenreView;
 
   helpers.postlude(module);
 } finally {
@@ -39903,7 +39820,7 @@ var _axiosDefault = parcelHelpers.interopDefault(_axios);
 var _propTypes = require("prop-types");
 var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
 var _reactBootstrap = require("react-bootstrap");
-var _bootstrap = require("bootstrap");
+var _profileViewScss = require("./profile-view.scss");
 class ProfileView extends _reactDefault.default.Component {
     constructor(){
         super();
@@ -39940,7 +39857,7 @@ class ProfileView extends _reactDefault.default.Component {
             console.log(error);
         });
     }
-    removeFavoriteMovie() {
+    removeFavoriteMovie(movie) {
         let token = localStorage.getItem('token');
         let username = localStorage.getItem('user');
         //axios delete a movie
@@ -40027,54 +39944,55 @@ class ProfileView extends _reactDefault.default.Component {
     }
     render() {
         const { FavoriteMovies , validated  } = this.state;
-        const { movie  } = this.props;
+        const { movies  } = this.props;
         return(/*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Row, {
             className: "profile-view",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 147
+                lineNumber: 148
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Card, {
             className: "profile-card",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 148
+                lineNumber: 149
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement("h2", {
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 149
+                lineNumber: 150
             },
             __self: this
         }, "Your Favorites Movies"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Card.Body, {
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 150
+                lineNumber: 151
             },
             __self: this
-        }, FavoriteMovies.length === 0 && /*#__PURE__*/ _reactDefault.default.createElement("div", {
+        }, FavoriteMovies && FavoriteMovies.length === 0 && /*#__PURE__*/ _reactDefault.default.createElement("div", {
             className: "text-center",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 151
+                lineNumber: 152
             },
             __self: this
         }, "Empty."), /*#__PURE__*/ _reactDefault.default.createElement("div", {
             className: "favorites-movies",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 153
+                lineNumber: 154
             },
             __self: this
-        }, FavoriteMovies.length > 0 && movies.map((movie1)=>{
-            if (movie1._id === FavoriteMovies.find((favMovie)=>favMovie === movie1._id
+        }, FavoriteMovies && FavoriteMovies.length > 0 && movies && movies.map((movie)=>{
+            if (movie._id === FavoriteMovies.find((favMovie)=>favMovie === movie._id
             )) return(/*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.CardDeck, {
                 className: "movie-card-deck",
+                key: movie._id,
                 __source: {
                     fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                    lineNumber: 158
+                    lineNumber: 160
                 },
                 __self: this
             }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Card, {
@@ -40082,10 +40000,9 @@ class ProfileView extends _reactDefault.default.Component {
                 style: {
                     width: '16rem'
                 },
-                key: movie1._id,
                 __source: {
                     fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                    lineNumber: 159
+                    lineNumber: 161
                 },
                 __self: this
             }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Card.Img, {
@@ -40094,35 +40011,35 @@ class ProfileView extends _reactDefault.default.Component {
                 },
                 className: "movieCard",
                 variant: "top",
-                src: movie1.ImagePath,
+                src: movie.ImagePath,
                 __source: {
                     fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                    lineNumber: 160
+                    lineNumber: 162
                 },
                 __self: this
             }), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Card.Body, {
                 __source: {
                     fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                    lineNumber: 161
+                    lineNumber: 163
                 },
                 __self: this
             }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Card.Title, {
                 className: "movie-card-title",
                 __source: {
                     fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                    lineNumber: 162
+                    lineNumber: 164
                 },
                 __self: this
-            }, movie1.Title), /*#__PURE__*/ _reactDefault.default.createElement(_bootstrap.Button, {
+            }, movie.Title), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Button, {
                 size: "sm",
                 className: "profile-button remove-favorite",
                 variant: "danger",
-                value: movie1._id,
-                onClick: (e)=>this.removeFavouriteMovie(e, movie1)
+                value: movie._id,
+                onClick: ()=>this.removeFavoriteMovie(movie)
                 ,
                 __source: {
                     fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                    lineNumber: 163
+                    lineNumber: 165
                 },
                 __self: this
             }, "Remove")))));
@@ -40130,13 +40047,21 @@ class ProfileView extends _reactDefault.default.Component {
             className: "section",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 175
+                lineNumber: 177
             },
             __self: this
         }, "Update Profile Information"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Card.Body, {
+            className: "justify-content-md-center",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 176
+                lineNumber: 178
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Col, {
+            md: 6,
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
+                lineNumber: 179
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form, {
@@ -40147,21 +40072,21 @@ class ProfileView extends _reactDefault.default.Component {
             ,
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 177
+                lineNumber: 180
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Group, {
             controlId: "formBasicUsername",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 179
+                lineNumber: 182
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Label, {
             className: "form-label",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 180
+                lineNumber: 183
             },
             __self: this
         }, "Username"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Control, {
@@ -40171,28 +40096,28 @@ class ProfileView extends _reactDefault.default.Component {
             ,
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 181
+                lineNumber: 184
             },
             __self: this
         })), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Group, {
             controlId: "formBasicPassword",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 184
+                lineNumber: 187
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Label, {
             className: "form-label",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 185
+                lineNumber: 188
             },
             __self: this
         }, "Password", /*#__PURE__*/ _reactDefault.default.createElement("span", {
             className: "required",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 186
+                lineNumber: 189
             },
             __self: this
         }, "*")), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Control, {
@@ -40202,21 +40127,21 @@ class ProfileView extends _reactDefault.default.Component {
             ,
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 188
+                lineNumber: 191
             },
             __self: this
         })), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Group, {
             controlId: "formBasicEmail",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 191
+                lineNumber: 194
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Label, {
             className: "form-label",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 192
+                lineNumber: 195
             },
             __self: this
         }, "Email"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Control, {
@@ -40226,21 +40151,21 @@ class ProfileView extends _reactDefault.default.Component {
             ,
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 193
+                lineNumber: 196
             },
             __self: this
         })), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Group, {
             controlId: "formBasicBirthday",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 196
+                lineNumber: 199
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Label, {
             className: "form-label",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 197
+                lineNumber: 200
             },
             __self: this
         }, "Birthdate"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form.Control, {
@@ -40250,39 +40175,39 @@ class ProfileView extends _reactDefault.default.Component {
             ,
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 198
+                lineNumber: 201
             },
             __self: this
-        })), /*#__PURE__*/ _reactDefault.default.createElement(_bootstrap.Button, {
+        })), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Button, {
             variant: "danger",
             type: "submit",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 201
+                lineNumber: 204
             },
             __self: this
         }, "Update Info"), /*#__PURE__*/ _reactDefault.default.createElement("h3", {
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 205
+                lineNumber: 208
             },
             __self: this
         }, "Delete your account"), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Card.Body, {
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 206
+                lineNumber: 209
             },
             __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement(_bootstrap.Button, {
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Button, {
             variant: "danger",
             onClick: (e)=>this.handleDeleteUser(e)
             ,
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\profile-view\\profile-view.jsx",
-                lineNumber: 207
+                lineNumber: 210
             },
             __self: this
-        }, "Delete Account")))))));
+        }, "Delete Account"))))))));
     }
 }
 ProfileView.prototypes = {
@@ -40302,5082 +40227,7 @@ ProfileView.prototypes = {
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"3b2NM","axios":"7rA65","prop-types":"4dfy5","react-bootstrap":"4n7hB","bootstrap":"2wmtg","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH"}],"2wmtg":[function(require,module,exports) {
-(function(global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@popperjs/core')) : typeof define === 'function' && define.amd ? define([
-        '@popperjs/core'
-    ], factory) : (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.bootstrap = factory(global.Popper));
-})(this, function(Popper) {
-    'use strict';
-    function _interopNamespace(e) {
-        if (e && e.__esModule) return e;
-        var n = Object.create(null);
-        if (e) Object.keys(e).forEach(function(k) {
-            if (k !== 'default') {
-                var d = Object.getOwnPropertyDescriptor(e, k);
-                Object.defineProperty(n, k, d.get ? d : {
-                    enumerable: true,
-                    get: function() {
-                        return e[k];
-                    }
-                });
-            }
-        });
-        n['default'] = e;
-        return Object.freeze(n);
-    }
-    var Popper__namespace = /*#__PURE__*/ _interopNamespace(Popper);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): util/index.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ const MAX_UID = 1000000;
-    const MILLISECONDS_MULTIPLIER = 1000;
-    const TRANSITION_END = 'transitionend'; // Shoutout AngusCroll (https://goo.gl/pxwQGp)
-    const toType = (obj)=>{
-        if (obj === null || obj === undefined) return `${obj}`;
-        return ({
-        }).toString.call(obj).match(/\s([a-z]+)/i)[1].toLowerCase();
-    };
-    /**
-   * --------------------------------------------------------------------------
-   * Public Util Api
-   * --------------------------------------------------------------------------
-   */ const getUID = (prefix)=>{
-        do prefix += Math.floor(Math.random() * MAX_UID);
-        while (document.getElementById(prefix))
-        return prefix;
-    };
-    const getSelector = (element)=>{
-        let selector = element.getAttribute('data-bs-target');
-        if (!selector || selector === '#') {
-            let hrefAttr = element.getAttribute('href'); // The only valid content that could double as a selector are IDs or classes,
-            // so everything starting with `#` or `.`. If a "real" URL is used as the selector,
-            // `document.querySelector` will rightfully complain it is invalid.
-            // See https://github.com/twbs/bootstrap/issues/32273
-            if (!hrefAttr || !hrefAttr.includes('#') && !hrefAttr.startsWith('.')) return null;
-             // Just in case some CMS puts out a full URL with the anchor appended
-            if (hrefAttr.includes('#') && !hrefAttr.startsWith('#')) hrefAttr = `#${hrefAttr.split('#')[1]}`;
-            selector = hrefAttr && hrefAttr !== '#' ? hrefAttr.trim() : null;
-        }
-        return selector;
-    };
-    const getSelectorFromElement = (element)=>{
-        const selector = getSelector(element);
-        if (selector) return document.querySelector(selector) ? selector : null;
-        return null;
-    };
-    const getElementFromSelector = (element)=>{
-        const selector = getSelector(element);
-        return selector ? document.querySelector(selector) : null;
-    };
-    const getTransitionDurationFromElement = (element)=>{
-        if (!element) return 0;
-         // Get transition-duration of the element
-        let { transitionDuration , transitionDelay  } = window.getComputedStyle(element);
-        const floatTransitionDuration = Number.parseFloat(transitionDuration);
-        const floatTransitionDelay = Number.parseFloat(transitionDelay); // Return 0 if element or transition duration is not found
-        if (!floatTransitionDuration && !floatTransitionDelay) return 0;
-         // If multiple durations are defined, take the first
-        transitionDuration = transitionDuration.split(',')[0];
-        transitionDelay = transitionDelay.split(',')[0];
-        return (Number.parseFloat(transitionDuration) + Number.parseFloat(transitionDelay)) * MILLISECONDS_MULTIPLIER;
-    };
-    const triggerTransitionEnd = (element)=>{
-        element.dispatchEvent(new Event(TRANSITION_END));
-    };
-    const isElement = (obj)=>{
-        if (!obj || typeof obj !== 'object') return false;
-        if (typeof obj.jquery !== 'undefined') obj = obj[0];
-        return typeof obj.nodeType !== 'undefined';
-    };
-    const getElement = (obj)=>{
-        if (isElement(obj)) // it's a jQuery object or a node element
-        return obj.jquery ? obj[0] : obj;
-        if (typeof obj === 'string' && obj.length > 0) return document.querySelector(obj);
-        return null;
-    };
-    const typeCheckConfig = (componentName, config, configTypes)=>{
-        Object.keys(configTypes).forEach((property)=>{
-            const expectedTypes = configTypes[property];
-            const value = config[property];
-            const valueType = value && isElement(value) ? 'element' : toType(value);
-            if (!new RegExp(expectedTypes).test(valueType)) throw new TypeError(`${componentName.toUpperCase()}: Option "${property}" provided type "${valueType}" but expected type "${expectedTypes}".`);
-        });
-    };
-    const isVisible = (element)=>{
-        if (!isElement(element) || element.getClientRects().length === 0) return false;
-        return getComputedStyle(element).getPropertyValue('visibility') === 'visible';
-    };
-    const isDisabled = (element)=>{
-        if (!element || element.nodeType !== Node.ELEMENT_NODE) return true;
-        if (element.classList.contains('disabled')) return true;
-        if (typeof element.disabled !== 'undefined') return element.disabled;
-        return element.hasAttribute('disabled') && element.getAttribute('disabled') !== 'false';
-    };
-    const findShadowRoot = (element)=>{
-        if (!document.documentElement.attachShadow) return null;
-         // Can find the shadow root otherwise it'll return the document
-        if (typeof element.getRootNode === 'function') {
-            const root = element.getRootNode();
-            return root instanceof ShadowRoot ? root : null;
-        }
-        if (element instanceof ShadowRoot) return element;
-         // when we don't find a shadow root
-        if (!element.parentNode) return null;
-        return findShadowRoot(element.parentNode);
-    };
-    const noop = ()=>{
-    };
-    /**
-   * Trick to restart an element's animation
-   *
-   * @param {HTMLElement} element
-   * @return void
-   *
-   * @see https://www.charistheo.io/blog/2021/02/restart-a-css-animation-with-javascript/#restarting-a-css-animation
-   */ const reflow = (element)=>{
-        // eslint-disable-next-line no-unused-expressions
-        element.offsetHeight;
-    };
-    const getjQuery = ()=>{
-        const { jQuery  } = window;
-        if (jQuery && !document.body.hasAttribute('data-bs-no-jquery')) return jQuery;
-        return null;
-    };
-    const DOMContentLoadedCallbacks = [];
-    const onDOMContentLoaded = (callback)=>{
-        if (document.readyState === 'loading') {
-            // add listener on the first call when the document is in loading state
-            if (!DOMContentLoadedCallbacks.length) document.addEventListener('DOMContentLoaded', ()=>{
-                DOMContentLoadedCallbacks.forEach((callback1)=>callback1()
-                );
-            });
-            DOMContentLoadedCallbacks.push(callback);
-        } else callback();
-    };
-    const isRTL = ()=>document.documentElement.dir === 'rtl'
-    ;
-    const defineJQueryPlugin = (plugin)=>{
-        onDOMContentLoaded(()=>{
-            const $ = getjQuery();
-            /* istanbul ignore if */ if ($) {
-                const name = plugin.NAME;
-                const JQUERY_NO_CONFLICT = $.fn[name];
-                $.fn[name] = plugin.jQueryInterface;
-                $.fn[name].Constructor = plugin;
-                $.fn[name].noConflict = ()=>{
-                    $.fn[name] = JQUERY_NO_CONFLICT;
-                    return plugin.jQueryInterface;
-                };
-            }
-        });
-    };
-    const execute = (callback)=>{
-        if (typeof callback === 'function') callback();
-    };
-    const executeAfterTransition = (callback, transitionElement, waitForTransition = true)=>{
-        if (!waitForTransition) {
-            execute(callback);
-            return;
-        }
-        const durationPadding = 5;
-        const emulatedDuration = getTransitionDurationFromElement(transitionElement) + durationPadding;
-        let called = false;
-        const handler = ({ target  })=>{
-            if (target !== transitionElement) return;
-            called = true;
-            transitionElement.removeEventListener(TRANSITION_END, handler);
-            execute(callback);
-        };
-        transitionElement.addEventListener(TRANSITION_END, handler);
-        setTimeout(()=>{
-            if (!called) triggerTransitionEnd(transitionElement);
-        }, emulatedDuration);
-    };
-    /**
-   * Return the previous/next element of a list.
-   *
-   * @param {array} list    The list of elements
-   * @param activeElement   The active element
-   * @param shouldGetNext   Choose to get next or previous element
-   * @param isCycleAllowed
-   * @return {Element|elem} The proper element
-   */ const getNextActiveElement = (list, activeElement, shouldGetNext, isCycleAllowed)=>{
-        let index = list.indexOf(activeElement); // if the element does not exist in the list return an element depending on the direction and if cycle is allowed
-        if (index === -1) return list[!shouldGetNext && isCycleAllowed ? list.length - 1 : 0];
-        const listLength = list.length;
-        index += shouldGetNext ? 1 : -1;
-        if (isCycleAllowed) index = (index + listLength) % listLength;
-        return list[Math.max(0, Math.min(index, listLength - 1))];
-    };
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): dom/event-handler.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const namespaceRegex = /[^.]*(?=\..*)\.|.*/;
-    const stripNameRegex = /\..*/;
-    const stripUidRegex = /::\d+$/;
-    const eventRegistry = {
-    }; // Events storage
-    let uidEvent = 1;
-    const customEvents = {
-        mouseenter: 'mouseover',
-        mouseleave: 'mouseout'
-    };
-    const customEventsRegex = /^(mouseenter|mouseleave)/i;
-    const nativeEvents = new Set([
-        'click',
-        'dblclick',
-        'mouseup',
-        'mousedown',
-        'contextmenu',
-        'mousewheel',
-        'DOMMouseScroll',
-        'mouseover',
-        'mouseout',
-        'mousemove',
-        'selectstart',
-        'selectend',
-        'keydown',
-        'keypress',
-        'keyup',
-        'orientationchange',
-        'touchstart',
-        'touchmove',
-        'touchend',
-        'touchcancel',
-        'pointerdown',
-        'pointermove',
-        'pointerup',
-        'pointerleave',
-        'pointercancel',
-        'gesturestart',
-        'gesturechange',
-        'gestureend',
-        'focus',
-        'blur',
-        'change',
-        'reset',
-        'select',
-        'submit',
-        'focusin',
-        'focusout',
-        'load',
-        'unload',
-        'beforeunload',
-        'resize',
-        'move',
-        'DOMContentLoaded',
-        'readystatechange',
-        'error',
-        'abort',
-        'scroll'
-    ]);
-    /**
-   * ------------------------------------------------------------------------
-   * Private methods
-   * ------------------------------------------------------------------------
-   */ function getUidEvent(element, uid) {
-        return uid && `${uid}::${uidEvent++}` || element.uidEvent || uidEvent++;
-    }
-    function getEvent(element) {
-        const uid = getUidEvent(element);
-        element.uidEvent = uid;
-        eventRegistry[uid] = eventRegistry[uid] || {
-        };
-        return eventRegistry[uid];
-    }
-    function bootstrapHandler(element, fn) {
-        return function handler(event) {
-            event.delegateTarget = element;
-            if (handler.oneOff) EventHandler.off(element, event.type, fn);
-            return fn.apply(element, [
-                event
-            ]);
-        };
-    }
-    function bootstrapDelegationHandler(element, selector, fn) {
-        return function handler(event) {
-            const domElements = element.querySelectorAll(selector);
-            for(let { target  } = event; target && target !== this; target = target.parentNode){
-                for(let i = domElements.length; i--;)if (domElements[i] === target) {
-                    event.delegateTarget = target;
-                    if (handler.oneOff) // eslint-disable-next-line unicorn/consistent-destructuring
-                    EventHandler.off(element, event.type, selector, fn);
-                    return fn.apply(target, [
-                        event
-                    ]);
-                }
-            } // To please ESLint
-            return null;
-        };
-    }
-    function findHandler(events, handler, delegationSelector = null) {
-        const uidEventList = Object.keys(events);
-        for(let i = 0, len = uidEventList.length; i < len; i++){
-            const event = events[uidEventList[i]];
-            if (event.originalHandler === handler && event.delegationSelector === delegationSelector) return event;
-        }
-        return null;
-    }
-    function normalizeParams(originalTypeEvent, handler, delegationFn) {
-        const delegation = typeof handler === 'string';
-        const originalHandler = delegation ? delegationFn : handler;
-        let typeEvent = getTypeEvent(originalTypeEvent);
-        const isNative = nativeEvents.has(typeEvent);
-        if (!isNative) typeEvent = originalTypeEvent;
-        return [
-            delegation,
-            originalHandler,
-            typeEvent
-        ];
-    }
-    function addHandler(element, originalTypeEvent, handler, delegationFn, oneOff) {
-        if (typeof originalTypeEvent !== 'string' || !element) return;
-        if (!handler) {
-            handler = delegationFn;
-            delegationFn = null;
-        } // in case of mouseenter or mouseleave wrap the handler within a function that checks for its DOM position
-        // this prevents the handler from being dispatched the same way as mouseover or mouseout does
-        if (customEventsRegex.test(originalTypeEvent)) {
-            const wrapFn = (fn)=>{
-                return function(event) {
-                    if (!event.relatedTarget || event.relatedTarget !== event.delegateTarget && !event.delegateTarget.contains(event.relatedTarget)) return fn.call(this, event);
-                };
-            };
-            if (delegationFn) delegationFn = wrapFn(delegationFn);
-            else handler = wrapFn(handler);
-        }
-        const [delegation, originalHandler, typeEvent] = normalizeParams(originalTypeEvent, handler, delegationFn);
-        const events = getEvent(element);
-        const handlers = events[typeEvent] || (events[typeEvent] = {
-        });
-        const previousFn = findHandler(handlers, originalHandler, delegation ? handler : null);
-        if (previousFn) {
-            previousFn.oneOff = previousFn.oneOff && oneOff;
-            return;
-        }
-        const uid = getUidEvent(originalHandler, originalTypeEvent.replace(namespaceRegex, ''));
-        const fn = delegation ? bootstrapDelegationHandler(element, handler, delegationFn) : bootstrapHandler(element, handler);
-        fn.delegationSelector = delegation ? handler : null;
-        fn.originalHandler = originalHandler;
-        fn.oneOff = oneOff;
-        fn.uidEvent = uid;
-        handlers[uid] = fn;
-        element.addEventListener(typeEvent, fn, delegation);
-    }
-    function removeHandler(element, events, typeEvent, handler, delegationSelector) {
-        const fn = findHandler(events[typeEvent], handler, delegationSelector);
-        if (!fn) return;
-        element.removeEventListener(typeEvent, fn, Boolean(delegationSelector));
-        delete events[typeEvent][fn.uidEvent];
-    }
-    function removeNamespacedHandlers(element, events, typeEvent, namespace) {
-        const storeElementEvent = events[typeEvent] || {
-        };
-        Object.keys(storeElementEvent).forEach((handlerKey)=>{
-            if (handlerKey.includes(namespace)) {
-                const event = storeElementEvent[handlerKey];
-                removeHandler(element, events, typeEvent, event.originalHandler, event.delegationSelector);
-            }
-        });
-    }
-    function getTypeEvent(event) {
-        // allow to get the native events from namespaced events ('click.bs.button' --> 'click')
-        event = event.replace(stripNameRegex, '');
-        return customEvents[event] || event;
-    }
-    const EventHandler = {
-        on (element, event, handler, delegationFn) {
-            addHandler(element, event, handler, delegationFn, false);
-        },
-        one (element, event, handler, delegationFn) {
-            addHandler(element, event, handler, delegationFn, true);
-        },
-        off (element, originalTypeEvent, handler, delegationFn) {
-            if (typeof originalTypeEvent !== 'string' || !element) return;
-            const [delegation, originalHandler, typeEvent] = normalizeParams(originalTypeEvent, handler, delegationFn);
-            const inNamespace = typeEvent !== originalTypeEvent;
-            const events = getEvent(element);
-            const isNamespace = originalTypeEvent.startsWith('.');
-            if (typeof originalHandler !== 'undefined') {
-                // Simplest case: handler is passed, remove that listener ONLY.
-                if (!events || !events[typeEvent]) return;
-                removeHandler(element, events, typeEvent, originalHandler, delegation ? handler : null);
-                return;
-            }
-            if (isNamespace) Object.keys(events).forEach((elementEvent)=>{
-                removeNamespacedHandlers(element, events, elementEvent, originalTypeEvent.slice(1));
-            });
-            const storeElementEvent = events[typeEvent] || {
-            };
-            Object.keys(storeElementEvent).forEach((keyHandlers)=>{
-                const handlerKey = keyHandlers.replace(stripUidRegex, '');
-                if (!inNamespace || originalTypeEvent.includes(handlerKey)) {
-                    const event = storeElementEvent[keyHandlers];
-                    removeHandler(element, events, typeEvent, event.originalHandler, event.delegationSelector);
-                }
-            });
-        },
-        trigger (element, event, args) {
-            if (typeof event !== 'string' || !element) return null;
-            const $ = getjQuery();
-            const typeEvent = getTypeEvent(event);
-            const inNamespace = event !== typeEvent;
-            const isNative = nativeEvents.has(typeEvent);
-            let jQueryEvent;
-            let bubbles = true;
-            let nativeDispatch = true;
-            let defaultPrevented = false;
-            let evt = null;
-            if (inNamespace && $) {
-                jQueryEvent = $.Event(event, args);
-                $(element).trigger(jQueryEvent);
-                bubbles = !jQueryEvent.isPropagationStopped();
-                nativeDispatch = !jQueryEvent.isImmediatePropagationStopped();
-                defaultPrevented = jQueryEvent.isDefaultPrevented();
-            }
-            if (isNative) {
-                evt = document.createEvent('HTMLEvents');
-                evt.initEvent(typeEvent, bubbles, true);
-            } else evt = new CustomEvent(event, {
-                bubbles,
-                cancelable: true
-            });
-             // merge custom information in our event
-            if (typeof args !== 'undefined') Object.keys(args).forEach((key)=>{
-                Object.defineProperty(evt, key, {
-                    get () {
-                        return args[key];
-                    }
-                });
-            });
-            if (defaultPrevented) evt.preventDefault();
-            if (nativeDispatch) element.dispatchEvent(evt);
-            if (evt.defaultPrevented && typeof jQueryEvent !== 'undefined') jQueryEvent.preventDefault();
-            return evt;
-        }
-    };
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): dom/data.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const elementMap = new Map();
-    var Data = {
-        set (element, key, instance) {
-            if (!elementMap.has(element)) elementMap.set(element, new Map());
-            const instanceMap = elementMap.get(element); // make it clear we only want one instance per element
-            // can be removed later when multiple key/instances are fine to be used
-            if (!instanceMap.has(key) && instanceMap.size !== 0) {
-                // eslint-disable-next-line no-console
-                console.error(`Bootstrap doesn't allow more than one instance per element. Bound instance: ${Array.from(instanceMap.keys())[0]}.`);
-                return;
-            }
-            instanceMap.set(key, instance);
-        },
-        get (element, key) {
-            if (elementMap.has(element)) return elementMap.get(element).get(key) || null;
-            return null;
-        },
-        remove (element, key) {
-            if (!elementMap.has(element)) return;
-            const instanceMap = elementMap.get(element);
-            instanceMap.delete(key); // free up element references if there are no instances left for an element
-            if (instanceMap.size === 0) elementMap.delete(element);
-        }
-    };
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): base-component.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const VERSION = '5.1.0';
-    class BaseComponent {
-        constructor(element1){
-            element1 = getElement(element1);
-            if (!element1) return;
-            this._element = element1;
-            Data.set(this._element, this.constructor.DATA_KEY, this);
-        }
-        dispose() {
-            Data.remove(this._element, this.constructor.DATA_KEY);
-            EventHandler.off(this._element, this.constructor.EVENT_KEY);
-            Object.getOwnPropertyNames(this).forEach((propertyName)=>{
-                this[propertyName] = null;
-            });
-        }
-        _queueCallback(callback, element, isAnimated = true) {
-            executeAfterTransition(callback, element, isAnimated);
-        }
-        /** Static */ static getInstance(element) {
-            return Data.get(getElement(element), this.DATA_KEY);
-        }
-        static getOrCreateInstance(element, config = {
-        }) {
-            return this.getInstance(element) || new this(element, typeof config === 'object' ? config : null);
-        }
-        static get VERSION() {
-            return VERSION;
-        }
-        static get NAME() {
-            throw new Error('You have to implement the static method "NAME", for each component!');
-        }
-        static get DATA_KEY() {
-            return `bs.${this.NAME}`;
-        }
-        static get EVENT_KEY() {
-            return `.${this.DATA_KEY}`;
-        }
-    }
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): util/component-functions.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ const enableDismissTrigger = (component, method = 'hide')=>{
-        const clickEvent = `click.dismiss${component.EVENT_KEY}`;
-        const name = component.NAME;
-        EventHandler.on(document, clickEvent, `[data-bs-dismiss="${name}"]`, function(event) {
-            if ([
-                'A',
-                'AREA'
-            ].includes(this.tagName)) event.preventDefault();
-            if (isDisabled(this)) return;
-            const target = getElementFromSelector(this) || this.closest(`.${name}`);
-            const instance = component.getOrCreateInstance(target); // Method argument is left, for Alert and only, as it doesn't implement the 'hide' method
-            instance[method]();
-        });
-    };
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): alert.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$d = 'alert';
-    const DATA_KEY$c = 'bs.alert';
-    const EVENT_KEY$c = `.${DATA_KEY$c}`;
-    const EVENT_CLOSE = `close${EVENT_KEY$c}`;
-    const EVENT_CLOSED = `closed${EVENT_KEY$c}`;
-    const CLASS_NAME_FADE$5 = 'fade';
-    const CLASS_NAME_SHOW$8 = 'show';
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Alert extends BaseComponent {
-        // Getters
-        static get NAME() {
-            return NAME$d;
-        }
-        close() {
-            const closeEvent = EventHandler.trigger(this._element, EVENT_CLOSE);
-            if (closeEvent.defaultPrevented) return;
-            this._element.classList.remove(CLASS_NAME_SHOW$8);
-            const isAnimated = this._element.classList.contains(CLASS_NAME_FADE$5);
-            this._queueCallback(()=>this._destroyElement()
-            , this._element, isAnimated);
-        }
-        _destroyElement() {
-            this._element.remove();
-            EventHandler.trigger(this._element, EVENT_CLOSED);
-            this.dispose();
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                const data = Alert.getOrCreateInstance(this);
-                if (typeof config !== 'string') return;
-                if (data[config] === undefined || config.startsWith('_') || config === 'constructor') throw new TypeError(`No method named "${config}"`);
-                data[config](this);
-            });
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * Data Api implementation
-   * ------------------------------------------------------------------------
-   */ enableDismissTrigger(Alert, 'close');
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .Alert to jQuery only if jQuery is present
-   */ defineJQueryPlugin(Alert);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): button.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$c = 'button';
-    const DATA_KEY$b = 'bs.button';
-    const EVENT_KEY$b = `.${DATA_KEY$b}`;
-    const DATA_API_KEY$7 = '.data-api';
-    const CLASS_NAME_ACTIVE$3 = 'active';
-    const SELECTOR_DATA_TOGGLE$5 = '[data-bs-toggle="button"]';
-    const EVENT_CLICK_DATA_API$6 = `click${EVENT_KEY$b}${DATA_API_KEY$7}`;
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Button extends BaseComponent {
-        // Getters
-        static get NAME() {
-            return NAME$c;
-        }
-        toggle() {
-            // Toggle class and sync the `aria-pressed` attribute with the return value of the `.toggle()` method
-            this._element.setAttribute('aria-pressed', this._element.classList.toggle(CLASS_NAME_ACTIVE$3));
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                const data = Button.getOrCreateInstance(this);
-                if (config === 'toggle') data[config]();
-            });
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * Data Api implementation
-   * ------------------------------------------------------------------------
-   */ EventHandler.on(document, EVENT_CLICK_DATA_API$6, SELECTOR_DATA_TOGGLE$5, (event)=>{
-        event.preventDefault();
-        const button = event.target.closest(SELECTOR_DATA_TOGGLE$5);
-        const data = Button.getOrCreateInstance(button);
-        data.toggle();
-    });
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .Button to jQuery only if jQuery is present
-   */ defineJQueryPlugin(Button);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): dom/manipulator.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ function normalizeData(val) {
-        if (val === 'true') return true;
-        if (val === 'false') return false;
-        if (val === Number(val).toString()) return Number(val);
-        if (val === '' || val === 'null') return null;
-        return val;
-    }
-    function normalizeDataKey(key) {
-        return key.replace(/[A-Z]/g, (chr)=>`-${chr.toLowerCase()}`
-        );
-    }
-    const Manipulator = {
-        setDataAttribute (element, key, value) {
-            element.setAttribute(`data-bs-${normalizeDataKey(key)}`, value);
-        },
-        removeDataAttribute (element, key) {
-            element.removeAttribute(`data-bs-${normalizeDataKey(key)}`);
-        },
-        getDataAttributes (element) {
-            if (!element) return {
-            };
-            const attributes = {
-            };
-            Object.keys(element.dataset).filter((key)=>key.startsWith('bs')
-            ).forEach((key)=>{
-                let pureKey = key.replace(/^bs/, '');
-                pureKey = pureKey.charAt(0).toLowerCase() + pureKey.slice(1, pureKey.length);
-                attributes[pureKey] = normalizeData(element.dataset[key]);
-            });
-            return attributes;
-        },
-        getDataAttribute (element, key) {
-            return normalizeData(element.getAttribute(`data-bs-${normalizeDataKey(key)}`));
-        },
-        offset (element) {
-            const rect = element.getBoundingClientRect();
-            return {
-                top: rect.top + window.pageYOffset,
-                left: rect.left + window.pageXOffset
-            };
-        },
-        position (element) {
-            return {
-                top: element.offsetTop,
-                left: element.offsetLeft
-            };
-        }
-    };
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): dom/selector-engine.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ const NODE_TEXT = 3;
-    const SelectorEngine = {
-        find (selector, element = document.documentElement) {
-            return [].concat(...Element.prototype.querySelectorAll.call(element, selector));
-        },
-        findOne (selector, element = document.documentElement) {
-            return Element.prototype.querySelector.call(element, selector);
-        },
-        children (element, selector) {
-            return [].concat(...element.children).filter((child)=>child.matches(selector)
-            );
-        },
-        parents (element, selector) {
-            const parents = [];
-            let ancestor = element.parentNode;
-            while(ancestor && ancestor.nodeType === Node.ELEMENT_NODE && ancestor.nodeType !== NODE_TEXT){
-                if (ancestor.matches(selector)) parents.push(ancestor);
-                ancestor = ancestor.parentNode;
-            }
-            return parents;
-        },
-        prev (element, selector) {
-            let previous = element.previousElementSibling;
-            while(previous){
-                if (previous.matches(selector)) return [
-                    previous
-                ];
-                previous = previous.previousElementSibling;
-            }
-            return [];
-        },
-        next (element, selector) {
-            let next = element.nextElementSibling;
-            while(next){
-                if (next.matches(selector)) return [
-                    next
-                ];
-                next = next.nextElementSibling;
-            }
-            return [];
-        },
-        focusableChildren (element) {
-            const focusables = [
-                'a',
-                'button',
-                'input',
-                'textarea',
-                'select',
-                'details',
-                '[tabindex]',
-                '[contenteditable="true"]'
-            ].map((selector)=>`${selector}:not([tabindex^="-"])`
-            ).join(', ');
-            return this.find(focusables, element).filter((el)=>!isDisabled(el) && isVisible(el)
-            );
-        }
-    };
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): carousel.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$b = 'carousel';
-    const DATA_KEY$a = 'bs.carousel';
-    const EVENT_KEY$a = `.${DATA_KEY$a}`;
-    const DATA_API_KEY$6 = '.data-api';
-    const ARROW_LEFT_KEY = 'ArrowLeft';
-    const ARROW_RIGHT_KEY = 'ArrowRight';
-    const TOUCHEVENT_COMPAT_WAIT = 500; // Time for mouse compat events to fire after touch
-    const SWIPE_THRESHOLD = 40;
-    const Default$a = {
-        interval: 5000,
-        keyboard: true,
-        slide: false,
-        pause: 'hover',
-        wrap: true,
-        touch: true
-    };
-    const DefaultType$a = {
-        interval: '(number|boolean)',
-        keyboard: 'boolean',
-        slide: '(boolean|string)',
-        pause: '(string|boolean)',
-        wrap: 'boolean',
-        touch: 'boolean'
-    };
-    const ORDER_NEXT = 'next';
-    const ORDER_PREV = 'prev';
-    const DIRECTION_LEFT = 'left';
-    const DIRECTION_RIGHT = 'right';
-    const KEY_TO_DIRECTION = {
-        [ARROW_LEFT_KEY]: DIRECTION_RIGHT,
-        [ARROW_RIGHT_KEY]: DIRECTION_LEFT
-    };
-    const EVENT_SLIDE = `slide${EVENT_KEY$a}`;
-    const EVENT_SLID = `slid${EVENT_KEY$a}`;
-    const EVENT_KEYDOWN = `keydown${EVENT_KEY$a}`;
-    const EVENT_MOUSEENTER = `mouseenter${EVENT_KEY$a}`;
-    const EVENT_MOUSELEAVE = `mouseleave${EVENT_KEY$a}`;
-    const EVENT_TOUCHSTART = `touchstart${EVENT_KEY$a}`;
-    const EVENT_TOUCHMOVE = `touchmove${EVENT_KEY$a}`;
-    const EVENT_TOUCHEND = `touchend${EVENT_KEY$a}`;
-    const EVENT_POINTERDOWN = `pointerdown${EVENT_KEY$a}`;
-    const EVENT_POINTERUP = `pointerup${EVENT_KEY$a}`;
-    const EVENT_DRAG_START = `dragstart${EVENT_KEY$a}`;
-    const EVENT_LOAD_DATA_API$2 = `load${EVENT_KEY$a}${DATA_API_KEY$6}`;
-    const EVENT_CLICK_DATA_API$5 = `click${EVENT_KEY$a}${DATA_API_KEY$6}`;
-    const CLASS_NAME_CAROUSEL = 'carousel';
-    const CLASS_NAME_ACTIVE$2 = 'active';
-    const CLASS_NAME_SLIDE = 'slide';
-    const CLASS_NAME_END = 'carousel-item-end';
-    const CLASS_NAME_START = 'carousel-item-start';
-    const CLASS_NAME_NEXT = 'carousel-item-next';
-    const CLASS_NAME_PREV = 'carousel-item-prev';
-    const CLASS_NAME_POINTER_EVENT = 'pointer-event';
-    const SELECTOR_ACTIVE$1 = '.active';
-    const SELECTOR_ACTIVE_ITEM = '.active.carousel-item';
-    const SELECTOR_ITEM = '.carousel-item';
-    const SELECTOR_ITEM_IMG = '.carousel-item img';
-    const SELECTOR_NEXT_PREV = '.carousel-item-next, .carousel-item-prev';
-    const SELECTOR_INDICATORS = '.carousel-indicators';
-    const SELECTOR_INDICATOR = '[data-bs-target]';
-    const SELECTOR_DATA_SLIDE = '[data-bs-slide], [data-bs-slide-to]';
-    const SELECTOR_DATA_RIDE = '[data-bs-ride="carousel"]';
-    const POINTER_TYPE_TOUCH = 'touch';
-    const POINTER_TYPE_PEN = 'pen';
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Carousel extends BaseComponent {
-        constructor(element2, config1){
-            super(element2);
-            this._items = null;
-            this._interval = null;
-            this._activeElement = null;
-            this._isPaused = false;
-            this._isSliding = false;
-            this.touchTimeout = null;
-            this.touchStartX = 0;
-            this.touchDeltaX = 0;
-            this._config = this._getConfig(config1);
-            this._indicatorsElement = SelectorEngine.findOne(SELECTOR_INDICATORS, this._element);
-            this._touchSupported = 'ontouchstart' in document.documentElement || navigator.maxTouchPoints > 0;
-            this._pointerEvent = Boolean(window.PointerEvent);
-            this._addEventListeners();
-        }
-        static get Default() {
-            return Default$a;
-        }
-        static get NAME() {
-            return NAME$b;
-        }
-        next() {
-            this._slide(ORDER_NEXT);
-        }
-        nextWhenVisible() {
-            // Don't call next when the page isn't visible
-            // or the carousel or its parent isn't visible
-            if (!document.hidden && isVisible(this._element)) this.next();
-        }
-        prev() {
-            this._slide(ORDER_PREV);
-        }
-        pause(event) {
-            if (!event) this._isPaused = true;
-            if (SelectorEngine.findOne(SELECTOR_NEXT_PREV, this._element)) {
-                triggerTransitionEnd(this._element);
-                this.cycle(true);
-            }
-            clearInterval(this._interval);
-            this._interval = null;
-        }
-        cycle(event) {
-            if (!event) this._isPaused = false;
-            if (this._interval) {
-                clearInterval(this._interval);
-                this._interval = null;
-            }
-            if (this._config && this._config.interval && !this._isPaused) {
-                this._updateInterval();
-                this._interval = setInterval((document.visibilityState ? this.nextWhenVisible : this.next).bind(this), this._config.interval);
-            }
-        }
-        to(index) {
-            this._activeElement = SelectorEngine.findOne(SELECTOR_ACTIVE_ITEM, this._element);
-            const activeIndex = this._getItemIndex(this._activeElement);
-            if (index > this._items.length - 1 || index < 0) return;
-            if (this._isSliding) {
-                EventHandler.one(this._element, EVENT_SLID, ()=>this.to(index)
-                );
-                return;
-            }
-            if (activeIndex === index) {
-                this.pause();
-                this.cycle();
-                return;
-            }
-            const order = index > activeIndex ? ORDER_NEXT : ORDER_PREV;
-            this._slide(order, this._items[index]);
-        }
-        _getConfig(config) {
-            config = {
-                ...Default$a,
-                ...Manipulator.getDataAttributes(this._element),
-                ...typeof config === 'object' ? config : {
-                }
-            };
-            typeCheckConfig(NAME$b, config, DefaultType$a);
-            return config;
-        }
-        _handleSwipe() {
-            const absDeltax = Math.abs(this.touchDeltaX);
-            if (absDeltax <= SWIPE_THRESHOLD) return;
-            const direction = absDeltax / this.touchDeltaX;
-            this.touchDeltaX = 0;
-            if (!direction) return;
-            this._slide(direction > 0 ? DIRECTION_RIGHT : DIRECTION_LEFT);
-        }
-        _addEventListeners() {
-            if (this._config.keyboard) EventHandler.on(this._element, EVENT_KEYDOWN, (event)=>this._keydown(event)
-            );
-            if (this._config.pause === 'hover') {
-                EventHandler.on(this._element, EVENT_MOUSEENTER, (event)=>this.pause(event)
-                );
-                EventHandler.on(this._element, EVENT_MOUSELEAVE, (event)=>this.cycle(event)
-                );
-            }
-            if (this._config.touch && this._touchSupported) this._addTouchEventListeners();
-        }
-        _addTouchEventListeners() {
-            const start = (event)=>{
-                if (this._pointerEvent && (event.pointerType === POINTER_TYPE_PEN || event.pointerType === POINTER_TYPE_TOUCH)) this.touchStartX = event.clientX;
-                else if (!this._pointerEvent) this.touchStartX = event.touches[0].clientX;
-            };
-            const move = (event)=>{
-                // ensure swiping with one touch and not pinching
-                this.touchDeltaX = event.touches && event.touches.length > 1 ? 0 : event.touches[0].clientX - this.touchStartX;
-            };
-            const end = (event)=>{
-                if (this._pointerEvent && (event.pointerType === POINTER_TYPE_PEN || event.pointerType === POINTER_TYPE_TOUCH)) this.touchDeltaX = event.clientX - this.touchStartX;
-                this._handleSwipe();
-                if (this._config.pause === 'hover') {
-                    // If it's a touch-enabled device, mouseenter/leave are fired as
-                    // part of the mouse compatibility events on first tap - the carousel
-                    // would stop cycling until user tapped out of it;
-                    // here, we listen for touchend, explicitly pause the carousel
-                    // (as if it's the second time we tap on it, mouseenter compat event
-                    // is NOT fired) and after a timeout (to allow for mouse compatibility
-                    // events to fire) we explicitly restart cycling
-                    this.pause();
-                    if (this.touchTimeout) clearTimeout(this.touchTimeout);
-                    this.touchTimeout = setTimeout((event1)=>this.cycle(event1)
-                    , TOUCHEVENT_COMPAT_WAIT + this._config.interval);
-                }
-            };
-            SelectorEngine.find(SELECTOR_ITEM_IMG, this._element).forEach((itemImg)=>{
-                EventHandler.on(itemImg, EVENT_DRAG_START, (e)=>e.preventDefault()
-                );
-            });
-            if (this._pointerEvent) {
-                EventHandler.on(this._element, EVENT_POINTERDOWN, (event)=>start(event)
-                );
-                EventHandler.on(this._element, EVENT_POINTERUP, (event)=>end(event)
-                );
-                this._element.classList.add(CLASS_NAME_POINTER_EVENT);
-            } else {
-                EventHandler.on(this._element, EVENT_TOUCHSTART, (event)=>start(event)
-                );
-                EventHandler.on(this._element, EVENT_TOUCHMOVE, (event)=>move(event)
-                );
-                EventHandler.on(this._element, EVENT_TOUCHEND, (event)=>end(event)
-                );
-            }
-        }
-        _keydown(event) {
-            if (/input|textarea/i.test(event.target.tagName)) return;
-            const direction = KEY_TO_DIRECTION[event.key];
-            if (direction) {
-                event.preventDefault();
-                this._slide(direction);
-            }
-        }
-        _getItemIndex(element) {
-            this._items = element && element.parentNode ? SelectorEngine.find(SELECTOR_ITEM, element.parentNode) : [];
-            return this._items.indexOf(element);
-        }
-        _getItemByOrder(order, activeElement) {
-            const isNext = order === ORDER_NEXT;
-            return getNextActiveElement(this._items, activeElement, isNext, this._config.wrap);
-        }
-        _triggerSlideEvent(relatedTarget, eventDirectionName) {
-            const targetIndex = this._getItemIndex(relatedTarget);
-            const fromIndex = this._getItemIndex(SelectorEngine.findOne(SELECTOR_ACTIVE_ITEM, this._element));
-            return EventHandler.trigger(this._element, EVENT_SLIDE, {
-                relatedTarget,
-                direction: eventDirectionName,
-                from: fromIndex,
-                to: targetIndex
-            });
-        }
-        _setActiveIndicatorElement(element) {
-            if (this._indicatorsElement) {
-                const activeIndicator = SelectorEngine.findOne(SELECTOR_ACTIVE$1, this._indicatorsElement);
-                activeIndicator.classList.remove(CLASS_NAME_ACTIVE$2);
-                activeIndicator.removeAttribute('aria-current');
-                const indicators = SelectorEngine.find(SELECTOR_INDICATOR, this._indicatorsElement);
-                for(let i = 0; i < indicators.length; i++)if (Number.parseInt(indicators[i].getAttribute('data-bs-slide-to'), 10) === this._getItemIndex(element)) {
-                    indicators[i].classList.add(CLASS_NAME_ACTIVE$2);
-                    indicators[i].setAttribute('aria-current', 'true');
-                    break;
-                }
-            }
-        }
-        _updateInterval() {
-            const element3 = this._activeElement || SelectorEngine.findOne(SELECTOR_ACTIVE_ITEM, this._element);
-            if (!element3) return;
-            const elementInterval = Number.parseInt(element3.getAttribute('data-bs-interval'), 10);
-            if (elementInterval) {
-                this._config.defaultInterval = this._config.defaultInterval || this._config.interval;
-                this._config.interval = elementInterval;
-            } else this._config.interval = this._config.defaultInterval || this._config.interval;
-        }
-        _slide(directionOrOrder, element) {
-            const order = this._directionToOrder(directionOrOrder);
-            const activeElement = SelectorEngine.findOne(SELECTOR_ACTIVE_ITEM, this._element);
-            const activeElementIndex = this._getItemIndex(activeElement);
-            const nextElement = element || this._getItemByOrder(order, activeElement);
-            const nextElementIndex = this._getItemIndex(nextElement);
-            const isCycling = Boolean(this._interval);
-            const isNext = order === ORDER_NEXT;
-            const directionalClassName = isNext ? CLASS_NAME_START : CLASS_NAME_END;
-            const orderClassName = isNext ? CLASS_NAME_NEXT : CLASS_NAME_PREV;
-            const eventDirectionName = this._orderToDirection(order);
-            if (nextElement && nextElement.classList.contains(CLASS_NAME_ACTIVE$2)) {
-                this._isSliding = false;
-                return;
-            }
-            if (this._isSliding) return;
-            const slideEvent = this._triggerSlideEvent(nextElement, eventDirectionName);
-            if (slideEvent.defaultPrevented) return;
-            if (!activeElement || !nextElement) // Some weirdness is happening, so we bail
-            return;
-            this._isSliding = true;
-            if (isCycling) this.pause();
-            this._setActiveIndicatorElement(nextElement);
-            this._activeElement = nextElement;
-            const triggerSlidEvent = ()=>{
-                EventHandler.trigger(this._element, EVENT_SLID, {
-                    relatedTarget: nextElement,
-                    direction: eventDirectionName,
-                    from: activeElementIndex,
-                    to: nextElementIndex
-                });
-            };
-            if (this._element.classList.contains(CLASS_NAME_SLIDE)) {
-                nextElement.classList.add(orderClassName);
-                reflow(nextElement);
-                activeElement.classList.add(directionalClassName);
-                nextElement.classList.add(directionalClassName);
-                const completeCallBack = ()=>{
-                    nextElement.classList.remove(directionalClassName, orderClassName);
-                    nextElement.classList.add(CLASS_NAME_ACTIVE$2);
-                    activeElement.classList.remove(CLASS_NAME_ACTIVE$2, orderClassName, directionalClassName);
-                    this._isSliding = false;
-                    setTimeout(triggerSlidEvent, 0);
-                };
-                this._queueCallback(completeCallBack, activeElement, true);
-            } else {
-                activeElement.classList.remove(CLASS_NAME_ACTIVE$2);
-                nextElement.classList.add(CLASS_NAME_ACTIVE$2);
-                this._isSliding = false;
-                triggerSlidEvent();
-            }
-            if (isCycling) this.cycle();
-        }
-        _directionToOrder(direction) {
-            if (![
-                DIRECTION_RIGHT,
-                DIRECTION_LEFT
-            ].includes(direction)) return direction;
-            if (isRTL()) return direction === DIRECTION_LEFT ? ORDER_PREV : ORDER_NEXT;
-            return direction === DIRECTION_LEFT ? ORDER_NEXT : ORDER_PREV;
-        }
-        _orderToDirection(order) {
-            if (![
-                ORDER_NEXT,
-                ORDER_PREV
-            ].includes(order)) return order;
-            if (isRTL()) return order === ORDER_PREV ? DIRECTION_LEFT : DIRECTION_RIGHT;
-            return order === ORDER_PREV ? DIRECTION_RIGHT : DIRECTION_LEFT;
-        }
-        static carouselInterface(element, config) {
-            const data = Carousel.getOrCreateInstance(element, config);
-            let { _config  } = data;
-            if (typeof config === 'object') _config = {
-                ..._config,
-                ...config
-            };
-            const action = typeof config === 'string' ? config : _config.slide;
-            if (typeof config === 'number') data.to(config);
-            else if (typeof action === 'string') {
-                if (typeof data[action] === 'undefined') throw new TypeError(`No method named "${action}"`);
-                data[action]();
-            } else if (_config.interval && _config.ride) {
-                data.pause();
-                data.cycle();
-            }
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                Carousel.carouselInterface(this, config);
-            });
-        }
-        static dataApiClickHandler(event) {
-            const target = getElementFromSelector(this);
-            if (!target || !target.classList.contains(CLASS_NAME_CAROUSEL)) return;
-            const config2 = {
-                ...Manipulator.getDataAttributes(target),
-                ...Manipulator.getDataAttributes(this)
-            };
-            const slideIndex = this.getAttribute('data-bs-slide-to');
-            if (slideIndex) config2.interval = false;
-            Carousel.carouselInterface(target, config2);
-            if (slideIndex) Carousel.getInstance(target).to(slideIndex);
-            event.preventDefault();
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * Data Api implementation
-   * ------------------------------------------------------------------------
-   */ EventHandler.on(document, EVENT_CLICK_DATA_API$5, SELECTOR_DATA_SLIDE, Carousel.dataApiClickHandler);
-    EventHandler.on(window, EVENT_LOAD_DATA_API$2, ()=>{
-        const carousels = SelectorEngine.find(SELECTOR_DATA_RIDE);
-        for(let i = 0, len = carousels.length; i < len; i++)Carousel.carouselInterface(carousels[i], Carousel.getInstance(carousels[i]));
-    });
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .Carousel to jQuery only if jQuery is present
-   */ defineJQueryPlugin(Carousel);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): collapse.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$a = 'collapse';
-    const DATA_KEY$9 = 'bs.collapse';
-    const EVENT_KEY$9 = `.${DATA_KEY$9}`;
-    const DATA_API_KEY$5 = '.data-api';
-    const Default$9 = {
-        toggle: true,
-        parent: null
-    };
-    const DefaultType$9 = {
-        toggle: 'boolean',
-        parent: '(null|element)'
-    };
-    const EVENT_SHOW$5 = `show${EVENT_KEY$9}`;
-    const EVENT_SHOWN$5 = `shown${EVENT_KEY$9}`;
-    const EVENT_HIDE$5 = `hide${EVENT_KEY$9}`;
-    const EVENT_HIDDEN$5 = `hidden${EVENT_KEY$9}`;
-    const EVENT_CLICK_DATA_API$4 = `click${EVENT_KEY$9}${DATA_API_KEY$5}`;
-    const CLASS_NAME_SHOW$7 = 'show';
-    const CLASS_NAME_COLLAPSE = 'collapse';
-    const CLASS_NAME_COLLAPSING = 'collapsing';
-    const CLASS_NAME_COLLAPSED = 'collapsed';
-    const CLASS_NAME_HORIZONTAL = 'collapse-horizontal';
-    const WIDTH = 'width';
-    const HEIGHT = 'height';
-    const SELECTOR_ACTIVES = '.show, .collapsing';
-    const SELECTOR_DATA_TOGGLE$4 = '[data-bs-toggle="collapse"]';
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Collapse extends BaseComponent {
-        constructor(element3, config2){
-            super(element3);
-            this._isTransitioning = false;
-            this._config = this._getConfig(config2);
-            this._triggerArray = [];
-            const toggleList = SelectorEngine.find(SELECTOR_DATA_TOGGLE$4);
-            for(let i = 0, len = toggleList.length; i < len; i++){
-                const elem = toggleList[i];
-                const selector = getSelectorFromElement(elem);
-                const filterElement = SelectorEngine.find(selector).filter((foundElem)=>foundElem === this._element
-                );
-                if (selector !== null && filterElement.length) {
-                    this._selector = selector;
-                    this._triggerArray.push(elem);
-                }
-            }
-            this._initializeChildren();
-            if (!this._config.parent) this._addAriaAndCollapsedClass(this._triggerArray, this._isShown());
-            if (this._config.toggle) this.toggle();
-        }
-        static get Default() {
-            return Default$9;
-        }
-        static get NAME() {
-            return NAME$a;
-        }
-        toggle() {
-            if (this._isShown()) this.hide();
-            else this.show();
-        }
-        show() {
-            if (this._isTransitioning || this._isShown()) return;
-            let actives = [];
-            let activesData;
-            if (this._config.parent) {
-                const children = SelectorEngine.find(`.${CLASS_NAME_COLLAPSE} .${CLASS_NAME_COLLAPSE}`, this._config.parent);
-                actives = SelectorEngine.find(SELECTOR_ACTIVES, this._config.parent).filter((elem)=>!children.includes(elem)
-                ); // remove children if greater depth
-            }
-            const container = SelectorEngine.findOne(this._selector);
-            if (actives.length) {
-                const tempActiveData = actives.find((elem)=>container !== elem
-                );
-                activesData = tempActiveData ? Collapse.getInstance(tempActiveData) : null;
-                if (activesData && activesData._isTransitioning) return;
-            }
-            const startEvent = EventHandler.trigger(this._element, EVENT_SHOW$5);
-            if (startEvent.defaultPrevented) return;
-            actives.forEach((elemActive)=>{
-                if (container !== elemActive) Collapse.getOrCreateInstance(elemActive, {
-                    toggle: false
-                }).hide();
-                if (!activesData) Data.set(elemActive, DATA_KEY$9, null);
-            });
-            const dimension = this._getDimension();
-            this._element.classList.remove(CLASS_NAME_COLLAPSE);
-            this._element.classList.add(CLASS_NAME_COLLAPSING);
-            this._element.style[dimension] = 0;
-            this._addAriaAndCollapsedClass(this._triggerArray, true);
-            this._isTransitioning = true;
-            const complete = ()=>{
-                this._isTransitioning = false;
-                this._element.classList.remove(CLASS_NAME_COLLAPSING);
-                this._element.classList.add(CLASS_NAME_COLLAPSE, CLASS_NAME_SHOW$7);
-                this._element.style[dimension] = '';
-                EventHandler.trigger(this._element, EVENT_SHOWN$5);
-            };
-            const capitalizedDimension = dimension[0].toUpperCase() + dimension.slice(1);
-            const scrollSize = `scroll${capitalizedDimension}`;
-            this._queueCallback(complete, this._element, true);
-            this._element.style[dimension] = `${this._element[scrollSize]}px`;
-        }
-        hide() {
-            if (this._isTransitioning || !this._isShown()) return;
-            const startEvent = EventHandler.trigger(this._element, EVENT_HIDE$5);
-            if (startEvent.defaultPrevented) return;
-            const dimension = this._getDimension();
-            this._element.style[dimension] = `${this._element.getBoundingClientRect()[dimension]}px`;
-            reflow(this._element);
-            this._element.classList.add(CLASS_NAME_COLLAPSING);
-            this._element.classList.remove(CLASS_NAME_COLLAPSE, CLASS_NAME_SHOW$7);
-            const triggerArrayLength = this._triggerArray.length;
-            for(let i1 = 0; i1 < triggerArrayLength; i1++){
-                const trigger = this._triggerArray[i1];
-                const elem = getElementFromSelector(trigger);
-                if (elem && !this._isShown(elem)) this._addAriaAndCollapsedClass([
-                    trigger
-                ], false);
-            }
-            this._isTransitioning = true;
-            const complete = ()=>{
-                this._isTransitioning = false;
-                this._element.classList.remove(CLASS_NAME_COLLAPSING);
-                this._element.classList.add(CLASS_NAME_COLLAPSE);
-                EventHandler.trigger(this._element, EVENT_HIDDEN$5);
-            };
-            this._element.style[dimension] = '';
-            this._queueCallback(complete, this._element, true);
-        }
-        _isShown(element = this._element) {
-            return element.classList.contains(CLASS_NAME_SHOW$7);
-        }
-        _getConfig(config) {
-            config = {
-                ...Default$9,
-                ...Manipulator.getDataAttributes(this._element),
-                ...config
-            };
-            config.toggle = Boolean(config.toggle); // Coerce string values
-            config.parent = getElement(config.parent);
-            typeCheckConfig(NAME$a, config, DefaultType$9);
-            return config;
-        }
-        _getDimension() {
-            return this._element.classList.contains(CLASS_NAME_HORIZONTAL) ? WIDTH : HEIGHT;
-        }
-        _initializeChildren() {
-            if (!this._config.parent) return;
-            const children = SelectorEngine.find(`.${CLASS_NAME_COLLAPSE} .${CLASS_NAME_COLLAPSE}`, this._config.parent);
-            SelectorEngine.find(SELECTOR_DATA_TOGGLE$4, this._config.parent).filter((elem)=>!children.includes(elem)
-            ).forEach((element4)=>{
-                const selected = getElementFromSelector(element4);
-                if (selected) this._addAriaAndCollapsedClass([
-                    element4
-                ], this._isShown(selected));
-            });
-        }
-        _addAriaAndCollapsedClass(triggerArray, isOpen) {
-            if (!triggerArray.length) return;
-            triggerArray.forEach((elem)=>{
-                if (isOpen) elem.classList.remove(CLASS_NAME_COLLAPSED);
-                else elem.classList.add(CLASS_NAME_COLLAPSED);
-                elem.setAttribute('aria-expanded', isOpen);
-            });
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                const _config = {
-                };
-                if (typeof config === 'string' && /show|hide/.test(config)) _config.toggle = false;
-                const data = Collapse.getOrCreateInstance(this, _config);
-                if (typeof config === 'string') {
-                    if (typeof data[config] === 'undefined') throw new TypeError(`No method named "${config}"`);
-                    data[config]();
-                }
-            });
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * Data Api implementation
-   * ------------------------------------------------------------------------
-   */ EventHandler.on(document, EVENT_CLICK_DATA_API$4, SELECTOR_DATA_TOGGLE$4, function(event) {
-        // preventDefault only for <a> elements (which change the URL) not inside the collapsible element
-        if (event.target.tagName === 'A' || event.delegateTarget && event.delegateTarget.tagName === 'A') event.preventDefault();
-        const selector = getSelectorFromElement(this);
-        const selectorElements = SelectorEngine.find(selector);
-        selectorElements.forEach((element4)=>{
-            Collapse.getOrCreateInstance(element4, {
-                toggle: false
-            }).toggle();
-        });
-    });
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .Collapse to jQuery only if jQuery is present
-   */ defineJQueryPlugin(Collapse);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): dropdown.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$9 = 'dropdown';
-    const DATA_KEY$8 = 'bs.dropdown';
-    const EVENT_KEY$8 = `.${DATA_KEY$8}`;
-    const DATA_API_KEY$4 = '.data-api';
-    const ESCAPE_KEY$2 = 'Escape';
-    const SPACE_KEY = 'Space';
-    const TAB_KEY$1 = 'Tab';
-    const ARROW_UP_KEY = 'ArrowUp';
-    const ARROW_DOWN_KEY = 'ArrowDown';
-    const RIGHT_MOUSE_BUTTON = 2; // MouseEvent.button value for the secondary button, usually the right button
-    const REGEXP_KEYDOWN = new RegExp(`${ARROW_UP_KEY}|${ARROW_DOWN_KEY}|${ESCAPE_KEY$2}`);
-    const EVENT_HIDE$4 = `hide${EVENT_KEY$8}`;
-    const EVENT_HIDDEN$4 = `hidden${EVENT_KEY$8}`;
-    const EVENT_SHOW$4 = `show${EVENT_KEY$8}`;
-    const EVENT_SHOWN$4 = `shown${EVENT_KEY$8}`;
-    const EVENT_CLICK_DATA_API$3 = `click${EVENT_KEY$8}${DATA_API_KEY$4}`;
-    const EVENT_KEYDOWN_DATA_API = `keydown${EVENT_KEY$8}${DATA_API_KEY$4}`;
-    const EVENT_KEYUP_DATA_API = `keyup${EVENT_KEY$8}${DATA_API_KEY$4}`;
-    const CLASS_NAME_SHOW$6 = 'show';
-    const CLASS_NAME_DROPUP = 'dropup';
-    const CLASS_NAME_DROPEND = 'dropend';
-    const CLASS_NAME_DROPSTART = 'dropstart';
-    const CLASS_NAME_NAVBAR = 'navbar';
-    const SELECTOR_DATA_TOGGLE$3 = '[data-bs-toggle="dropdown"]';
-    const SELECTOR_MENU = '.dropdown-menu';
-    const SELECTOR_NAVBAR_NAV = '.navbar-nav';
-    const SELECTOR_VISIBLE_ITEMS = '.dropdown-menu .dropdown-item:not(.disabled):not(:disabled)';
-    const PLACEMENT_TOP = isRTL() ? 'top-end' : 'top-start';
-    const PLACEMENT_TOPEND = isRTL() ? 'top-start' : 'top-end';
-    const PLACEMENT_BOTTOM = isRTL() ? 'bottom-end' : 'bottom-start';
-    const PLACEMENT_BOTTOMEND = isRTL() ? 'bottom-start' : 'bottom-end';
-    const PLACEMENT_RIGHT = isRTL() ? 'left-start' : 'right-start';
-    const PLACEMENT_LEFT = isRTL() ? 'right-start' : 'left-start';
-    const Default$8 = {
-        offset: [
-            0,
-            2
-        ],
-        boundary: 'clippingParents',
-        reference: 'toggle',
-        display: 'dynamic',
-        popperConfig: null,
-        autoClose: true
-    };
-    const DefaultType$8 = {
-        offset: '(array|string|function)',
-        boundary: '(string|element)',
-        reference: '(string|element|object)',
-        display: 'string',
-        popperConfig: '(null|object|function)',
-        autoClose: '(boolean|string)'
-    };
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Dropdown extends BaseComponent {
-        constructor(element4, config3){
-            super(element4);
-            this._popper = null;
-            this._config = this._getConfig(config3);
-            this._menu = this._getMenuElement();
-            this._inNavbar = this._detectNavbar();
-        }
-        static get Default() {
-            return Default$8;
-        }
-        static get DefaultType() {
-            return DefaultType$8;
-        }
-        static get NAME() {
-            return NAME$9;
-        }
-        toggle() {
-            return this._isShown() ? this.hide() : this.show();
-        }
-        show() {
-            if (isDisabled(this._element) || this._isShown(this._menu)) return;
-            const relatedTarget = {
-                relatedTarget: this._element
-            };
-            const showEvent = EventHandler.trigger(this._element, EVENT_SHOW$4, relatedTarget);
-            if (showEvent.defaultPrevented) return;
-            const parent = Dropdown.getParentFromElement(this._element); // Totally disable Popper for Dropdowns in Navbar
-            if (this._inNavbar) Manipulator.setDataAttribute(this._menu, 'popper', 'none');
-            else this._createPopper(parent);
-             // If this is a touch-enabled device we add extra
-            // empty mouseover listeners to the body's immediate children;
-            // only needed because of broken event delegation on iOS
-            // https://www.quirksmode.org/blog/archives/2014/02/mouse_event_bub.html
-            if ('ontouchstart' in document.documentElement && !parent.closest(SELECTOR_NAVBAR_NAV)) [].concat(...document.body.children).forEach((elem)=>EventHandler.on(elem, 'mouseover', noop)
-            );
-            this._element.focus();
-            this._element.setAttribute('aria-expanded', true);
-            this._menu.classList.add(CLASS_NAME_SHOW$6);
-            this._element.classList.add(CLASS_NAME_SHOW$6);
-            EventHandler.trigger(this._element, EVENT_SHOWN$4, relatedTarget);
-        }
-        hide() {
-            if (isDisabled(this._element) || !this._isShown(this._menu)) return;
-            const relatedTarget = {
-                relatedTarget: this._element
-            };
-            this._completeHide(relatedTarget);
-        }
-        dispose() {
-            if (this._popper) this._popper.destroy();
-            super.dispose();
-        }
-        update() {
-            this._inNavbar = this._detectNavbar();
-            if (this._popper) this._popper.update();
-        }
-        _completeHide(relatedTarget) {
-            const hideEvent = EventHandler.trigger(this._element, EVENT_HIDE$4, relatedTarget);
-            if (hideEvent.defaultPrevented) return;
-             // If this is a touch-enabled device we remove the extra
-            // empty mouseover listeners we added for iOS support
-            if ('ontouchstart' in document.documentElement) [].concat(...document.body.children).forEach((elem)=>EventHandler.off(elem, 'mouseover', noop)
-            );
-            if (this._popper) this._popper.destroy();
-            this._menu.classList.remove(CLASS_NAME_SHOW$6);
-            this._element.classList.remove(CLASS_NAME_SHOW$6);
-            this._element.setAttribute('aria-expanded', 'false');
-            Manipulator.removeDataAttribute(this._menu, 'popper');
-            EventHandler.trigger(this._element, EVENT_HIDDEN$4, relatedTarget);
-        }
-        _getConfig(config) {
-            config = {
-                ...this.constructor.Default,
-                ...Manipulator.getDataAttributes(this._element),
-                ...config
-            };
-            typeCheckConfig(NAME$9, config, this.constructor.DefaultType);
-            if (typeof config.reference === 'object' && !isElement(config.reference) && typeof config.reference.getBoundingClientRect !== 'function') // Popper virtual elements require a getBoundingClientRect method
-            throw new TypeError(`${NAME$9.toUpperCase()}: Option "reference" provided type "object" without a required "getBoundingClientRect" method.`);
-            return config;
-        }
-        _createPopper(parent) {
-            if (typeof Popper__namespace === 'undefined') throw new TypeError('Bootstrap\'s dropdowns require Popper (https://popper.js.org)');
-            let referenceElement = this._element;
-            if (this._config.reference === 'parent') referenceElement = parent;
-            else if (isElement(this._config.reference)) referenceElement = getElement(this._config.reference);
-            else if (typeof this._config.reference === 'object') referenceElement = this._config.reference;
-            const popperConfig = this._getPopperConfig();
-            const isDisplayStatic = popperConfig.modifiers.find((modifier)=>modifier.name === 'applyStyles' && modifier.enabled === false
-            );
-            this._popper = Popper__namespace.createPopper(referenceElement, this._menu, popperConfig);
-            if (isDisplayStatic) Manipulator.setDataAttribute(this._menu, 'popper', 'static');
-        }
-        _isShown(element = this._element) {
-            return element.classList.contains(CLASS_NAME_SHOW$6);
-        }
-        _getMenuElement() {
-            return SelectorEngine.next(this._element, SELECTOR_MENU)[0];
-        }
-        _getPlacement() {
-            const parentDropdown = this._element.parentNode;
-            if (parentDropdown.classList.contains(CLASS_NAME_DROPEND)) return PLACEMENT_RIGHT;
-            if (parentDropdown.classList.contains(CLASS_NAME_DROPSTART)) return PLACEMENT_LEFT;
-             // We need to trim the value because custom properties can also include spaces
-            const isEnd = getComputedStyle(this._menu).getPropertyValue('--bs-position').trim() === 'end';
-            if (parentDropdown.classList.contains(CLASS_NAME_DROPUP)) return isEnd ? PLACEMENT_TOPEND : PLACEMENT_TOP;
-            return isEnd ? PLACEMENT_BOTTOMEND : PLACEMENT_BOTTOM;
-        }
-        _detectNavbar() {
-            return this._element.closest(`.${CLASS_NAME_NAVBAR}`) !== null;
-        }
-        _getOffset() {
-            const { offset  } = this._config;
-            if (typeof offset === 'string') return offset.split(',').map((val)=>Number.parseInt(val, 10)
-            );
-            if (typeof offset === 'function') return (popperData)=>offset(popperData, this._element)
-            ;
-            return offset;
-        }
-        _getPopperConfig() {
-            const defaultBsPopperConfig = {
-                placement: this._getPlacement(),
-                modifiers: [
-                    {
-                        name: 'preventOverflow',
-                        options: {
-                            boundary: this._config.boundary
-                        }
-                    },
-                    {
-                        name: 'offset',
-                        options: {
-                            offset: this._getOffset()
-                        }
-                    }
-                ]
-            }; // Disable Popper if we have a static display
-            if (this._config.display === 'static') defaultBsPopperConfig.modifiers = [
-                {
-                    name: 'applyStyles',
-                    enabled: false
-                }
-            ];
-            return {
-                ...defaultBsPopperConfig,
-                ...typeof this._config.popperConfig === 'function' ? this._config.popperConfig(defaultBsPopperConfig) : this._config.popperConfig
-            };
-        }
-        _selectMenuItem({ key , target  }) {
-            const items = SelectorEngine.find(SELECTOR_VISIBLE_ITEMS, this._menu).filter(isVisible);
-            if (!items.length) return;
-             // if target isn't included in items (e.g. when expanding the dropdown)
-            // allow cycling to get the last item in case key equals ARROW_UP_KEY
-            getNextActiveElement(items, target, key === ARROW_DOWN_KEY, !items.includes(target)).focus();
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                const data = Dropdown.getOrCreateInstance(this, config);
-                if (typeof config !== 'string') return;
-                if (typeof data[config] === 'undefined') throw new TypeError(`No method named "${config}"`);
-                data[config]();
-            });
-        }
-        static clearMenus(event) {
-            if (event && (event.button === RIGHT_MOUSE_BUTTON || event.type === 'keyup' && event.key !== TAB_KEY$1)) return;
-            const toggles = SelectorEngine.find(SELECTOR_DATA_TOGGLE$3);
-            for(let i1 = 0, len1 = toggles.length; i1 < len1; i1++){
-                const context = Dropdown.getInstance(toggles[i1]);
-                if (!context || context._config.autoClose === false) continue;
-                if (!context._isShown()) continue;
-                const relatedTarget = {
-                    relatedTarget: context._element
-                };
-                if (event) {
-                    const composedPath = event.composedPath();
-                    const isMenuTarget = composedPath.includes(context._menu);
-                    if (composedPath.includes(context._element) || context._config.autoClose === 'inside' && !isMenuTarget || context._config.autoClose === 'outside' && isMenuTarget) continue;
-                     // Tab navigation through the dropdown menu or events from contained inputs shouldn't close the menu
-                    if (context._menu.contains(event.target) && (event.type === 'keyup' && event.key === TAB_KEY$1 || /input|select|option|textarea|form/i.test(event.target.tagName))) continue;
-                    if (event.type === 'click') relatedTarget.clickEvent = event;
-                }
-                context._completeHide(relatedTarget);
-            }
-        }
-        static getParentFromElement(element) {
-            return getElementFromSelector(element) || element.parentNode;
-        }
-        static dataApiKeydownHandler(event) {
-            // If not input/textarea:
-            //  - And not a key in REGEXP_KEYDOWN => not a dropdown command
-            // If input/textarea:
-            //  - If space key => not a dropdown command
-            //  - If key is other than escape
-            //    - If key is not up or down => not a dropdown command
-            //    - If trigger inside the menu => not a dropdown command
-            if (/input|textarea/i.test(event.target.tagName) ? event.key === SPACE_KEY || event.key !== ESCAPE_KEY$2 && (event.key !== ARROW_DOWN_KEY && event.key !== ARROW_UP_KEY || event.target.closest(SELECTOR_MENU)) : !REGEXP_KEYDOWN.test(event.key)) return;
-            const isActive = this.classList.contains(CLASS_NAME_SHOW$6);
-            if (!isActive && event.key === ESCAPE_KEY$2) return;
-            event.preventDefault();
-            event.stopPropagation();
-            if (isDisabled(this)) return;
-            const getToggleButton = this.matches(SELECTOR_DATA_TOGGLE$3) ? this : SelectorEngine.prev(this, SELECTOR_DATA_TOGGLE$3)[0];
-            const instance = Dropdown.getOrCreateInstance(getToggleButton);
-            if (event.key === ESCAPE_KEY$2) {
-                instance.hide();
-                return;
-            }
-            if (event.key === ARROW_UP_KEY || event.key === ARROW_DOWN_KEY) {
-                if (!isActive) instance.show();
-                instance._selectMenuItem(event);
-                return;
-            }
-            if (!isActive || event.key === SPACE_KEY) Dropdown.clearMenus();
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * Data Api implementation
-   * ------------------------------------------------------------------------
-   */ EventHandler.on(document, EVENT_KEYDOWN_DATA_API, SELECTOR_DATA_TOGGLE$3, Dropdown.dataApiKeydownHandler);
-    EventHandler.on(document, EVENT_KEYDOWN_DATA_API, SELECTOR_MENU, Dropdown.dataApiKeydownHandler);
-    EventHandler.on(document, EVENT_CLICK_DATA_API$3, Dropdown.clearMenus);
-    EventHandler.on(document, EVENT_KEYUP_DATA_API, Dropdown.clearMenus);
-    EventHandler.on(document, EVENT_CLICK_DATA_API$3, SELECTOR_DATA_TOGGLE$3, function(event) {
-        event.preventDefault();
-        Dropdown.getOrCreateInstance(this).toggle();
-    });
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .Dropdown to jQuery only if jQuery is present
-   */ defineJQueryPlugin(Dropdown);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): util/scrollBar.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ const SELECTOR_FIXED_CONTENT = '.fixed-top, .fixed-bottom, .is-fixed, .sticky-top';
-    const SELECTOR_STICKY_CONTENT = '.sticky-top';
-    class ScrollBarHelper {
-        constructor(){
-            this._element = document.body;
-        }
-        getWidth() {
-            // https://developer.mozilla.org/en-US/docs/Web/API/Window/innerWidth#usage_notes
-            const documentWidth = document.documentElement.clientWidth;
-            return Math.abs(window.innerWidth - documentWidth);
-        }
-        hide() {
-            const width = this.getWidth();
-            this._disableOverFlow(); // give padding to element to balance the hidden scrollbar width
-            this._setElementAttributes(this._element, 'paddingRight', (calculatedValue)=>calculatedValue + width
-            ); // trick: We adjust positive paddingRight and negative marginRight to sticky-top elements to keep showing fullwidth
-            this._setElementAttributes(SELECTOR_FIXED_CONTENT, 'paddingRight', (calculatedValue)=>calculatedValue + width
-            );
-            this._setElementAttributes(SELECTOR_STICKY_CONTENT, 'marginRight', (calculatedValue)=>calculatedValue - width
-            );
-        }
-        _disableOverFlow() {
-            this._saveInitialAttribute(this._element, 'overflow');
-            this._element.style.overflow = 'hidden';
-        }
-        _setElementAttributes(selector, styleProp, callback) {
-            const scrollbarWidth = this.getWidth();
-            const manipulationCallBack = (element5)=>{
-                if (element5 !== this._element && window.innerWidth > element5.clientWidth + scrollbarWidth) return;
-                this._saveInitialAttribute(element5, styleProp);
-                const calculatedValue = window.getComputedStyle(element5)[styleProp];
-                element5.style[styleProp] = `${callback(Number.parseFloat(calculatedValue))}px`;
-            };
-            this._applyManipulationCallback(selector, manipulationCallBack);
-        }
-        reset() {
-            this._resetElementAttributes(this._element, 'overflow');
-            this._resetElementAttributes(this._element, 'paddingRight');
-            this._resetElementAttributes(SELECTOR_FIXED_CONTENT, 'paddingRight');
-            this._resetElementAttributes(SELECTOR_STICKY_CONTENT, 'marginRight');
-        }
-        _saveInitialAttribute(element, styleProp) {
-            const actualValue = element.style[styleProp];
-            if (actualValue) Manipulator.setDataAttribute(element, styleProp, actualValue);
-        }
-        _resetElementAttributes(selector, styleProp) {
-            const manipulationCallBack = (element5)=>{
-                const value = Manipulator.getDataAttribute(element5, styleProp);
-                if (typeof value === 'undefined') element5.style.removeProperty(styleProp);
-                else {
-                    Manipulator.removeDataAttribute(element5, styleProp);
-                    element5.style[styleProp] = value;
-                }
-            };
-            this._applyManipulationCallback(selector, manipulationCallBack);
-        }
-        _applyManipulationCallback(selector, callBack) {
-            if (isElement(selector)) callBack(selector);
-            else SelectorEngine.find(selector, this._element).forEach(callBack);
-        }
-        isOverflowing() {
-            return this.getWidth() > 0;
-        }
-    }
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): util/backdrop.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-   * --------------------------------------------------------------------------
-   */ const Default$7 = {
-        className: 'modal-backdrop',
-        isVisible: true,
-        // if false, we use the backdrop helper without adding any element to the dom
-        isAnimated: false,
-        rootElement: 'body',
-        // give the choice to place backdrop under different elements
-        clickCallback: null
-    };
-    const DefaultType$7 = {
-        className: 'string',
-        isVisible: 'boolean',
-        isAnimated: 'boolean',
-        rootElement: '(element|string)',
-        clickCallback: '(function|null)'
-    };
-    const NAME$8 = 'backdrop';
-    const CLASS_NAME_FADE$4 = 'fade';
-    const CLASS_NAME_SHOW$5 = 'show';
-    const EVENT_MOUSEDOWN = `mousedown.bs.${NAME$8}`;
-    class Backdrop {
-        constructor(config4){
-            this._config = this._getConfig(config4);
-            this._isAppended = false;
-            this._element = null;
-        }
-        show(callback) {
-            if (!this._config.isVisible) {
-                execute(callback);
-                return;
-            }
-            this._append();
-            if (this._config.isAnimated) reflow(this._getElement());
-            this._getElement().classList.add(CLASS_NAME_SHOW$5);
-            this._emulateAnimation(()=>{
-                execute(callback);
-            });
-        }
-        hide(callback) {
-            if (!this._config.isVisible) {
-                execute(callback);
-                return;
-            }
-            this._getElement().classList.remove(CLASS_NAME_SHOW$5);
-            this._emulateAnimation(()=>{
-                this.dispose();
-                execute(callback);
-            });
-        }
-        _getElement() {
-            if (!this._element) {
-                const backdrop = document.createElement('div');
-                backdrop.className = this._config.className;
-                if (this._config.isAnimated) backdrop.classList.add(CLASS_NAME_FADE$4);
-                this._element = backdrop;
-            }
-            return this._element;
-        }
-        _getConfig(config) {
-            config = {
-                ...Default$7,
-                ...typeof config === 'object' ? config : {
-                }
-            }; // use getElement() with the default "body" to get a fresh Element on each instantiation
-            config.rootElement = getElement(config.rootElement);
-            typeCheckConfig(NAME$8, config, DefaultType$7);
-            return config;
-        }
-        _append() {
-            if (this._isAppended) return;
-            this._config.rootElement.append(this._getElement());
-            EventHandler.on(this._getElement(), EVENT_MOUSEDOWN, ()=>{
-                execute(this._config.clickCallback);
-            });
-            this._isAppended = true;
-        }
-        dispose() {
-            if (!this._isAppended) return;
-            EventHandler.off(this._element, EVENT_MOUSEDOWN);
-            this._element.remove();
-            this._isAppended = false;
-        }
-        _emulateAnimation(callback) {
-            executeAfterTransition(callback, this._getElement(), this._config.isAnimated);
-        }
-    }
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): util/focustrap.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-   * --------------------------------------------------------------------------
-   */ const Default$6 = {
-        trapElement: null,
-        // The element to trap focus inside of
-        autofocus: true
-    };
-    const DefaultType$6 = {
-        trapElement: 'element',
-        autofocus: 'boolean'
-    };
-    const NAME$7 = 'focustrap';
-    const DATA_KEY$7 = 'bs.focustrap';
-    const EVENT_KEY$7 = `.${DATA_KEY$7}`;
-    const EVENT_FOCUSIN$1 = `focusin${EVENT_KEY$7}`;
-    const EVENT_KEYDOWN_TAB = `keydown.tab${EVENT_KEY$7}`;
-    const TAB_KEY = 'Tab';
-    const TAB_NAV_FORWARD = 'forward';
-    const TAB_NAV_BACKWARD = 'backward';
-    class FocusTrap {
-        constructor(config5){
-            this._config = this._getConfig(config5);
-            this._isActive = false;
-            this._lastTabNavDirection = null;
-        }
-        activate() {
-            const { trapElement , autofocus  } = this._config;
-            if (this._isActive) return;
-            if (autofocus) trapElement.focus();
-            EventHandler.off(document, EVENT_KEY$7); // guard against infinite focus loop
-            EventHandler.on(document, EVENT_FOCUSIN$1, (event)=>this._handleFocusin(event)
-            );
-            EventHandler.on(document, EVENT_KEYDOWN_TAB, (event)=>this._handleKeydown(event)
-            );
-            this._isActive = true;
-        }
-        deactivate() {
-            if (!this._isActive) return;
-            this._isActive = false;
-            EventHandler.off(document, EVENT_KEY$7);
-        }
-        _handleFocusin(event) {
-            const { target  } = event;
-            const { trapElement  } = this._config;
-            if (target === document || target === trapElement || trapElement.contains(target)) return;
-            const elements = SelectorEngine.focusableChildren(trapElement);
-            if (elements.length === 0) trapElement.focus();
-            else if (this._lastTabNavDirection === TAB_NAV_BACKWARD) elements[elements.length - 1].focus();
-            else elements[0].focus();
-        }
-        _handleKeydown(event) {
-            if (event.key !== TAB_KEY) return;
-            this._lastTabNavDirection = event.shiftKey ? TAB_NAV_BACKWARD : TAB_NAV_FORWARD;
-        }
-        _getConfig(config) {
-            config = {
-                ...Default$6,
-                ...typeof config === 'object' ? config : {
-                }
-            };
-            typeCheckConfig(NAME$7, config, DefaultType$6);
-            return config;
-        }
-    }
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): modal.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$6 = 'modal';
-    const DATA_KEY$6 = 'bs.modal';
-    const EVENT_KEY$6 = `.${DATA_KEY$6}`;
-    const DATA_API_KEY$3 = '.data-api';
-    const ESCAPE_KEY$1 = 'Escape';
-    const Default$5 = {
-        backdrop: true,
-        keyboard: true,
-        focus: true
-    };
-    const DefaultType$5 = {
-        backdrop: '(boolean|string)',
-        keyboard: 'boolean',
-        focus: 'boolean'
-    };
-    const EVENT_HIDE$3 = `hide${EVENT_KEY$6}`;
-    const EVENT_HIDE_PREVENTED = `hidePrevented${EVENT_KEY$6}`;
-    const EVENT_HIDDEN$3 = `hidden${EVENT_KEY$6}`;
-    const EVENT_SHOW$3 = `show${EVENT_KEY$6}`;
-    const EVENT_SHOWN$3 = `shown${EVENT_KEY$6}`;
-    const EVENT_RESIZE = `resize${EVENT_KEY$6}`;
-    const EVENT_CLICK_DISMISS = `click.dismiss${EVENT_KEY$6}`;
-    const EVENT_KEYDOWN_DISMISS$1 = `keydown.dismiss${EVENT_KEY$6}`;
-    const EVENT_MOUSEUP_DISMISS = `mouseup.dismiss${EVENT_KEY$6}`;
-    const EVENT_MOUSEDOWN_DISMISS = `mousedown.dismiss${EVENT_KEY$6}`;
-    const EVENT_CLICK_DATA_API$2 = `click${EVENT_KEY$6}${DATA_API_KEY$3}`;
-    const CLASS_NAME_OPEN = 'modal-open';
-    const CLASS_NAME_FADE$3 = 'fade';
-    const CLASS_NAME_SHOW$4 = 'show';
-    const CLASS_NAME_STATIC = 'modal-static';
-    const SELECTOR_DIALOG = '.modal-dialog';
-    const SELECTOR_MODAL_BODY = '.modal-body';
-    const SELECTOR_DATA_TOGGLE$2 = '[data-bs-toggle="modal"]';
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Modal extends BaseComponent {
-        constructor(element5, config6){
-            super(element5);
-            this._config = this._getConfig(config6);
-            this._dialog = SelectorEngine.findOne(SELECTOR_DIALOG, this._element);
-            this._backdrop = this._initializeBackDrop();
-            this._focustrap = this._initializeFocusTrap();
-            this._isShown = false;
-            this._ignoreBackdropClick = false;
-            this._isTransitioning = false;
-            this._scrollBar = new ScrollBarHelper();
-        }
-        static get Default() {
-            return Default$5;
-        }
-        static get NAME() {
-            return NAME$6;
-        }
-        toggle(relatedTarget) {
-            return this._isShown ? this.hide() : this.show(relatedTarget);
-        }
-        show(relatedTarget) {
-            if (this._isShown || this._isTransitioning) return;
-            const showEvent = EventHandler.trigger(this._element, EVENT_SHOW$3, {
-                relatedTarget
-            });
-            if (showEvent.defaultPrevented) return;
-            this._isShown = true;
-            if (this._isAnimated()) this._isTransitioning = true;
-            this._scrollBar.hide();
-            document.body.classList.add(CLASS_NAME_OPEN);
-            this._adjustDialog();
-            this._setEscapeEvent();
-            this._setResizeEvent();
-            EventHandler.on(this._dialog, EVENT_MOUSEDOWN_DISMISS, ()=>{
-                EventHandler.one(this._element, EVENT_MOUSEUP_DISMISS, (event)=>{
-                    if (event.target === this._element) this._ignoreBackdropClick = true;
-                });
-            });
-            this._showBackdrop(()=>this._showElement(relatedTarget)
-            );
-        }
-        hide() {
-            if (!this._isShown || this._isTransitioning) return;
-            const hideEvent = EventHandler.trigger(this._element, EVENT_HIDE$3);
-            if (hideEvent.defaultPrevented) return;
-            this._isShown = false;
-            const isAnimated = this._isAnimated();
-            if (isAnimated) this._isTransitioning = true;
-            this._setEscapeEvent();
-            this._setResizeEvent();
-            this._focustrap.deactivate();
-            this._element.classList.remove(CLASS_NAME_SHOW$4);
-            EventHandler.off(this._element, EVENT_CLICK_DISMISS);
-            EventHandler.off(this._dialog, EVENT_MOUSEDOWN_DISMISS);
-            this._queueCallback(()=>this._hideModal()
-            , this._element, isAnimated);
-        }
-        dispose() {
-            [
-                window,
-                this._dialog
-            ].forEach((htmlElement)=>EventHandler.off(htmlElement, EVENT_KEY$6)
-            );
-            this._backdrop.dispose();
-            this._focustrap.deactivate();
-            super.dispose();
-        }
-        handleUpdate() {
-            this._adjustDialog();
-        }
-        _initializeBackDrop() {
-            return new Backdrop({
-                isVisible: Boolean(this._config.backdrop),
-                // 'static' option will be translated to true, and booleans will keep their value
-                isAnimated: this._isAnimated()
-            });
-        }
-        _initializeFocusTrap() {
-            return new FocusTrap({
-                trapElement: this._element
-            });
-        }
-        _getConfig(config) {
-            config = {
-                ...Default$5,
-                ...Manipulator.getDataAttributes(this._element),
-                ...typeof config === 'object' ? config : {
-                }
-            };
-            typeCheckConfig(NAME$6, config, DefaultType$5);
-            return config;
-        }
-        _showElement(relatedTarget) {
-            const isAnimated = this._isAnimated();
-            const modalBody = SelectorEngine.findOne(SELECTOR_MODAL_BODY, this._dialog);
-            if (!this._element.parentNode || this._element.parentNode.nodeType !== Node.ELEMENT_NODE) // Don't move modal's DOM position
-            document.body.append(this._element);
-            this._element.style.display = 'block';
-            this._element.removeAttribute('aria-hidden');
-            this._element.setAttribute('aria-modal', true);
-            this._element.setAttribute('role', 'dialog');
-            this._element.scrollTop = 0;
-            if (modalBody) modalBody.scrollTop = 0;
-            if (isAnimated) reflow(this._element);
-            this._element.classList.add(CLASS_NAME_SHOW$4);
-            const transitionComplete = ()=>{
-                if (this._config.focus) this._focustrap.activate();
-                this._isTransitioning = false;
-                EventHandler.trigger(this._element, EVENT_SHOWN$3, {
-                    relatedTarget
-                });
-            };
-            this._queueCallback(transitionComplete, this._dialog, isAnimated);
-        }
-        _setEscapeEvent() {
-            if (this._isShown) EventHandler.on(this._element, EVENT_KEYDOWN_DISMISS$1, (event)=>{
-                if (this._config.keyboard && event.key === ESCAPE_KEY$1) {
-                    event.preventDefault();
-                    this.hide();
-                } else if (!this._config.keyboard && event.key === ESCAPE_KEY$1) this._triggerBackdropTransition();
-            });
-            else EventHandler.off(this._element, EVENT_KEYDOWN_DISMISS$1);
-        }
-        _setResizeEvent() {
-            if (this._isShown) EventHandler.on(window, EVENT_RESIZE, ()=>this._adjustDialog()
-            );
-            else EventHandler.off(window, EVENT_RESIZE);
-        }
-        _hideModal() {
-            this._element.style.display = 'none';
-            this._element.setAttribute('aria-hidden', true);
-            this._element.removeAttribute('aria-modal');
-            this._element.removeAttribute('role');
-            this._isTransitioning = false;
-            this._backdrop.hide(()=>{
-                document.body.classList.remove(CLASS_NAME_OPEN);
-                this._resetAdjustments();
-                this._scrollBar.reset();
-                EventHandler.trigger(this._element, EVENT_HIDDEN$3);
-            });
-        }
-        _showBackdrop(callback) {
-            EventHandler.on(this._element, EVENT_CLICK_DISMISS, (event)=>{
-                if (this._ignoreBackdropClick) {
-                    this._ignoreBackdropClick = false;
-                    return;
-                }
-                if (event.target !== event.currentTarget) return;
-                if (this._config.backdrop === true) this.hide();
-                else if (this._config.backdrop === 'static') this._triggerBackdropTransition();
-            });
-            this._backdrop.show(callback);
-        }
-        _isAnimated() {
-            return this._element.classList.contains(CLASS_NAME_FADE$3);
-        }
-        _triggerBackdropTransition() {
-            const hideEvent = EventHandler.trigger(this._element, EVENT_HIDE_PREVENTED);
-            if (hideEvent.defaultPrevented) return;
-            const { classList , scrollHeight , style  } = this._element;
-            const isModalOverflowing = scrollHeight > document.documentElement.clientHeight; // return if the following background transition hasn't yet completed
-            if (!isModalOverflowing && style.overflowY === 'hidden' || classList.contains(CLASS_NAME_STATIC)) return;
-            if (!isModalOverflowing) style.overflowY = 'hidden';
-            classList.add(CLASS_NAME_STATIC);
-            this._queueCallback(()=>{
-                classList.remove(CLASS_NAME_STATIC);
-                if (!isModalOverflowing) this._queueCallback(()=>{
-                    style.overflowY = '';
-                }, this._dialog);
-            }, this._dialog);
-            this._element.focus();
-        }
-        // the following methods are used to handle overflowing modals
-        // ----------------------------------------------------------------------
-        _adjustDialog() {
-            const isModalOverflowing = this._element.scrollHeight > document.documentElement.clientHeight;
-            const scrollbarWidth = this._scrollBar.getWidth();
-            const isBodyOverflowing = scrollbarWidth > 0;
-            if (!isBodyOverflowing && isModalOverflowing && !isRTL() || isBodyOverflowing && !isModalOverflowing && isRTL()) this._element.style.paddingLeft = `${scrollbarWidth}px`;
-            if (isBodyOverflowing && !isModalOverflowing && !isRTL() || !isBodyOverflowing && isModalOverflowing && isRTL()) this._element.style.paddingRight = `${scrollbarWidth}px`;
-        }
-        _resetAdjustments() {
-            this._element.style.paddingLeft = '';
-            this._element.style.paddingRight = '';
-        }
-        static jQueryInterface(config, relatedTarget) {
-            return this.each(function() {
-                const data = Modal.getOrCreateInstance(this, config);
-                if (typeof config !== 'string') return;
-                if (typeof data[config] === 'undefined') throw new TypeError(`No method named "${config}"`);
-                data[config](relatedTarget);
-            });
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * Data Api implementation
-   * ------------------------------------------------------------------------
-   */ EventHandler.on(document, EVENT_CLICK_DATA_API$2, SELECTOR_DATA_TOGGLE$2, function(event) {
-        const target = getElementFromSelector(this);
-        if ([
-            'A',
-            'AREA'
-        ].includes(this.tagName)) event.preventDefault();
-        EventHandler.one(target, EVENT_SHOW$3, (showEvent)=>{
-            if (showEvent.defaultPrevented) // only register focus restorer if modal will actually get shown
-            return;
-            EventHandler.one(target, EVENT_HIDDEN$3, ()=>{
-                if (isVisible(this)) this.focus();
-            });
-        });
-        const data = Modal.getOrCreateInstance(target);
-        data.toggle(this);
-    });
-    enableDismissTrigger(Modal);
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .Modal to jQuery only if jQuery is present
-   */ defineJQueryPlugin(Modal);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): offcanvas.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$5 = 'offcanvas';
-    const DATA_KEY$5 = 'bs.offcanvas';
-    const EVENT_KEY$5 = `.${DATA_KEY$5}`;
-    const DATA_API_KEY$2 = '.data-api';
-    const EVENT_LOAD_DATA_API$1 = `load${EVENT_KEY$5}${DATA_API_KEY$2}`;
-    const ESCAPE_KEY = 'Escape';
-    const Default$4 = {
-        backdrop: true,
-        keyboard: true,
-        scroll: false
-    };
-    const DefaultType$4 = {
-        backdrop: 'boolean',
-        keyboard: 'boolean',
-        scroll: 'boolean'
-    };
-    const CLASS_NAME_SHOW$3 = 'show';
-    const CLASS_NAME_BACKDROP = 'offcanvas-backdrop';
-    const OPEN_SELECTOR = '.offcanvas.show';
-    const EVENT_SHOW$2 = `show${EVENT_KEY$5}`;
-    const EVENT_SHOWN$2 = `shown${EVENT_KEY$5}`;
-    const EVENT_HIDE$2 = `hide${EVENT_KEY$5}`;
-    const EVENT_HIDDEN$2 = `hidden${EVENT_KEY$5}`;
-    const EVENT_CLICK_DATA_API$1 = `click${EVENT_KEY$5}${DATA_API_KEY$2}`;
-    const EVENT_KEYDOWN_DISMISS = `keydown.dismiss${EVENT_KEY$5}`;
-    const SELECTOR_DATA_TOGGLE$1 = '[data-bs-toggle="offcanvas"]';
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Offcanvas extends BaseComponent {
-        constructor(element6, config7){
-            super(element6);
-            this._config = this._getConfig(config7);
-            this._isShown = false;
-            this._backdrop = this._initializeBackDrop();
-            this._focustrap = this._initializeFocusTrap();
-            this._addEventListeners();
-        }
-        static get NAME() {
-            return NAME$5;
-        }
-        static get Default() {
-            return Default$4;
-        }
-        toggle(relatedTarget) {
-            return this._isShown ? this.hide() : this.show(relatedTarget);
-        }
-        show(relatedTarget) {
-            if (this._isShown) return;
-            const showEvent = EventHandler.trigger(this._element, EVENT_SHOW$2, {
-                relatedTarget
-            });
-            if (showEvent.defaultPrevented) return;
-            this._isShown = true;
-            this._element.style.visibility = 'visible';
-            this._backdrop.show();
-            if (!this._config.scroll) new ScrollBarHelper().hide();
-            this._element.removeAttribute('aria-hidden');
-            this._element.setAttribute('aria-modal', true);
-            this._element.setAttribute('role', 'dialog');
-            this._element.classList.add(CLASS_NAME_SHOW$3);
-            const completeCallBack = ()=>{
-                if (!this._config.scroll) this._focustrap.activate();
-                EventHandler.trigger(this._element, EVENT_SHOWN$2, {
-                    relatedTarget
-                });
-            };
-            this._queueCallback(completeCallBack, this._element, true);
-        }
-        hide() {
-            if (!this._isShown) return;
-            const hideEvent = EventHandler.trigger(this._element, EVENT_HIDE$2);
-            if (hideEvent.defaultPrevented) return;
-            this._focustrap.deactivate();
-            this._element.blur();
-            this._isShown = false;
-            this._element.classList.remove(CLASS_NAME_SHOW$3);
-            this._backdrop.hide();
-            const completeCallback = ()=>{
-                this._element.setAttribute('aria-hidden', true);
-                this._element.removeAttribute('aria-modal');
-                this._element.removeAttribute('role');
-                this._element.style.visibility = 'hidden';
-                if (!this._config.scroll) new ScrollBarHelper().reset();
-                EventHandler.trigger(this._element, EVENT_HIDDEN$2);
-            };
-            this._queueCallback(completeCallback, this._element, true);
-        }
-        dispose() {
-            this._backdrop.dispose();
-            this._focustrap.deactivate();
-            super.dispose();
-        }
-        _getConfig(config) {
-            config = {
-                ...Default$4,
-                ...Manipulator.getDataAttributes(this._element),
-                ...typeof config === 'object' ? config : {
-                }
-            };
-            typeCheckConfig(NAME$5, config, DefaultType$4);
-            return config;
-        }
-        _initializeBackDrop() {
-            return new Backdrop({
-                className: CLASS_NAME_BACKDROP,
-                isVisible: this._config.backdrop,
-                isAnimated: true,
-                rootElement: this._element.parentNode,
-                clickCallback: ()=>this.hide()
-            });
-        }
-        _initializeFocusTrap() {
-            return new FocusTrap({
-                trapElement: this._element
-            });
-        }
-        _addEventListeners() {
-            EventHandler.on(this._element, EVENT_KEYDOWN_DISMISS, (event)=>{
-                if (this._config.keyboard && event.key === ESCAPE_KEY) this.hide();
-            });
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                const data = Offcanvas.getOrCreateInstance(this, config);
-                if (typeof config !== 'string') return;
-                if (data[config] === undefined || config.startsWith('_') || config === 'constructor') throw new TypeError(`No method named "${config}"`);
-                data[config](this);
-            });
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * Data Api implementation
-   * ------------------------------------------------------------------------
-   */ EventHandler.on(document, EVENT_CLICK_DATA_API$1, SELECTOR_DATA_TOGGLE$1, function(event) {
-        const target = getElementFromSelector(this);
-        if ([
-            'A',
-            'AREA'
-        ].includes(this.tagName)) event.preventDefault();
-        if (isDisabled(this)) return;
-        EventHandler.one(target, EVENT_HIDDEN$2, ()=>{
-            // focus on trigger when it is closed
-            if (isVisible(this)) this.focus();
-        }); // avoid conflict when clicking a toggler of an offcanvas, while another is open
-        const allReadyOpen = SelectorEngine.findOne(OPEN_SELECTOR);
-        if (allReadyOpen && allReadyOpen !== target) Offcanvas.getInstance(allReadyOpen).hide();
-        const data = Offcanvas.getOrCreateInstance(target);
-        data.toggle(this);
-    });
-    EventHandler.on(window, EVENT_LOAD_DATA_API$1, ()=>SelectorEngine.find(OPEN_SELECTOR).forEach((el)=>Offcanvas.getOrCreateInstance(el).show()
-        )
-    );
-    enableDismissTrigger(Offcanvas);
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   */ defineJQueryPlugin(Offcanvas);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): util/sanitizer.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ const uriAttrs = new Set([
-        'background',
-        'cite',
-        'href',
-        'itemtype',
-        'longdesc',
-        'poster',
-        'src',
-        'xlink:href'
-    ]);
-    const ARIA_ATTRIBUTE_PATTERN = /^aria-[\w-]*$/i;
-    /**
-   * A pattern that recognizes a commonly useful subset of URLs that are safe.
-   *
-   * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
-   */ const SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^#&/:?]*(?:[#/?]|$))/i;
-    /**
-   * A pattern that matches safe data URLs. Only matches image, video and audio types.
-   *
-   * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
-   */ const DATA_URL_PATTERN = /^data:(?:image\/(?:bmp|gif|jpeg|jpg|png|tiff|webp)|video\/(?:mpeg|mp4|ogg|webm)|audio\/(?:mp3|oga|ogg|opus));base64,[\d+/a-z]+=*$/i;
-    const allowedAttribute = (attr, allowedAttributeList)=>{
-        const attrName = attr.nodeName.toLowerCase();
-        if (allowedAttributeList.includes(attrName)) {
-            if (uriAttrs.has(attrName)) return Boolean(SAFE_URL_PATTERN.test(attr.nodeValue) || DATA_URL_PATTERN.test(attr.nodeValue));
-            return true;
-        }
-        const regExp = allowedAttributeList.filter((attrRegex)=>attrRegex instanceof RegExp
-        ); // Check if a regular expression validates the attribute.
-        for(let i1 = 0, len1 = regExp.length; i1 < len1; i1++){
-            if (regExp[i1].test(attrName)) return true;
-        }
-        return false;
-    };
-    const DefaultAllowlist = {
-        // Global attributes allowed on any supplied element below.
-        '*': [
-            'class',
-            'dir',
-            'id',
-            'lang',
-            'role',
-            ARIA_ATTRIBUTE_PATTERN
-        ],
-        a: [
-            'target',
-            'href',
-            'title',
-            'rel'
-        ],
-        area: [],
-        b: [],
-        br: [],
-        col: [],
-        code: [],
-        div: [],
-        em: [],
-        hr: [],
-        h1: [],
-        h2: [],
-        h3: [],
-        h4: [],
-        h5: [],
-        h6: [],
-        i: [],
-        img: [
-            'src',
-            'srcset',
-            'alt',
-            'title',
-            'width',
-            'height'
-        ],
-        li: [],
-        ol: [],
-        p: [],
-        pre: [],
-        s: [],
-        small: [],
-        span: [],
-        sub: [],
-        sup: [],
-        strong: [],
-        u: [],
-        ul: []
-    };
-    function sanitizeHtml(unsafeHtml, allowList, sanitizeFn) {
-        if (!unsafeHtml.length) return unsafeHtml;
-        if (sanitizeFn && typeof sanitizeFn === 'function') return sanitizeFn(unsafeHtml);
-        const domParser = new window.DOMParser();
-        const createdDocument = domParser.parseFromString(unsafeHtml, 'text/html');
-        const allowlistKeys = Object.keys(allowList);
-        const elements = [].concat(...createdDocument.body.querySelectorAll('*'));
-        for(let i1 = 0, len1 = elements.length; i1 < len1; i1++){
-            const el = elements[i1];
-            const elName = el.nodeName.toLowerCase();
-            if (!allowlistKeys.includes(elName)) {
-                el.remove();
-                continue;
-            }
-            const attributeList = [].concat(...el.attributes);
-            const allowedAttributes = [].concat(allowList['*'] || [], allowList[elName] || []);
-            attributeList.forEach((attr)=>{
-                if (!allowedAttribute(attr, allowedAttributes)) el.removeAttribute(attr.nodeName);
-            });
-        }
-        return createdDocument.body.innerHTML;
-    }
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): tooltip.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$4 = 'tooltip';
-    const DATA_KEY$4 = 'bs.tooltip';
-    const EVENT_KEY$4 = `.${DATA_KEY$4}`;
-    const CLASS_PREFIX$1 = 'bs-tooltip';
-    const DISALLOWED_ATTRIBUTES = new Set([
-        'sanitize',
-        'allowList',
-        'sanitizeFn'
-    ]);
-    const DefaultType$3 = {
-        animation: 'boolean',
-        template: 'string',
-        title: '(string|element|function)',
-        trigger: 'string',
-        delay: '(number|object)',
-        html: 'boolean',
-        selector: '(string|boolean)',
-        placement: '(string|function)',
-        offset: '(array|string|function)',
-        container: '(string|element|boolean)',
-        fallbackPlacements: 'array',
-        boundary: '(string|element)',
-        customClass: '(string|function)',
-        sanitize: 'boolean',
-        sanitizeFn: '(null|function)',
-        allowList: 'object',
-        popperConfig: '(null|object|function)'
-    };
-    const AttachmentMap = {
-        AUTO: 'auto',
-        TOP: 'top',
-        RIGHT: isRTL() ? 'left' : 'right',
-        BOTTOM: 'bottom',
-        LEFT: isRTL() ? 'right' : 'left'
-    };
-    const Default$3 = {
-        animation: true,
-        template: "<div class=\"tooltip\" role=\"tooltip\"><div class=\"tooltip-arrow\"></div><div class=\"tooltip-inner\"></div></div>",
-        trigger: 'hover focus',
-        title: '',
-        delay: 0,
-        html: false,
-        selector: false,
-        placement: 'top',
-        offset: [
-            0,
-            0
-        ],
-        container: false,
-        fallbackPlacements: [
-            'top',
-            'right',
-            'bottom',
-            'left'
-        ],
-        boundary: 'clippingParents',
-        customClass: '',
-        sanitize: true,
-        sanitizeFn: null,
-        allowList: DefaultAllowlist,
-        popperConfig: null
-    };
-    const Event$2 = {
-        HIDE: `hide${EVENT_KEY$4}`,
-        HIDDEN: `hidden${EVENT_KEY$4}`,
-        SHOW: `show${EVENT_KEY$4}`,
-        SHOWN: `shown${EVENT_KEY$4}`,
-        INSERTED: `inserted${EVENT_KEY$4}`,
-        CLICK: `click${EVENT_KEY$4}`,
-        FOCUSIN: `focusin${EVENT_KEY$4}`,
-        FOCUSOUT: `focusout${EVENT_KEY$4}`,
-        MOUSEENTER: `mouseenter${EVENT_KEY$4}`,
-        MOUSELEAVE: `mouseleave${EVENT_KEY$4}`
-    };
-    const CLASS_NAME_FADE$2 = 'fade';
-    const CLASS_NAME_MODAL = 'modal';
-    const CLASS_NAME_SHOW$2 = 'show';
-    const HOVER_STATE_SHOW = 'show';
-    const HOVER_STATE_OUT = 'out';
-    const SELECTOR_TOOLTIP_INNER = '.tooltip-inner';
-    const SELECTOR_MODAL = `.${CLASS_NAME_MODAL}`;
-    const EVENT_MODAL_HIDE = 'hide.bs.modal';
-    const TRIGGER_HOVER = 'hover';
-    const TRIGGER_FOCUS = 'focus';
-    const TRIGGER_CLICK = 'click';
-    const TRIGGER_MANUAL = 'manual';
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Tooltip extends BaseComponent {
-        constructor(element7, config8){
-            if (typeof Popper__namespace === 'undefined') throw new TypeError('Bootstrap\'s tooltips require Popper (https://popper.js.org)');
-            super(element7); // private
-            this._isEnabled = true;
-            this._timeout = 0;
-            this._hoverState = '';
-            this._activeTrigger = {
-            };
-            this._popper = null; // Protected
-            this._config = this._getConfig(config8);
-            this.tip = null;
-            this._setListeners();
-        }
-        static get Default() {
-            return Default$3;
-        }
-        static get NAME() {
-            return NAME$4;
-        }
-        static get Event() {
-            return Event$2;
-        }
-        static get DefaultType() {
-            return DefaultType$3;
-        }
-        enable() {
-            this._isEnabled = true;
-        }
-        disable() {
-            this._isEnabled = false;
-        }
-        toggleEnabled() {
-            this._isEnabled = !this._isEnabled;
-        }
-        toggle(event) {
-            if (!this._isEnabled) return;
-            if (event) {
-                const context = this._initializeOnDelegatedTarget(event);
-                context._activeTrigger.click = !context._activeTrigger.click;
-                if (context._isWithActiveTrigger()) context._enter(null, context);
-                else context._leave(null, context);
-            } else {
-                if (this.getTipElement().classList.contains(CLASS_NAME_SHOW$2)) {
-                    this._leave(null, this);
-                    return;
-                }
-                this._enter(null, this);
-            }
-        }
-        dispose() {
-            clearTimeout(this._timeout);
-            EventHandler.off(this._element.closest(SELECTOR_MODAL), EVENT_MODAL_HIDE, this._hideModalHandler);
-            if (this.tip) this.tip.remove();
-            if (this._popper) this._popper.destroy();
-            super.dispose();
-        }
-        show() {
-            if (this._element.style.display === 'none') throw new Error('Please use show on visible elements');
-            if (!(this.isWithContent() && this._isEnabled)) return;
-            const showEvent = EventHandler.trigger(this._element, this.constructor.Event.SHOW);
-            const shadowRoot = findShadowRoot(this._element);
-            const isInTheDom = shadowRoot === null ? this._element.ownerDocument.documentElement.contains(this._element) : shadowRoot.contains(this._element);
-            if (showEvent.defaultPrevented || !isInTheDom) return;
-            const tip = this.getTipElement();
-            const tipId = getUID(this.constructor.NAME);
-            tip.setAttribute('id', tipId);
-            this._element.setAttribute('aria-describedby', tipId);
-            if (this._config.animation) tip.classList.add(CLASS_NAME_FADE$2);
-            const placement = typeof this._config.placement === 'function' ? this._config.placement.call(this, tip, this._element) : this._config.placement;
-            const attachment = this._getAttachment(placement);
-            this._addAttachmentClass(attachment);
-            const { container  } = this._config;
-            Data.set(tip, this.constructor.DATA_KEY, this);
-            if (!this._element.ownerDocument.documentElement.contains(this.tip)) {
-                container.append(tip);
-                EventHandler.trigger(this._element, this.constructor.Event.INSERTED);
-            }
-            if (this._popper) this._popper.update();
-            else this._popper = Popper__namespace.createPopper(this._element, tip, this._getPopperConfig(attachment));
-            tip.classList.add(CLASS_NAME_SHOW$2);
-            const customClass = this._resolvePossibleFunction(this._config.customClass);
-            if (customClass) tip.classList.add(...customClass.split(' '));
-             // If this is a touch-enabled device we add extra
-            // empty mouseover listeners to the body's immediate children;
-            // only needed because of broken event delegation on iOS
-            // https://www.quirksmode.org/blog/archives/2014/02/mouse_event_bub.html
-            if ('ontouchstart' in document.documentElement) [].concat(...document.body.children).forEach((element8)=>{
-                EventHandler.on(element8, 'mouseover', noop);
-            });
-            const complete = ()=>{
-                const prevHoverState = this._hoverState;
-                this._hoverState = null;
-                EventHandler.trigger(this._element, this.constructor.Event.SHOWN);
-                if (prevHoverState === HOVER_STATE_OUT) this._leave(null, this);
-            };
-            const isAnimated = this.tip.classList.contains(CLASS_NAME_FADE$2);
-            this._queueCallback(complete, this.tip, isAnimated);
-        }
-        hide() {
-            if (!this._popper) return;
-            const tip = this.getTipElement();
-            const complete = ()=>{
-                if (this._isWithActiveTrigger()) return;
-                if (this._hoverState !== HOVER_STATE_SHOW) tip.remove();
-                this._cleanTipClass();
-                this._element.removeAttribute('aria-describedby');
-                EventHandler.trigger(this._element, this.constructor.Event.HIDDEN);
-                if (this._popper) {
-                    this._popper.destroy();
-                    this._popper = null;
-                }
-            };
-            const hideEvent = EventHandler.trigger(this._element, this.constructor.Event.HIDE);
-            if (hideEvent.defaultPrevented) return;
-            tip.classList.remove(CLASS_NAME_SHOW$2); // If this is a touch-enabled device we remove the extra
-            // empty mouseover listeners we added for iOS support
-            if ('ontouchstart' in document.documentElement) [].concat(...document.body.children).forEach((element8)=>EventHandler.off(element8, 'mouseover', noop)
-            );
-            this._activeTrigger[TRIGGER_CLICK] = false;
-            this._activeTrigger[TRIGGER_FOCUS] = false;
-            this._activeTrigger[TRIGGER_HOVER] = false;
-            const isAnimated = this.tip.classList.contains(CLASS_NAME_FADE$2);
-            this._queueCallback(complete, this.tip, isAnimated);
-            this._hoverState = '';
-        }
-        update() {
-            if (this._popper !== null) this._popper.update();
-        }
-        isWithContent() {
-            return Boolean(this.getTitle());
-        }
-        getTipElement() {
-            if (this.tip) return this.tip;
-            const element8 = document.createElement('div');
-            element8.innerHTML = this._config.template;
-            const tip = element8.children[0];
-            this.setContent(tip);
-            tip.classList.remove(CLASS_NAME_FADE$2, CLASS_NAME_SHOW$2);
-            this.tip = tip;
-            return this.tip;
-        }
-        setContent(tip) {
-            this._sanitizeAndSetContent(tip, this.getTitle(), SELECTOR_TOOLTIP_INNER);
-        }
-        _sanitizeAndSetContent(template, content, selector) {
-            const templateElement = SelectorEngine.findOne(selector, template);
-            if (!content && templateElement) {
-                templateElement.remove();
-                return;
-            } // we use append for html objects to maintain js events
-            this.setElementContent(templateElement, content);
-        }
-        setElementContent(element, content) {
-            if (element === null) return;
-            if (isElement(content)) {
-                content = getElement(content); // content is a DOM node or a jQuery
-                if (this._config.html) {
-                    if (content.parentNode !== element) {
-                        element.innerHTML = '';
-                        element.append(content);
-                    }
-                } else element.textContent = content.textContent;
-                return;
-            }
-            if (this._config.html) {
-                if (this._config.sanitize) content = sanitizeHtml(content, this._config.allowList, this._config.sanitizeFn);
-                element.innerHTML = content;
-            } else element.textContent = content;
-        }
-        getTitle() {
-            const title = this._element.getAttribute('data-bs-original-title') || this._config.title;
-            return this._resolvePossibleFunction(title);
-        }
-        updateAttachment(attachment) {
-            if (attachment === 'right') return 'end';
-            if (attachment === 'left') return 'start';
-            return attachment;
-        }
-        _initializeOnDelegatedTarget(event, context) {
-            return context || this.constructor.getOrCreateInstance(event.delegateTarget, this._getDelegateConfig());
-        }
-        _getOffset() {
-            const { offset  } = this._config;
-            if (typeof offset === 'string') return offset.split(',').map((val)=>Number.parseInt(val, 10)
-            );
-            if (typeof offset === 'function') return (popperData)=>offset(popperData, this._element)
-            ;
-            return offset;
-        }
-        _resolvePossibleFunction(content) {
-            return typeof content === 'function' ? content.call(this._element) : content;
-        }
-        _getPopperConfig(attachment) {
-            const defaultBsPopperConfig = {
-                placement: attachment,
-                modifiers: [
-                    {
-                        name: 'flip',
-                        options: {
-                            fallbackPlacements: this._config.fallbackPlacements
-                        }
-                    },
-                    {
-                        name: 'offset',
-                        options: {
-                            offset: this._getOffset()
-                        }
-                    },
-                    {
-                        name: 'preventOverflow',
-                        options: {
-                            boundary: this._config.boundary
-                        }
-                    },
-                    {
-                        name: 'arrow',
-                        options: {
-                            element: `.${this.constructor.NAME}-arrow`
-                        }
-                    },
-                    {
-                        name: 'onChange',
-                        enabled: true,
-                        phase: 'afterWrite',
-                        fn: (data)=>this._handlePopperPlacementChange(data)
-                    }
-                ],
-                onFirstUpdate: (data)=>{
-                    if (data.options.placement !== data.placement) this._handlePopperPlacementChange(data);
-                }
-            };
-            return {
-                ...defaultBsPopperConfig,
-                ...typeof this._config.popperConfig === 'function' ? this._config.popperConfig(defaultBsPopperConfig) : this._config.popperConfig
-            };
-        }
-        _addAttachmentClass(attachment) {
-            this.getTipElement().classList.add(`${this._getBasicClassPrefix()}-${this.updateAttachment(attachment)}`);
-        }
-        _getAttachment(placement) {
-            return AttachmentMap[placement.toUpperCase()];
-        }
-        _setListeners() {
-            const triggers = this._config.trigger.split(' ');
-            triggers.forEach((trigger)=>{
-                if (trigger === 'click') EventHandler.on(this._element, this.constructor.Event.CLICK, this._config.selector, (event)=>this.toggle(event)
-                );
-                else if (trigger !== TRIGGER_MANUAL) {
-                    const eventIn = trigger === TRIGGER_HOVER ? this.constructor.Event.MOUSEENTER : this.constructor.Event.FOCUSIN;
-                    const eventOut = trigger === TRIGGER_HOVER ? this.constructor.Event.MOUSELEAVE : this.constructor.Event.FOCUSOUT;
-                    EventHandler.on(this._element, eventIn, this._config.selector, (event)=>this._enter(event)
-                    );
-                    EventHandler.on(this._element, eventOut, this._config.selector, (event)=>this._leave(event)
-                    );
-                }
-            });
-            this._hideModalHandler = ()=>{
-                if (this._element) this.hide();
-            };
-            EventHandler.on(this._element.closest(SELECTOR_MODAL), EVENT_MODAL_HIDE, this._hideModalHandler);
-            if (this._config.selector) this._config = {
-                ...this._config,
-                trigger: 'manual',
-                selector: ''
-            };
-            else this._fixTitle();
-        }
-        _fixTitle() {
-            const title = this._element.getAttribute('title');
-            const originalTitleType = typeof this._element.getAttribute('data-bs-original-title');
-            if (title || originalTitleType !== 'string') {
-                this._element.setAttribute('data-bs-original-title', title || '');
-                if (title && !this._element.getAttribute('aria-label') && !this._element.textContent) this._element.setAttribute('aria-label', title);
-                this._element.setAttribute('title', '');
-            }
-        }
-        _enter(event, context) {
-            context = this._initializeOnDelegatedTarget(event, context);
-            if (event) context._activeTrigger[event.type === 'focusin' ? TRIGGER_FOCUS : TRIGGER_HOVER] = true;
-            if (context.getTipElement().classList.contains(CLASS_NAME_SHOW$2) || context._hoverState === HOVER_STATE_SHOW) {
-                context._hoverState = HOVER_STATE_SHOW;
-                return;
-            }
-            clearTimeout(context._timeout);
-            context._hoverState = HOVER_STATE_SHOW;
-            if (!context._config.delay || !context._config.delay.show) {
-                context.show();
-                return;
-            }
-            context._timeout = setTimeout(()=>{
-                if (context._hoverState === HOVER_STATE_SHOW) context.show();
-            }, context._config.delay.show);
-        }
-        _leave(event, context) {
-            context = this._initializeOnDelegatedTarget(event, context);
-            if (event) context._activeTrigger[event.type === 'focusout' ? TRIGGER_FOCUS : TRIGGER_HOVER] = context._element.contains(event.relatedTarget);
-            if (context._isWithActiveTrigger()) return;
-            clearTimeout(context._timeout);
-            context._hoverState = HOVER_STATE_OUT;
-            if (!context._config.delay || !context._config.delay.hide) {
-                context.hide();
-                return;
-            }
-            context._timeout = setTimeout(()=>{
-                if (context._hoverState === HOVER_STATE_OUT) context.hide();
-            }, context._config.delay.hide);
-        }
-        _isWithActiveTrigger() {
-            for(const trigger in this._activeTrigger){
-                if (this._activeTrigger[trigger]) return true;
-            }
-            return false;
-        }
-        _getConfig(config) {
-            const dataAttributes = Manipulator.getDataAttributes(this._element);
-            Object.keys(dataAttributes).forEach((dataAttr)=>{
-                if (DISALLOWED_ATTRIBUTES.has(dataAttr)) delete dataAttributes[dataAttr];
-            });
-            config = {
-                ...this.constructor.Default,
-                ...dataAttributes,
-                ...typeof config === 'object' && config ? config : {
-                }
-            };
-            config.container = config.container === false ? document.body : getElement(config.container);
-            if (typeof config.delay === 'number') config.delay = {
-                show: config.delay,
-                hide: config.delay
-            };
-            if (typeof config.title === 'number') config.title = config.title.toString();
-            if (typeof config.content === 'number') config.content = config.content.toString();
-            typeCheckConfig(NAME$4, config, this.constructor.DefaultType);
-            if (config.sanitize) config.template = sanitizeHtml(config.template, config.allowList, config.sanitizeFn);
-            return config;
-        }
-        _getDelegateConfig() {
-            const config9 = {
-            };
-            for(const key in this._config)if (this.constructor.Default[key] !== this._config[key]) config9[key] = this._config[key];
-             // In the future can be replaced with:
-            // const keysWithDifferentValues = Object.entries(this._config).filter(entry => this.constructor.Default[entry[0]] !== this._config[entry[0]])
-            // `Object.fromEntries(keysWithDifferentValues)`
-            return config9;
-        }
-        _cleanTipClass() {
-            const tip = this.getTipElement();
-            const basicClassPrefixRegex = new RegExp(`(^|\\s)${this._getBasicClassPrefix()}\\S+`, 'g');
-            const tabClass = tip.getAttribute('class').match(basicClassPrefixRegex);
-            if (tabClass !== null && tabClass.length > 0) tabClass.map((token)=>token.trim()
-            ).forEach((tClass)=>tip.classList.remove(tClass)
-            );
-        }
-        _getBasicClassPrefix() {
-            return CLASS_PREFIX$1;
-        }
-        _handlePopperPlacementChange(popperData) {
-            const { state  } = popperData;
-            if (!state) return;
-            this.tip = state.elements.popper;
-            this._cleanTipClass();
-            this._addAttachmentClass(this._getAttachment(state.placement));
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                const data = Tooltip.getOrCreateInstance(this, config);
-                if (typeof config === 'string') {
-                    if (typeof data[config] === 'undefined') throw new TypeError(`No method named "${config}"`);
-                    data[config]();
-                }
-            });
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .Tooltip to jQuery only if jQuery is present
-   */ defineJQueryPlugin(Tooltip);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): popover.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$3 = 'popover';
-    const DATA_KEY$3 = 'bs.popover';
-    const EVENT_KEY$3 = `.${DATA_KEY$3}`;
-    const CLASS_PREFIX = 'bs-popover';
-    const Default$2 = {
-        ...Tooltip.Default,
-        placement: 'right',
-        offset: [
-            0,
-            8
-        ],
-        trigger: 'click',
-        content: '',
-        template: "<div class=\"popover\" role=\"tooltip\"><div class=\"popover-arrow\"></div><h3 class=\"popover-header\"></h3><div class=\"popover-body\"></div></div>"
-    };
-    const DefaultType$2 = {
-        ...Tooltip.DefaultType,
-        content: '(string|element|function)'
-    };
-    const Event$1 = {
-        HIDE: `hide${EVENT_KEY$3}`,
-        HIDDEN: `hidden${EVENT_KEY$3}`,
-        SHOW: `show${EVENT_KEY$3}`,
-        SHOWN: `shown${EVENT_KEY$3}`,
-        INSERTED: `inserted${EVENT_KEY$3}`,
-        CLICK: `click${EVENT_KEY$3}`,
-        FOCUSIN: `focusin${EVENT_KEY$3}`,
-        FOCUSOUT: `focusout${EVENT_KEY$3}`,
-        MOUSEENTER: `mouseenter${EVENT_KEY$3}`,
-        MOUSELEAVE: `mouseleave${EVENT_KEY$3}`
-    };
-    const SELECTOR_TITLE = '.popover-header';
-    const SELECTOR_CONTENT = '.popover-body';
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Popover extends Tooltip {
-        // Getters
-        static get Default() {
-            return Default$2;
-        }
-        static get NAME() {
-            return NAME$3;
-        }
-        static get Event() {
-            return Event$1;
-        }
-        static get DefaultType() {
-            return DefaultType$2;
-        }
-        isWithContent() {
-            return this.getTitle() || this._getContent();
-        }
-        setContent(tip) {
-            this._sanitizeAndSetContent(tip, this.getTitle(), SELECTOR_TITLE);
-            this._sanitizeAndSetContent(tip, this._getContent(), SELECTOR_CONTENT);
-        }
-        _getContent() {
-            return this._resolvePossibleFunction(this._config.content);
-        }
-        _getBasicClassPrefix() {
-            return CLASS_PREFIX;
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                const data = Popover.getOrCreateInstance(this, config);
-                if (typeof config === 'string') {
-                    if (typeof data[config] === 'undefined') throw new TypeError(`No method named "${config}"`);
-                    data[config]();
-                }
-            });
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .Popover to jQuery only if jQuery is present
-   */ defineJQueryPlugin(Popover);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): scrollspy.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$2 = 'scrollspy';
-    const DATA_KEY$2 = 'bs.scrollspy';
-    const EVENT_KEY$2 = `.${DATA_KEY$2}`;
-    const DATA_API_KEY$1 = '.data-api';
-    const Default$1 = {
-        offset: 10,
-        method: 'auto',
-        target: ''
-    };
-    const DefaultType$1 = {
-        offset: 'number',
-        method: 'string',
-        target: '(string|element)'
-    };
-    const EVENT_ACTIVATE = `activate${EVENT_KEY$2}`;
-    const EVENT_SCROLL = `scroll${EVENT_KEY$2}`;
-    const EVENT_LOAD_DATA_API = `load${EVENT_KEY$2}${DATA_API_KEY$1}`;
-    const CLASS_NAME_DROPDOWN_ITEM = 'dropdown-item';
-    const CLASS_NAME_ACTIVE$1 = 'active';
-    const SELECTOR_DATA_SPY = '[data-bs-spy="scroll"]';
-    const SELECTOR_NAV_LIST_GROUP$1 = '.nav, .list-group';
-    const SELECTOR_NAV_LINKS = '.nav-link';
-    const SELECTOR_NAV_ITEMS = '.nav-item';
-    const SELECTOR_LIST_ITEMS = '.list-group-item';
-    const SELECTOR_LINK_ITEMS = `${SELECTOR_NAV_LINKS}, ${SELECTOR_LIST_ITEMS}, .${CLASS_NAME_DROPDOWN_ITEM}`;
-    const SELECTOR_DROPDOWN$1 = '.dropdown';
-    const SELECTOR_DROPDOWN_TOGGLE$1 = '.dropdown-toggle';
-    const METHOD_OFFSET = 'offset';
-    const METHOD_POSITION = 'position';
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class ScrollSpy extends BaseComponent {
-        constructor(element8, config9){
-            super(element8);
-            this._scrollElement = this._element.tagName === 'BODY' ? window : this._element;
-            this._config = this._getConfig(config9);
-            this._offsets = [];
-            this._targets = [];
-            this._activeTarget = null;
-            this._scrollHeight = 0;
-            EventHandler.on(this._scrollElement, EVENT_SCROLL, ()=>this._process()
-            );
-            this.refresh();
-            this._process();
-        }
-        static get Default() {
-            return Default$1;
-        }
-        static get NAME() {
-            return NAME$2;
-        }
-        refresh() {
-            const autoMethod = this._scrollElement === this._scrollElement.window ? METHOD_OFFSET : METHOD_POSITION;
-            const offsetMethod = this._config.method === 'auto' ? autoMethod : this._config.method;
-            const offsetBase = offsetMethod === METHOD_POSITION ? this._getScrollTop() : 0;
-            this._offsets = [];
-            this._targets = [];
-            this._scrollHeight = this._getScrollHeight();
-            const targets = SelectorEngine.find(SELECTOR_LINK_ITEMS, this._config.target);
-            targets.map((element9)=>{
-                const targetSelector = getSelectorFromElement(element9);
-                const target = targetSelector ? SelectorEngine.findOne(targetSelector) : null;
-                if (target) {
-                    const targetBCR = target.getBoundingClientRect();
-                    if (targetBCR.width || targetBCR.height) return [
-                        Manipulator[offsetMethod](target).top + offsetBase,
-                        targetSelector
-                    ];
-                }
-                return null;
-            }).filter((item)=>item
-            ).sort((a, b)=>a[0] - b[0]
-            ).forEach((item)=>{
-                this._offsets.push(item[0]);
-                this._targets.push(item[1]);
-            });
-        }
-        dispose() {
-            EventHandler.off(this._scrollElement, EVENT_KEY$2);
-            super.dispose();
-        }
-        _getConfig(config) {
-            config = {
-                ...Default$1,
-                ...Manipulator.getDataAttributes(this._element),
-                ...typeof config === 'object' && config ? config : {
-                }
-            };
-            config.target = getElement(config.target) || document.documentElement;
-            typeCheckConfig(NAME$2, config, DefaultType$1);
-            return config;
-        }
-        _getScrollTop() {
-            return this._scrollElement === window ? this._scrollElement.pageYOffset : this._scrollElement.scrollTop;
-        }
-        _getScrollHeight() {
-            return this._scrollElement.scrollHeight || Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-        }
-        _getOffsetHeight() {
-            return this._scrollElement === window ? window.innerHeight : this._scrollElement.getBoundingClientRect().height;
-        }
-        _process() {
-            const scrollTop = this._getScrollTop() + this._config.offset;
-            const scrollHeight = this._getScrollHeight();
-            const maxScroll = this._config.offset + scrollHeight - this._getOffsetHeight();
-            if (this._scrollHeight !== scrollHeight) this.refresh();
-            if (scrollTop >= maxScroll) {
-                const target = this._targets[this._targets.length - 1];
-                if (this._activeTarget !== target) this._activate(target);
-                return;
-            }
-            if (this._activeTarget && scrollTop < this._offsets[0] && this._offsets[0] > 0) {
-                this._activeTarget = null;
-                this._clear();
-                return;
-            }
-            for(let i1 = this._offsets.length; i1--;){
-                const isActiveTarget = this._activeTarget !== this._targets[i1] && scrollTop >= this._offsets[i1] && (typeof this._offsets[i1 + 1] === 'undefined' || scrollTop < this._offsets[i1 + 1]);
-                if (isActiveTarget) this._activate(this._targets[i1]);
-            }
-        }
-        _activate(target) {
-            this._activeTarget = target;
-            this._clear();
-            const queries = SELECTOR_LINK_ITEMS.split(',').map((selector)=>`${selector}[data-bs-target="${target}"],${selector}[href="${target}"]`
-            );
-            const link = SelectorEngine.findOne(queries.join(','), this._config.target);
-            link.classList.add(CLASS_NAME_ACTIVE$1);
-            if (link.classList.contains(CLASS_NAME_DROPDOWN_ITEM)) SelectorEngine.findOne(SELECTOR_DROPDOWN_TOGGLE$1, link.closest(SELECTOR_DROPDOWN$1)).classList.add(CLASS_NAME_ACTIVE$1);
-            else SelectorEngine.parents(link, SELECTOR_NAV_LIST_GROUP$1).forEach((listGroup)=>{
-                // Set triggered links parents as active
-                // With both <ul> and <nav> markup a parent is the previous sibling of any nav ancestor
-                SelectorEngine.prev(listGroup, `${SELECTOR_NAV_LINKS}, ${SELECTOR_LIST_ITEMS}`).forEach((item)=>item.classList.add(CLASS_NAME_ACTIVE$1)
-                ); // Handle special case when .nav-link is inside .nav-item
-                SelectorEngine.prev(listGroup, SELECTOR_NAV_ITEMS).forEach((navItem)=>{
-                    SelectorEngine.children(navItem, SELECTOR_NAV_LINKS).forEach((item)=>item.classList.add(CLASS_NAME_ACTIVE$1)
-                    );
-                });
-            });
-            EventHandler.trigger(this._scrollElement, EVENT_ACTIVATE, {
-                relatedTarget: target
-            });
-        }
-        _clear() {
-            SelectorEngine.find(SELECTOR_LINK_ITEMS, this._config.target).filter((node)=>node.classList.contains(CLASS_NAME_ACTIVE$1)
-            ).forEach((node)=>node.classList.remove(CLASS_NAME_ACTIVE$1)
-            );
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                const data = ScrollSpy.getOrCreateInstance(this, config);
-                if (typeof config !== 'string') return;
-                if (typeof data[config] === 'undefined') throw new TypeError(`No method named "${config}"`);
-                data[config]();
-            });
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * Data Api implementation
-   * ------------------------------------------------------------------------
-   */ EventHandler.on(window, EVENT_LOAD_DATA_API, ()=>{
-        SelectorEngine.find(SELECTOR_DATA_SPY).forEach((spy)=>new ScrollSpy(spy)
-        );
-    });
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .ScrollSpy to jQuery only if jQuery is present
-   */ defineJQueryPlugin(ScrollSpy);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): tab.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME$1 = 'tab';
-    const DATA_KEY$1 = 'bs.tab';
-    const EVENT_KEY$1 = `.${DATA_KEY$1}`;
-    const DATA_API_KEY = '.data-api';
-    const EVENT_HIDE$1 = `hide${EVENT_KEY$1}`;
-    const EVENT_HIDDEN$1 = `hidden${EVENT_KEY$1}`;
-    const EVENT_SHOW$1 = `show${EVENT_KEY$1}`;
-    const EVENT_SHOWN$1 = `shown${EVENT_KEY$1}`;
-    const EVENT_CLICK_DATA_API = `click${EVENT_KEY$1}${DATA_API_KEY}`;
-    const CLASS_NAME_DROPDOWN_MENU = 'dropdown-menu';
-    const CLASS_NAME_ACTIVE = 'active';
-    const CLASS_NAME_FADE$1 = 'fade';
-    const CLASS_NAME_SHOW$1 = 'show';
-    const SELECTOR_DROPDOWN = '.dropdown';
-    const SELECTOR_NAV_LIST_GROUP = '.nav, .list-group';
-    const SELECTOR_ACTIVE = '.active';
-    const SELECTOR_ACTIVE_UL = ':scope > li > .active';
-    const SELECTOR_DATA_TOGGLE = '[data-bs-toggle="tab"], [data-bs-toggle="pill"], [data-bs-toggle="list"]';
-    const SELECTOR_DROPDOWN_TOGGLE = '.dropdown-toggle';
-    const SELECTOR_DROPDOWN_ACTIVE_CHILD = ':scope > .dropdown-menu .active';
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Tab extends BaseComponent {
-        // Getters
-        static get NAME() {
-            return NAME$1;
-        }
-        show() {
-            if (this._element.parentNode && this._element.parentNode.nodeType === Node.ELEMENT_NODE && this._element.classList.contains(CLASS_NAME_ACTIVE)) return;
-            let previous;
-            const target = getElementFromSelector(this._element);
-            const listElement = this._element.closest(SELECTOR_NAV_LIST_GROUP);
-            if (listElement) {
-                const itemSelector = listElement.nodeName === 'UL' || listElement.nodeName === 'OL' ? SELECTOR_ACTIVE_UL : SELECTOR_ACTIVE;
-                previous = SelectorEngine.find(itemSelector, listElement);
-                previous = previous[previous.length - 1];
-            }
-            const hideEvent = previous ? EventHandler.trigger(previous, EVENT_HIDE$1, {
-                relatedTarget: this._element
-            }) : null;
-            const showEvent = EventHandler.trigger(this._element, EVENT_SHOW$1, {
-                relatedTarget: previous
-            });
-            if (showEvent.defaultPrevented || hideEvent !== null && hideEvent.defaultPrevented) return;
-            this._activate(this._element, listElement);
-            const complete = ()=>{
-                EventHandler.trigger(previous, EVENT_HIDDEN$1, {
-                    relatedTarget: this._element
-                });
-                EventHandler.trigger(this._element, EVENT_SHOWN$1, {
-                    relatedTarget: previous
-                });
-            };
-            if (target) this._activate(target, target.parentNode, complete);
-            else complete();
-        }
-        _activate(element, container, callback) {
-            const activeElements = container && (container.nodeName === 'UL' || container.nodeName === 'OL') ? SelectorEngine.find(SELECTOR_ACTIVE_UL, container) : SelectorEngine.children(container, SELECTOR_ACTIVE);
-            const active = activeElements[0];
-            const isTransitioning = callback && active && active.classList.contains(CLASS_NAME_FADE$1);
-            const complete = ()=>this._transitionComplete(element, active, callback)
-            ;
-            if (active && isTransitioning) {
-                active.classList.remove(CLASS_NAME_SHOW$1);
-                this._queueCallback(complete, element, true);
-            } else complete();
-        }
-        _transitionComplete(element, active, callback) {
-            if (active) {
-                active.classList.remove(CLASS_NAME_ACTIVE);
-                const dropdownChild = SelectorEngine.findOne(SELECTOR_DROPDOWN_ACTIVE_CHILD, active.parentNode);
-                if (dropdownChild) dropdownChild.classList.remove(CLASS_NAME_ACTIVE);
-                if (active.getAttribute('role') === 'tab') active.setAttribute('aria-selected', false);
-            }
-            element.classList.add(CLASS_NAME_ACTIVE);
-            if (element.getAttribute('role') === 'tab') element.setAttribute('aria-selected', true);
-            reflow(element);
-            if (element.classList.contains(CLASS_NAME_FADE$1)) element.classList.add(CLASS_NAME_SHOW$1);
-            let parent = element.parentNode;
-            if (parent && parent.nodeName === 'LI') parent = parent.parentNode;
-            if (parent && parent.classList.contains(CLASS_NAME_DROPDOWN_MENU)) {
-                const dropdownElement = element.closest(SELECTOR_DROPDOWN);
-                if (dropdownElement) SelectorEngine.find(SELECTOR_DROPDOWN_TOGGLE, dropdownElement).forEach((dropdown)=>dropdown.classList.add(CLASS_NAME_ACTIVE)
-                );
-                element.setAttribute('aria-expanded', true);
-            }
-            if (callback) callback();
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                const data = Tab.getOrCreateInstance(this);
-                if (typeof config === 'string') {
-                    if (typeof data[config] === 'undefined') throw new TypeError(`No method named "${config}"`);
-                    data[config]();
-                }
-            });
-        }
-    }
-    /**
-   * ------------------------------------------------------------------------
-   * Data Api implementation
-   * ------------------------------------------------------------------------
-   */ EventHandler.on(document, EVENT_CLICK_DATA_API, SELECTOR_DATA_TOGGLE, function(event) {
-        if ([
-            'A',
-            'AREA'
-        ].includes(this.tagName)) event.preventDefault();
-        if (isDisabled(this)) return;
-        const data = Tab.getOrCreateInstance(this);
-        data.show();
-    });
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .Tab to jQuery only if jQuery is present
-   */ defineJQueryPlugin(Tab);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): toast.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */ const NAME = 'toast';
-    const DATA_KEY = 'bs.toast';
-    const EVENT_KEY = `.${DATA_KEY}`;
-    const EVENT_MOUSEOVER = `mouseover${EVENT_KEY}`;
-    const EVENT_MOUSEOUT = `mouseout${EVENT_KEY}`;
-    const EVENT_FOCUSIN = `focusin${EVENT_KEY}`;
-    const EVENT_FOCUSOUT = `focusout${EVENT_KEY}`;
-    const EVENT_HIDE = `hide${EVENT_KEY}`;
-    const EVENT_HIDDEN = `hidden${EVENT_KEY}`;
-    const EVENT_SHOW = `show${EVENT_KEY}`;
-    const EVENT_SHOWN = `shown${EVENT_KEY}`;
-    const CLASS_NAME_FADE = 'fade';
-    const CLASS_NAME_HIDE = 'hide'; // @deprecated - kept here only for backwards compatibility
-    const CLASS_NAME_SHOW = 'show';
-    const CLASS_NAME_SHOWING = 'showing';
-    const DefaultType = {
-        animation: 'boolean',
-        autohide: 'boolean',
-        delay: 'number'
-    };
-    const Default = {
-        animation: true,
-        autohide: true,
-        delay: 5000
-    };
-    /**
-   * ------------------------------------------------------------------------
-   * Class Definition
-   * ------------------------------------------------------------------------
-   */ class Toast extends BaseComponent {
-        constructor(element9, config10){
-            super(element9);
-            this._config = this._getConfig(config10);
-            this._timeout = null;
-            this._hasMouseInteraction = false;
-            this._hasKeyboardInteraction = false;
-            this._setListeners();
-        }
-        static get DefaultType() {
-            return DefaultType;
-        }
-        static get Default() {
-            return Default;
-        }
-        static get NAME() {
-            return NAME;
-        }
-        show() {
-            const showEvent = EventHandler.trigger(this._element, EVENT_SHOW);
-            if (showEvent.defaultPrevented) return;
-            this._clearTimeout();
-            if (this._config.animation) this._element.classList.add(CLASS_NAME_FADE);
-            const complete = ()=>{
-                this._element.classList.remove(CLASS_NAME_SHOWING);
-                EventHandler.trigger(this._element, EVENT_SHOWN);
-                this._maybeScheduleHide();
-            };
-            this._element.classList.remove(CLASS_NAME_HIDE); // @deprecated
-            reflow(this._element);
-            this._element.classList.add(CLASS_NAME_SHOW);
-            this._element.classList.add(CLASS_NAME_SHOWING);
-            this._queueCallback(complete, this._element, this._config.animation);
-        }
-        hide() {
-            if (!this._element.classList.contains(CLASS_NAME_SHOW)) return;
-            const hideEvent = EventHandler.trigger(this._element, EVENT_HIDE);
-            if (hideEvent.defaultPrevented) return;
-            const complete = ()=>{
-                this._element.classList.add(CLASS_NAME_HIDE); // @deprecated
-                this._element.classList.remove(CLASS_NAME_SHOWING);
-                this._element.classList.remove(CLASS_NAME_SHOW);
-                EventHandler.trigger(this._element, EVENT_HIDDEN);
-            };
-            this._element.classList.add(CLASS_NAME_SHOWING);
-            this._queueCallback(complete, this._element, this._config.animation);
-        }
-        dispose() {
-            this._clearTimeout();
-            if (this._element.classList.contains(CLASS_NAME_SHOW)) this._element.classList.remove(CLASS_NAME_SHOW);
-            super.dispose();
-        }
-        _getConfig(config) {
-            config = {
-                ...Default,
-                ...Manipulator.getDataAttributes(this._element),
-                ...typeof config === 'object' && config ? config : {
-                }
-            };
-            typeCheckConfig(NAME, config, this.constructor.DefaultType);
-            return config;
-        }
-        _maybeScheduleHide() {
-            if (!this._config.autohide) return;
-            if (this._hasMouseInteraction || this._hasKeyboardInteraction) return;
-            this._timeout = setTimeout(()=>{
-                this.hide();
-            }, this._config.delay);
-        }
-        _onInteraction(event, isInteracting) {
-            switch(event.type){
-                case 'mouseover':
-                case 'mouseout':
-                    this._hasMouseInteraction = isInteracting;
-                    break;
-                case 'focusin':
-                case 'focusout':
-                    this._hasKeyboardInteraction = isInteracting;
-                    break;
-            }
-            if (isInteracting) {
-                this._clearTimeout();
-                return;
-            }
-            const nextElement = event.relatedTarget;
-            if (this._element === nextElement || this._element.contains(nextElement)) return;
-            this._maybeScheduleHide();
-        }
-        _setListeners() {
-            EventHandler.on(this._element, EVENT_MOUSEOVER, (event)=>this._onInteraction(event, true)
-            );
-            EventHandler.on(this._element, EVENT_MOUSEOUT, (event)=>this._onInteraction(event, false)
-            );
-            EventHandler.on(this._element, EVENT_FOCUSIN, (event)=>this._onInteraction(event, true)
-            );
-            EventHandler.on(this._element, EVENT_FOCUSOUT, (event)=>this._onInteraction(event, false)
-            );
-        }
-        _clearTimeout() {
-            clearTimeout(this._timeout);
-            this._timeout = null;
-        }
-        static jQueryInterface(config) {
-            return this.each(function() {
-                const data = Toast.getOrCreateInstance(this, config);
-                if (typeof config === 'string') {
-                    if (typeof data[config] === 'undefined') throw new TypeError(`No method named "${config}"`);
-                    data[config](this);
-                }
-            });
-        }
-    }
-    enableDismissTrigger(Toast);
-    /**
-   * ------------------------------------------------------------------------
-   * jQuery
-   * ------------------------------------------------------------------------
-   * add .Toast to jQuery only if jQuery is present
-   */ defineJQueryPlugin(Toast);
-    /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.1.0): index.umd.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
-   * --------------------------------------------------------------------------
-   */ var index_umd = {
-        Alert,
-        Button,
-        Carousel,
-        Collapse,
-        Dropdown,
-        Modal,
-        Offcanvas,
-        Popover,
-        ScrollSpy,
-        Tab,
-        Toast,
-        Tooltip
-    };
-    return index_umd;
-});
-
-},{"@popperjs/core":"3b7Fs"}],"3b7Fs":[function(require,module,exports) {
-/**
- * @popperjs/core v2.9.3 - MIT License
- */ 'use strict';
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-function getWindow(node) {
-    if (node == null) return window;
-    if (node.toString() !== '[object Window]') {
-        var ownerDocument = node.ownerDocument;
-        return ownerDocument ? ownerDocument.defaultView || window : window;
-    }
-    return node;
-}
-function isElement(node) {
-    var OwnElement = getWindow(node).Element;
-    return node instanceof OwnElement || node instanceof Element;
-}
-function isHTMLElement(node) {
-    var OwnElement = getWindow(node).HTMLElement;
-    return node instanceof OwnElement || node instanceof HTMLElement;
-}
-function isShadowRoot(node) {
-    // IE 11 has no ShadowRoot
-    if (typeof ShadowRoot === 'undefined') return false;
-    var OwnElement = getWindow(node).ShadowRoot;
-    return node instanceof OwnElement || node instanceof ShadowRoot;
-}
-var round$1 = Math.round;
-function getBoundingClientRect(element, includeScale) {
-    if (includeScale === void 0) includeScale = false;
-    var rect = element.getBoundingClientRect();
-    var scaleX = 1;
-    var scaleY = 1;
-    if (isHTMLElement(element) && includeScale) {
-        // Fallback to 1 in case both values are `0`
-        scaleX = rect.width / element.offsetWidth || 1;
-        scaleY = rect.height / element.offsetHeight || 1;
-    }
-    return {
-        width: round$1(rect.width / scaleX),
-        height: round$1(rect.height / scaleY),
-        top: round$1(rect.top / scaleY),
-        right: round$1(rect.right / scaleX),
-        bottom: round$1(rect.bottom / scaleY),
-        left: round$1(rect.left / scaleX),
-        x: round$1(rect.left / scaleX),
-        y: round$1(rect.top / scaleY)
-    };
-}
-function getWindowScroll(node) {
-    var win = getWindow(node);
-    var scrollLeft = win.pageXOffset;
-    var scrollTop = win.pageYOffset;
-    return {
-        scrollLeft: scrollLeft,
-        scrollTop: scrollTop
-    };
-}
-function getHTMLElementScroll(element) {
-    return {
-        scrollLeft: element.scrollLeft,
-        scrollTop: element.scrollTop
-    };
-}
-function getNodeScroll(node) {
-    if (node === getWindow(node) || !isHTMLElement(node)) return getWindowScroll(node);
-    else return getHTMLElementScroll(node);
-}
-function getNodeName(element) {
-    return element ? (element.nodeName || '').toLowerCase() : null;
-}
-function getDocumentElement(element) {
-    // $FlowFixMe[incompatible-return]: assume body is always available
-    return ((isElement(element) ? element.ownerDocument : element.document) || window.document).documentElement;
-}
-function getWindowScrollBarX(element) {
-    // If <html> has a CSS width greater than the viewport, then this will be
-    // incorrect for RTL.
-    // Popper 1 is broken in this case and never had a bug report so let's assume
-    // it's not an issue. I don't think anyone ever specifies width on <html>
-    // anyway.
-    // Browsers where the left scrollbar doesn't cause an issue report `0` for
-    // this (e.g. Edge 2019, IE11, Safari)
-    return getBoundingClientRect(getDocumentElement(element)).left + getWindowScroll(element).scrollLeft;
-}
-function getComputedStyle(element) {
-    return getWindow(element).getComputedStyle(element);
-}
-function isScrollParent(element) {
-    // Firefox wants us to check `-x` and `-y` variations as well
-    var _getComputedStyle = getComputedStyle(element), overflow = _getComputedStyle.overflow, overflowX = _getComputedStyle.overflowX, overflowY = _getComputedStyle.overflowY;
-    return /auto|scroll|overlay|hidden/.test(overflow + overflowY + overflowX);
-}
-function isElementScaled(element) {
-    var rect = element.getBoundingClientRect();
-    var scaleX = rect.width / element.offsetWidth || 1;
-    var scaleY = rect.height / element.offsetHeight || 1;
-    return scaleX !== 1 || scaleY !== 1;
-} // Returns the composite rect of an element relative to its offsetParent.
-// Composite means it takes into account transforms as well as layout.
-function getCompositeRect(elementOrVirtualElement, offsetParent, isFixed) {
-    if (isFixed === void 0) isFixed = false;
-    var isOffsetParentAnElement = isHTMLElement(offsetParent);
-    var offsetParentIsScaled = isHTMLElement(offsetParent) && isElementScaled(offsetParent);
-    var documentElement = getDocumentElement(offsetParent);
-    var rect = getBoundingClientRect(elementOrVirtualElement, offsetParentIsScaled);
-    var scroll = {
-        scrollLeft: 0,
-        scrollTop: 0
-    };
-    var offsets = {
-        x: 0,
-        y: 0
-    };
-    if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
-        if (getNodeName(offsetParent) !== 'body' || isScrollParent(documentElement)) scroll = getNodeScroll(offsetParent);
-        if (isHTMLElement(offsetParent)) {
-            offsets = getBoundingClientRect(offsetParent, true);
-            offsets.x += offsetParent.clientLeft;
-            offsets.y += offsetParent.clientTop;
-        } else if (documentElement) offsets.x = getWindowScrollBarX(documentElement);
-    }
-    return {
-        x: rect.left + scroll.scrollLeft - offsets.x,
-        y: rect.top + scroll.scrollTop - offsets.y,
-        width: rect.width,
-        height: rect.height
-    };
-}
-// means it doesn't take into account transforms.
-function getLayoutRect(element) {
-    var clientRect = getBoundingClientRect(element); // Use the clientRect sizes if it's not been transformed.
-    // Fixes https://github.com/popperjs/popper-core/issues/1223
-    var width = element.offsetWidth;
-    var height = element.offsetHeight;
-    if (Math.abs(clientRect.width - width) <= 1) width = clientRect.width;
-    if (Math.abs(clientRect.height - height) <= 1) height = clientRect.height;
-    return {
-        x: element.offsetLeft,
-        y: element.offsetTop,
-        width: width,
-        height: height
-    };
-}
-function getParentNode(element) {
-    if (getNodeName(element) === 'html') return element;
-    return(// $FlowFixMe[incompatible-return]
-    // $FlowFixMe[prop-missing]
-    element.assignedSlot || element.parentNode || (isShadowRoot(element) ? element.host : null) || // $FlowFixMe[incompatible-call]: HTMLElement is a Node
-    getDocumentElement(element));
-}
-function getScrollParent(node) {
-    if ([
-        'html',
-        'body',
-        '#document'
-    ].indexOf(getNodeName(node)) >= 0) // $FlowFixMe[incompatible-return]: assume body is always available
-    return node.ownerDocument.body;
-    if (isHTMLElement(node) && isScrollParent(node)) return node;
-    return getScrollParent(getParentNode(node));
-}
-/*
-given a DOM element, return the list of all scroll parents, up the list of ancesors
-until we get to the top window object. This list is what we attach scroll listeners
-to, because if any of these parent elements scroll, we'll need to re-calculate the
-reference element's position.
-*/ function listScrollParents(element, list) {
-    var _element$ownerDocumen;
-    if (list === void 0) list = [];
-    var scrollParent = getScrollParent(element);
-    var isBody = scrollParent === ((_element$ownerDocumen = element.ownerDocument) == null ? void 0 : _element$ownerDocumen.body);
-    var win = getWindow(scrollParent);
-    var target = isBody ? [
-        win
-    ].concat(win.visualViewport || [], isScrollParent(scrollParent) ? scrollParent : []) : scrollParent;
-    var updatedList = list.concat(target);
-    return isBody ? updatedList : updatedList.concat(listScrollParents(getParentNode(target)));
-}
-function isTableElement(element) {
-    return [
-        'table',
-        'td',
-        'th'
-    ].indexOf(getNodeName(element)) >= 0;
-}
-function getTrueOffsetParent(element) {
-    if (!isHTMLElement(element) || getComputedStyle(element).position === 'fixed') return null;
-    return element.offsetParent;
-} // `.offsetParent` reports `null` for fixed elements, while absolute elements
-// return the containing block
-function getContainingBlock(element) {
-    var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') !== -1;
-    var isIE = navigator.userAgent.indexOf('Trident') !== -1;
-    if (isIE && isHTMLElement(element)) {
-        // In IE 9, 10 and 11 fixed elements containing block is always established by the viewport
-        var elementCss = getComputedStyle(element);
-        if (elementCss.position === 'fixed') return null;
-    }
-    var currentNode = getParentNode(element);
-    while(isHTMLElement(currentNode) && [
-        'html',
-        'body'
-    ].indexOf(getNodeName(currentNode)) < 0){
-        var css = getComputedStyle(currentNode); // This is non-exhaustive but covers the most common CSS properties that
-        // create a containing block.
-        // https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
-        if (css.transform !== 'none' || css.perspective !== 'none' || css.contain === 'paint' || [
-            'transform',
-            'perspective'
-        ].indexOf(css.willChange) !== -1 || isFirefox && css.willChange === 'filter' || isFirefox && css.filter && css.filter !== 'none') return currentNode;
-        else currentNode = currentNode.parentNode;
-    }
-    return null;
-} // Gets the closest ancestor positioned element. Handles some edge cases,
-// such as table ancestors and cross browser bugs.
-function getOffsetParent(element) {
-    var window = getWindow(element);
-    var offsetParent = getTrueOffsetParent(element);
-    while(offsetParent && isTableElement(offsetParent) && getComputedStyle(offsetParent).position === 'static')offsetParent = getTrueOffsetParent(offsetParent);
-    if (offsetParent && (getNodeName(offsetParent) === 'html' || getNodeName(offsetParent) === 'body' && getComputedStyle(offsetParent).position === 'static')) return window;
-    return offsetParent || getContainingBlock(element) || window;
-}
-var top = 'top';
-var bottom = 'bottom';
-var right = 'right';
-var left = 'left';
-var auto = 'auto';
-var basePlacements = [
-    top,
-    bottom,
-    right,
-    left
-];
-var start = 'start';
-var end = 'end';
-var clippingParents = 'clippingParents';
-var viewport = 'viewport';
-var popper = 'popper';
-var reference = 'reference';
-var variationPlacements = /*#__PURE__*/ basePlacements.reduce(function(acc, placement) {
-    return acc.concat([
-        placement + "-" + start,
-        placement + "-" + end
-    ]);
-}, []);
-var placements = /*#__PURE__*/ [].concat(basePlacements, [
-    auto
-]).reduce(function(acc, placement) {
-    return acc.concat([
-        placement,
-        placement + "-" + start,
-        placement + "-" + end
-    ]);
-}, []); // modifiers that need to read the DOM
-var beforeRead = 'beforeRead';
-var read = 'read';
-var afterRead = 'afterRead'; // pure-logic modifiers
-var beforeMain = 'beforeMain';
-var main = 'main';
-var afterMain = 'afterMain'; // modifier with the purpose to write to the DOM (or write into a framework state)
-var beforeWrite = 'beforeWrite';
-var write = 'write';
-var afterWrite = 'afterWrite';
-var modifierPhases = [
-    beforeRead,
-    read,
-    afterRead,
-    beforeMain,
-    main,
-    afterMain,
-    beforeWrite,
-    write,
-    afterWrite
-];
-function order(modifiers) {
-    var map = new Map();
-    var visited = new Set();
-    var result = [];
-    modifiers.forEach(function(modifier) {
-        map.set(modifier.name, modifier);
-    }); // On visiting object, check for its dependencies and visit them recursively
-    function sort(modifier) {
-        visited.add(modifier.name);
-        var requires = [].concat(modifier.requires || [], modifier.requiresIfExists || []);
-        requires.forEach(function(dep) {
-            if (!visited.has(dep)) {
-                var depModifier = map.get(dep);
-                if (depModifier) sort(depModifier);
-            }
-        });
-        result.push(modifier);
-    }
-    modifiers.forEach(function(modifier) {
-        if (!visited.has(modifier.name)) // check for visited object
-        sort(modifier);
-    });
-    return result;
-}
-function orderModifiers(modifiers) {
-    // order based on dependencies
-    var orderedModifiers = order(modifiers); // order based on phase
-    return modifierPhases.reduce(function(acc, phase) {
-        return acc.concat(orderedModifiers.filter(function(modifier) {
-            return modifier.phase === phase;
-        }));
-    }, []);
-}
-function debounce(fn) {
-    var pending;
-    return function() {
-        if (!pending) pending = new Promise(function(resolve) {
-            Promise.resolve().then(function() {
-                pending = undefined;
-                resolve(fn());
-            });
-        });
-        return pending;
-    };
-}
-function format(str) {
-    for(var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++)args[_key - 1] = arguments[_key];
-    return [].concat(args).reduce(function(p, c) {
-        return p.replace(/%s/, c);
-    }, str);
-}
-var INVALID_MODIFIER_ERROR = 'Popper: modifier "%s" provided an invalid %s property, expected %s but got %s';
-var MISSING_DEPENDENCY_ERROR = 'Popper: modifier "%s" requires "%s", but "%s" modifier is not available';
-var VALID_PROPERTIES = [
-    'name',
-    'enabled',
-    'phase',
-    'fn',
-    'effect',
-    'requires',
-    'options'
-];
-function validateModifiers(modifiers) {
-    modifiers.forEach(function(modifier) {
-        Object.keys(modifier).forEach(function(key) {
-            switch(key){
-                case 'name':
-                    if (typeof modifier.name !== 'string') console.error(format(INVALID_MODIFIER_ERROR, String(modifier.name), '"name"', '"string"', "\"" + String(modifier.name) + "\""));
-                    break;
-                case 'enabled':
-                    if (typeof modifier.enabled !== 'boolean') console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"enabled"', '"boolean"', "\"" + String(modifier.enabled) + "\""));
-                case 'phase':
-                    if (modifierPhases.indexOf(modifier.phase) < 0) console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"phase"', "either " + modifierPhases.join(', '), "\"" + String(modifier.phase) + "\""));
-                    break;
-                case 'fn':
-                    if (typeof modifier.fn !== 'function') console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"fn"', '"function"', "\"" + String(modifier.fn) + "\""));
-                    break;
-                case 'effect':
-                    if (typeof modifier.effect !== 'function') console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"effect"', '"function"', "\"" + String(modifier.fn) + "\""));
-                    break;
-                case 'requires':
-                    if (!Array.isArray(modifier.requires)) console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"requires"', '"array"', "\"" + String(modifier.requires) + "\""));
-                    break;
-                case 'requiresIfExists':
-                    if (!Array.isArray(modifier.requiresIfExists)) console.error(format(INVALID_MODIFIER_ERROR, modifier.name, '"requiresIfExists"', '"array"', "\"" + String(modifier.requiresIfExists) + "\""));
-                    break;
-                case 'options':
-                case 'data':
-                    break;
-                default:
-                    console.error("PopperJS: an invalid property has been provided to the \"" + modifier.name + "\" modifier, valid properties are " + VALID_PROPERTIES.map(function(s) {
-                        return "\"" + s + "\"";
-                    }).join(', ') + "; but \"" + key + "\" was provided.");
-            }
-            modifier.requires && modifier.requires.forEach(function(requirement) {
-                if (modifiers.find(function(mod) {
-                    return mod.name === requirement;
-                }) == null) console.error(format(MISSING_DEPENDENCY_ERROR, String(modifier.name), requirement, requirement));
-            });
-        });
-    });
-}
-function uniqueBy(arr, fn) {
-    var identifiers = new Set();
-    return arr.filter(function(item) {
-        var identifier = fn(item);
-        if (!identifiers.has(identifier)) {
-            identifiers.add(identifier);
-            return true;
-        }
-    });
-}
-function getBasePlacement(placement) {
-    return placement.split('-')[0];
-}
-function mergeByName(modifiers) {
-    var merged = modifiers.reduce(function(merged1, current) {
-        var existing = merged1[current.name];
-        merged1[current.name] = existing ? Object.assign({
-        }, existing, current, {
-            options: Object.assign({
-            }, existing.options, current.options),
-            data: Object.assign({
-            }, existing.data, current.data)
-        }) : current;
-        return merged1;
-    }, {
-    }); // IE11 does not support Object.values
-    return Object.keys(merged).map(function(key) {
-        return merged[key];
-    });
-}
-function getViewportRect(element) {
-    var win = getWindow(element);
-    var html = getDocumentElement(element);
-    var visualViewport = win.visualViewport;
-    var width = html.clientWidth;
-    var height = html.clientHeight;
-    var x = 0;
-    var y = 0; // NB: This isn't supported on iOS <= 12. If the keyboard is open, the popper
-    // can be obscured underneath it.
-    // Also, `html.clientHeight` adds the bottom bar height in Safari iOS, even
-    // if it isn't open, so if this isn't available, the popper will be detected
-    // to overflow the bottom of the screen too early.
-    if (visualViewport) {
-        width = visualViewport.width;
-        height = visualViewport.height; // Uses Layout Viewport (like Chrome; Safari does not currently)
-        // In Chrome, it returns a value very close to 0 (+/-) but contains rounding
-        // errors due to floating point numbers, so we need to check precision.
-        // Safari returns a number <= 0, usually < -1 when pinch-zoomed
-        // Feature detection fails in mobile emulation mode in Chrome.
-        // Math.abs(win.innerWidth / visualViewport.scale - visualViewport.width) <
-        // 0.001
-        // Fallback here: "Not Safari" userAgent
-        if (!/^((?!chrome|android).)*safari/i.test(navigator.userAgent)) {
-            x = visualViewport.offsetLeft;
-            y = visualViewport.offsetTop;
-        }
-    }
-    return {
-        width: width,
-        height: height,
-        x: x + getWindowScrollBarX(element),
-        y: y
-    };
-}
-var max = Math.max;
-var min = Math.min;
-var round = Math.round;
-// of the `<html>` and `<body>` rect bounds if horizontally scrollable
-function getDocumentRect(element) {
-    var _element$ownerDocumen;
-    var html = getDocumentElement(element);
-    var winScroll = getWindowScroll(element);
-    var body = (_element$ownerDocumen = element.ownerDocument) == null ? void 0 : _element$ownerDocumen.body;
-    var width = max(html.scrollWidth, html.clientWidth, body ? body.scrollWidth : 0, body ? body.clientWidth : 0);
-    var height = max(html.scrollHeight, html.clientHeight, body ? body.scrollHeight : 0, body ? body.clientHeight : 0);
-    var x = -winScroll.scrollLeft + getWindowScrollBarX(element);
-    var y = -winScroll.scrollTop;
-    if (getComputedStyle(body || html).direction === 'rtl') x += max(html.clientWidth, body ? body.clientWidth : 0) - width;
-    return {
-        width: width,
-        height: height,
-        x: x,
-        y: y
-    };
-}
-function contains(parent, child) {
-    var rootNode = child.getRootNode && child.getRootNode(); // First, attempt with faster native method
-    if (parent.contains(child)) return true;
-    else if (rootNode && isShadowRoot(rootNode)) {
-        var next = child;
-        do {
-            if (next && parent.isSameNode(next)) return true;
-             // $FlowFixMe[prop-missing]: need a better way to handle this...
-            next = next.parentNode || next.host;
-        }while (next)
-    } // Give up, the result is false
-    return false;
-}
-function rectToClientRect(rect) {
-    return Object.assign({
-    }, rect, {
-        left: rect.x,
-        top: rect.y,
-        right: rect.x + rect.width,
-        bottom: rect.y + rect.height
-    });
-}
-function getInnerBoundingClientRect(element) {
-    var rect = getBoundingClientRect(element);
-    rect.top = rect.top + element.clientTop;
-    rect.left = rect.left + element.clientLeft;
-    rect.bottom = rect.top + element.clientHeight;
-    rect.right = rect.left + element.clientWidth;
-    rect.width = element.clientWidth;
-    rect.height = element.clientHeight;
-    rect.x = rect.left;
-    rect.y = rect.top;
-    return rect;
-}
-function getClientRectFromMixedType(element, clippingParent) {
-    return clippingParent === viewport ? rectToClientRect(getViewportRect(element)) : isHTMLElement(clippingParent) ? getInnerBoundingClientRect(clippingParent) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
-} // A "clipping parent" is an overflowable container with the characteristic of
-// clipping (or hiding) overflowing elements with a position different from
-// `initial`
-function getClippingParents(element) {
-    var clippingParents1 = listScrollParents(getParentNode(element));
-    var canEscapeClipping = [
-        'absolute',
-        'fixed'
-    ].indexOf(getComputedStyle(element).position) >= 0;
-    var clipperElement = canEscapeClipping && isHTMLElement(element) ? getOffsetParent(element) : element;
-    if (!isElement(clipperElement)) return [];
-     // $FlowFixMe[incompatible-return]: https://github.com/facebook/flow/issues/1414
-    return clippingParents1.filter(function(clippingParent) {
-        return isElement(clippingParent) && contains(clippingParent, clipperElement) && getNodeName(clippingParent) !== 'body';
-    });
-} // Gets the maximum area that the element is visible in due to any number of
-// clipping parents
-function getClippingRect(element, boundary, rootBoundary) {
-    var mainClippingParents = boundary === 'clippingParents' ? getClippingParents(element) : [].concat(boundary);
-    var clippingParents1 = [].concat(mainClippingParents, [
-        rootBoundary
-    ]);
-    var firstClippingParent = clippingParents1[0];
-    var clippingRect = clippingParents1.reduce(function(accRect, clippingParent) {
-        var rect = getClientRectFromMixedType(element, clippingParent);
-        accRect.top = max(rect.top, accRect.top);
-        accRect.right = min(rect.right, accRect.right);
-        accRect.bottom = min(rect.bottom, accRect.bottom);
-        accRect.left = max(rect.left, accRect.left);
-        return accRect;
-    }, getClientRectFromMixedType(element, firstClippingParent));
-    clippingRect.width = clippingRect.right - clippingRect.left;
-    clippingRect.height = clippingRect.bottom - clippingRect.top;
-    clippingRect.x = clippingRect.left;
-    clippingRect.y = clippingRect.top;
-    return clippingRect;
-}
-function getVariation(placement) {
-    return placement.split('-')[1];
-}
-function getMainAxisFromPlacement(placement) {
-    return [
-        'top',
-        'bottom'
-    ].indexOf(placement) >= 0 ? 'x' : 'y';
-}
-function computeOffsets(_ref) {
-    var reference1 = _ref.reference, element = _ref.element, placement = _ref.placement;
-    var basePlacement = placement ? getBasePlacement(placement) : null;
-    var variation = placement ? getVariation(placement) : null;
-    var commonX = reference1.x + reference1.width / 2 - element.width / 2;
-    var commonY = reference1.y + reference1.height / 2 - element.height / 2;
-    var offsets;
-    switch(basePlacement){
-        case top:
-            offsets = {
-                x: commonX,
-                y: reference1.y - element.height
-            };
-            break;
-        case bottom:
-            offsets = {
-                x: commonX,
-                y: reference1.y + reference1.height
-            };
-            break;
-        case right:
-            offsets = {
-                x: reference1.x + reference1.width,
-                y: commonY
-            };
-            break;
-        case left:
-            offsets = {
-                x: reference1.x - element.width,
-                y: commonY
-            };
-            break;
-        default:
-            offsets = {
-                x: reference1.x,
-                y: reference1.y
-            };
-    }
-    var mainAxis = basePlacement ? getMainAxisFromPlacement(basePlacement) : null;
-    if (mainAxis != null) {
-        var len = mainAxis === 'y' ? 'height' : 'width';
-        switch(variation){
-            case start:
-                offsets[mainAxis] = offsets[mainAxis] - (reference1[len] / 2 - element[len] / 2);
-                break;
-            case end:
-                offsets[mainAxis] = offsets[mainAxis] + (reference1[len] / 2 - element[len] / 2);
-                break;
-        }
-    }
-    return offsets;
-}
-function getFreshSideObject() {
-    return {
-        top: 0,
-        right: 0,
-        bottom: 0,
-        left: 0
-    };
-}
-function mergePaddingObject(paddingObject) {
-    return Object.assign({
-    }, getFreshSideObject(), paddingObject);
-}
-function expandToHashMap(value, keys) {
-    return keys.reduce(function(hashMap, key) {
-        hashMap[key] = value;
-        return hashMap;
-    }, {
-    });
-}
-function detectOverflow(state, options) {
-    if (options === void 0) options = {
-    };
-    var _options = options, _options$placement = _options.placement, placement = _options$placement === void 0 ? state.placement : _options$placement, _options$boundary = _options.boundary, boundary = _options$boundary === void 0 ? clippingParents : _options$boundary, _options$rootBoundary = _options.rootBoundary, rootBoundary = _options$rootBoundary === void 0 ? viewport : _options$rootBoundary, _options$elementConte = _options.elementContext, elementContext = _options$elementConte === void 0 ? popper : _options$elementConte, _options$altBoundary = _options.altBoundary, altBoundary = _options$altBoundary === void 0 ? false : _options$altBoundary, _options$padding = _options.padding, padding = _options$padding === void 0 ? 0 : _options$padding;
-    var paddingObject = mergePaddingObject(typeof padding !== 'number' ? padding : expandToHashMap(padding, basePlacements));
-    var altContext = elementContext === popper ? reference : popper;
-    var referenceElement = state.elements.reference;
-    var popperRect = state.rects.popper;
-    var element = state.elements[altBoundary ? altContext : elementContext];
-    var clippingClientRect = getClippingRect(isElement(element) ? element : element.contextElement || getDocumentElement(state.elements.popper), boundary, rootBoundary);
-    var referenceClientRect = getBoundingClientRect(referenceElement);
-    var popperOffsets = computeOffsets({
-        reference: referenceClientRect,
-        element: popperRect,
-        strategy: 'absolute',
-        placement: placement
-    });
-    var popperClientRect = rectToClientRect(Object.assign({
-    }, popperRect, popperOffsets));
-    var elementClientRect = elementContext === popper ? popperClientRect : referenceClientRect; // positive = overflowing the clipping rect
-    // 0 or negative = within the clipping rect
-    var overflowOffsets = {
-        top: clippingClientRect.top - elementClientRect.top + paddingObject.top,
-        bottom: elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom,
-        left: clippingClientRect.left - elementClientRect.left + paddingObject.left,
-        right: elementClientRect.right - clippingClientRect.right + paddingObject.right
-    };
-    var offsetData = state.modifiersData.offset; // Offsets can be applied only to the popper element
-    if (elementContext === popper && offsetData) {
-        var offset = offsetData[placement];
-        Object.keys(overflowOffsets).forEach(function(key) {
-            var multiply = [
-                right,
-                bottom
-            ].indexOf(key) >= 0 ? 1 : -1;
-            var axis = [
-                top,
-                bottom
-            ].indexOf(key) >= 0 ? 'y' : 'x';
-            overflowOffsets[key] += offset[axis] * multiply;
-        });
-    }
-    return overflowOffsets;
-}
-var INVALID_ELEMENT_ERROR = 'Popper: Invalid reference or popper argument provided. They must be either a DOM element or virtual element.';
-var INFINITE_LOOP_ERROR = 'Popper: An infinite loop in the modifiers cycle has been detected! The cycle has been interrupted to prevent a browser crash.';
-var DEFAULT_OPTIONS = {
-    placement: 'bottom',
-    modifiers: [],
-    strategy: 'absolute'
-};
-function areValidElements() {
-    for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++)args[_key] = arguments[_key];
-    return !args.some(function(element) {
-        return !(element && typeof element.getBoundingClientRect === 'function');
-    });
-}
-function popperGenerator(generatorOptions) {
-    if (generatorOptions === void 0) generatorOptions = {
-    };
-    var _generatorOptions = generatorOptions, _generatorOptions$def = _generatorOptions.defaultModifiers, defaultModifiers = _generatorOptions$def === void 0 ? [] : _generatorOptions$def, _generatorOptions$def2 = _generatorOptions.defaultOptions, defaultOptions = _generatorOptions$def2 === void 0 ? DEFAULT_OPTIONS : _generatorOptions$def2;
-    return function createPopper(reference1, popper1, options) {
-        if (options === void 0) options = defaultOptions;
-        var state = {
-            placement: 'bottom',
-            orderedModifiers: [],
-            options: Object.assign({
-            }, DEFAULT_OPTIONS, defaultOptions),
-            modifiersData: {
-            },
-            elements: {
-                reference: reference1,
-                popper: popper1
-            },
-            attributes: {
-            },
-            styles: {
-            }
-        };
-        var effectCleanupFns = [];
-        var isDestroyed = false;
-        var instance = {
-            state: state,
-            setOptions: function setOptions(options1) {
-                cleanupModifierEffects();
-                state.options = Object.assign({
-                }, defaultOptions, state.options, options1);
-                state.scrollParents = {
-                    reference: isElement(reference1) ? listScrollParents(reference1) : reference1.contextElement ? listScrollParents(reference1.contextElement) : [],
-                    popper: listScrollParents(popper1)
-                }; // Orders the modifiers based on their dependencies and `phase`
-                // properties
-                var orderedModifiers = orderModifiers(mergeByName([].concat(defaultModifiers, state.options.modifiers))); // Strip out disabled modifiers
-                state.orderedModifiers = orderedModifiers.filter(function(m) {
-                    return m.enabled;
-                }); // Validate the provided modifiers so that the consumer will get warned
-                var modifiers = uniqueBy([].concat(orderedModifiers, state.options.modifiers), function(_ref) {
-                    var name = _ref.name;
-                    return name;
-                });
-                validateModifiers(modifiers);
-                if (getBasePlacement(state.options.placement) === auto) {
-                    var flipModifier = state.orderedModifiers.find(function(_ref2) {
-                        var name = _ref2.name;
-                        return name === 'flip';
-                    });
-                    if (!flipModifier) console.error([
-                        'Popper: "auto" placements require the "flip" modifier be',
-                        'present and enabled to work.'
-                    ].join(' '));
-                }
-                var _getComputedStyle = getComputedStyle(popper1), marginTop = _getComputedStyle.marginTop, marginRight = _getComputedStyle.marginRight, marginBottom = _getComputedStyle.marginBottom, marginLeft = _getComputedStyle.marginLeft; // We no longer take into account `margins` on the popper, and it can
-                // cause bugs with positioning, so we'll warn the consumer
-                if ([
-                    marginTop,
-                    marginRight,
-                    marginBottom,
-                    marginLeft
-                ].some(function(margin) {
-                    return parseFloat(margin);
-                })) console.warn([
-                    'Popper: CSS "margin" styles cannot be used to apply padding',
-                    'between the popper and its reference element or boundary.',
-                    'To replicate margin, use the `offset` modifier, as well as',
-                    'the `padding` option in the `preventOverflow` and `flip`',
-                    'modifiers.'
-                ].join(' '));
-                runModifierEffects();
-                return instance.update();
-            },
-            // Sync update – it will always be executed, even if not necessary. This
-            // is useful for low frequency updates where sync behavior simplifies the
-            // logic.
-            // For high frequency updates (e.g. `resize` and `scroll` events), always
-            // prefer the async Popper#update method
-            forceUpdate: function forceUpdate() {
-                if (isDestroyed) return;
-                var _state$elements = state.elements, reference2 = _state$elements.reference, popper2 = _state$elements.popper; // Don't proceed if `reference` or `popper` are not valid elements
-                // anymore
-                if (!areValidElements(reference2, popper2)) {
-                    console.error(INVALID_ELEMENT_ERROR);
-                    return;
-                } // Store the reference and popper rects to be read by modifiers
-                state.rects = {
-                    reference: getCompositeRect(reference2, getOffsetParent(popper2), state.options.strategy === 'fixed'),
-                    popper: getLayoutRect(popper2)
-                }; // Modifiers have the ability to reset the current update cycle. The
-                // most common use case for this is the `flip` modifier changing the
-                // placement, which then needs to re-run all the modifiers, because the
-                // logic was previously ran for the previous placement and is therefore
-                // stale/incorrect
-                state.reset = false;
-                state.placement = state.options.placement; // On each update cycle, the `modifiersData` property for each modifier
-                // is filled with the initial data specified by the modifier. This means
-                // it doesn't persist and is fresh on each update.
-                // To ensure persistent data, use `${name}#persistent`
-                state.orderedModifiers.forEach(function(modifier) {
-                    return state.modifiersData[modifier.name] = Object.assign({
-                    }, modifier.data);
-                });
-                var __debug_loops__ = 0;
-                for(var index = 0; index < state.orderedModifiers.length; index++){
-                    __debug_loops__ += 1;
-                    if (__debug_loops__ > 100) {
-                        console.error(INFINITE_LOOP_ERROR);
-                        break;
-                    }
-                    if (state.reset === true) {
-                        state.reset = false;
-                        index = -1;
-                        continue;
-                    }
-                    var _state$orderedModifie = state.orderedModifiers[index], fn = _state$orderedModifie.fn, _state$orderedModifie2 = _state$orderedModifie.options, _options = _state$orderedModifie2 === void 0 ? {
-                    } : _state$orderedModifie2, name = _state$orderedModifie.name;
-                    if (typeof fn === 'function') state = fn({
-                        state: state,
-                        options: _options,
-                        name: name,
-                        instance: instance
-                    }) || state;
-                }
-            },
-            // Async and optimistically optimized update – it will not be executed if
-            // not necessary (debounced to run at most once-per-tick)
-            update: debounce(function() {
-                return new Promise(function(resolve) {
-                    instance.forceUpdate();
-                    resolve(state);
-                });
-            }),
-            destroy: function destroy() {
-                cleanupModifierEffects();
-                isDestroyed = true;
-            }
-        };
-        if (!areValidElements(reference1, popper1)) {
-            console.error(INVALID_ELEMENT_ERROR);
-            return instance;
-        }
-        instance.setOptions(options).then(function(state1) {
-            if (!isDestroyed && options.onFirstUpdate) options.onFirstUpdate(state1);
-        }); // Modifiers have the ability to execute arbitrary code before the first
-        // update cycle runs. They will be executed in the same order as the update
-        // cycle. This is useful when a modifier adds some persistent data that
-        // other modifiers need to use, but the modifier is run after the dependent
-        // one.
-        function runModifierEffects() {
-            state.orderedModifiers.forEach(function(_ref3) {
-                var name = _ref3.name, _ref3$options = _ref3.options, options1 = _ref3$options === void 0 ? {
-                } : _ref3$options, effect = _ref3.effect;
-                if (typeof effect === 'function') {
-                    var cleanupFn = effect({
-                        state: state,
-                        name: name,
-                        instance: instance,
-                        options: options1
-                    });
-                    var noopFn = function noopFn1() {
-                    };
-                    effectCleanupFns.push(cleanupFn || noopFn);
-                }
-            });
-        }
-        function cleanupModifierEffects() {
-            effectCleanupFns.forEach(function(fn) {
-                return fn();
-            });
-            effectCleanupFns = [];
-        }
-        return instance;
-    };
-}
-var passive = {
-    passive: true
-};
-function effect$2(_ref) {
-    var state = _ref.state, instance = _ref.instance, options = _ref.options;
-    var _options$scroll = options.scroll, scroll = _options$scroll === void 0 ? true : _options$scroll, _options$resize = options.resize, resize = _options$resize === void 0 ? true : _options$resize;
-    var window = getWindow(state.elements.popper);
-    var scrollParents = [].concat(state.scrollParents.reference, state.scrollParents.popper);
-    if (scroll) scrollParents.forEach(function(scrollParent) {
-        scrollParent.addEventListener('scroll', instance.update, passive);
-    });
-    if (resize) window.addEventListener('resize', instance.update, passive);
-    return function() {
-        if (scroll) scrollParents.forEach(function(scrollParent) {
-            scrollParent.removeEventListener('scroll', instance.update, passive);
-        });
-        if (resize) window.removeEventListener('resize', instance.update, passive);
-    };
-} // eslint-disable-next-line import/no-unused-modules
-var eventListeners = {
-    name: 'eventListeners',
-    enabled: true,
-    phase: 'write',
-    fn: function fn() {
-    },
-    effect: effect$2,
-    data: {
-    }
-};
-function popperOffsets(_ref) {
-    var state = _ref.state, name = _ref.name;
-    // Offsets are the actual position the popper needs to have to be
-    // properly positioned near its reference element
-    // This is the most basic placement, and will be adjusted by
-    // the modifiers in the next step
-    state.modifiersData[name] = computeOffsets({
-        reference: state.rects.reference,
-        element: state.rects.popper,
-        strategy: 'absolute',
-        placement: state.placement
-    });
-} // eslint-disable-next-line import/no-unused-modules
-var popperOffsets$1 = {
-    name: 'popperOffsets',
-    enabled: true,
-    phase: 'read',
-    fn: popperOffsets,
-    data: {
-    }
-};
-var unsetSides = {
-    top: 'auto',
-    right: 'auto',
-    bottom: 'auto',
-    left: 'auto'
-}; // Round the offsets to the nearest suitable subpixel based on the DPR.
-// Zooming can change the DPR, but it seems to report a value that will
-// cleanly divide the values into the appropriate subpixels.
-function roundOffsetsByDPR(_ref) {
-    var x = _ref.x, y = _ref.y;
-    var win = window;
-    var dpr = win.devicePixelRatio || 1;
-    return {
-        x: round(round(x * dpr) / dpr) || 0,
-        y: round(round(y * dpr) / dpr) || 0
-    };
-}
-function mapToStyles(_ref2) {
-    var _Object$assign2;
-    var popper1 = _ref2.popper, popperRect = _ref2.popperRect, placement = _ref2.placement, offsets = _ref2.offsets, position = _ref2.position, gpuAcceleration = _ref2.gpuAcceleration, adaptive = _ref2.adaptive, roundOffsets = _ref2.roundOffsets;
-    var _ref3 = roundOffsets === true ? roundOffsetsByDPR(offsets) : typeof roundOffsets === 'function' ? roundOffsets(offsets) : offsets, _ref3$x = _ref3.x, x = _ref3$x === void 0 ? 0 : _ref3$x, _ref3$y = _ref3.y, y = _ref3$y === void 0 ? 0 : _ref3$y;
-    var hasX = offsets.hasOwnProperty('x');
-    var hasY = offsets.hasOwnProperty('y');
-    var sideX = left;
-    var sideY = top;
-    var win = window;
-    if (adaptive) {
-        var offsetParent = getOffsetParent(popper1);
-        var heightProp = 'clientHeight';
-        var widthProp = 'clientWidth';
-        if (offsetParent === getWindow(popper1)) {
-            offsetParent = getDocumentElement(popper1);
-            if (getComputedStyle(offsetParent).position !== 'static') {
-                heightProp = 'scrollHeight';
-                widthProp = 'scrollWidth';
-            }
-        } // $FlowFixMe[incompatible-cast]: force type refinement, we compare offsetParent with window above, but Flow doesn't detect it
-        if (placement === top) {
-            sideY = bottom; // $FlowFixMe[prop-missing]
-            y -= offsetParent[heightProp] - popperRect.height;
-            y *= gpuAcceleration ? 1 : -1;
-        }
-        if (placement === left) {
-            sideX = right; // $FlowFixMe[prop-missing]
-            x -= offsetParent[widthProp] - popperRect.width;
-            x *= gpuAcceleration ? 1 : -1;
-        }
-    }
-    var commonStyles = Object.assign({
-        position: position
-    }, adaptive && unsetSides);
-    if (gpuAcceleration) {
-        var _Object$assign;
-        return Object.assign({
-        }, commonStyles, (_Object$assign = {
-        }, _Object$assign[sideY] = hasY ? '0' : '', _Object$assign[sideX] = hasX ? '0' : '', _Object$assign.transform = (win.devicePixelRatio || 1) < 2 ? "translate(" + x + "px, " + y + "px)" : "translate3d(" + x + "px, " + y + "px, 0)", _Object$assign));
-    }
-    return Object.assign({
-    }, commonStyles, (_Object$assign2 = {
-    }, _Object$assign2[sideY] = hasY ? y + "px" : '', _Object$assign2[sideX] = hasX ? x + "px" : '', _Object$assign2.transform = '', _Object$assign2));
-}
-function computeStyles(_ref4) {
-    var state = _ref4.state, options = _ref4.options;
-    var _options$gpuAccelerat = options.gpuAcceleration, gpuAcceleration = _options$gpuAccelerat === void 0 ? true : _options$gpuAccelerat, _options$adaptive = options.adaptive, adaptive = _options$adaptive === void 0 ? true : _options$adaptive, _options$roundOffsets = options.roundOffsets, roundOffsets = _options$roundOffsets === void 0 ? true : _options$roundOffsets;
-    var transitionProperty = getComputedStyle(state.elements.popper).transitionProperty || '';
-    if (adaptive && [
-        'transform',
-        'top',
-        'right',
-        'bottom',
-        'left'
-    ].some(function(property) {
-        return transitionProperty.indexOf(property) >= 0;
-    })) console.warn([
-        'Popper: Detected CSS transitions on at least one of the following',
-        'CSS properties: "transform", "top", "right", "bottom", "left".',
-        '\n\n',
-        'Disable the "computeStyles" modifier\'s `adaptive` option to allow',
-        'for smooth transitions, or remove these properties from the CSS',
-        'transition declaration on the popper element if only transitioning',
-        'opacity or background-color for example.',
-        '\n\n',
-        'We recommend using the popper element as a wrapper around an inner',
-        'element that can have any CSS property transitioned for animations.'
-    ].join(' '));
-    var commonStyles = {
-        placement: getBasePlacement(state.placement),
-        popper: state.elements.popper,
-        popperRect: state.rects.popper,
-        gpuAcceleration: gpuAcceleration
-    };
-    if (state.modifiersData.popperOffsets != null) state.styles.popper = Object.assign({
-    }, state.styles.popper, mapToStyles(Object.assign({
-    }, commonStyles, {
-        offsets: state.modifiersData.popperOffsets,
-        position: state.options.strategy,
-        adaptive: adaptive,
-        roundOffsets: roundOffsets
-    })));
-    if (state.modifiersData.arrow != null) state.styles.arrow = Object.assign({
-    }, state.styles.arrow, mapToStyles(Object.assign({
-    }, commonStyles, {
-        offsets: state.modifiersData.arrow,
-        position: 'absolute',
-        adaptive: false,
-        roundOffsets: roundOffsets
-    })));
-    state.attributes.popper = Object.assign({
-    }, state.attributes.popper, {
-        'data-popper-placement': state.placement
-    });
-} // eslint-disable-next-line import/no-unused-modules
-var computeStyles$1 = {
-    name: 'computeStyles',
-    enabled: true,
-    phase: 'beforeWrite',
-    fn: computeStyles,
-    data: {
-    }
-};
-// and applies them to the HTMLElements such as popper and arrow
-function applyStyles(_ref) {
-    var state = _ref.state;
-    Object.keys(state.elements).forEach(function(name) {
-        var style = state.styles[name] || {
-        };
-        var attributes = state.attributes[name] || {
-        };
-        var element = state.elements[name]; // arrow is optional + virtual elements
-        if (!isHTMLElement(element) || !getNodeName(element)) return;
-         // Flow doesn't support to extend this property, but it's the most
-        // effective way to apply styles to an HTMLElement
-        // $FlowFixMe[cannot-write]
-        Object.assign(element.style, style);
-        Object.keys(attributes).forEach(function(name1) {
-            var value = attributes[name1];
-            if (value === false) element.removeAttribute(name1);
-            else element.setAttribute(name1, value === true ? '' : value);
-        });
-    });
-}
-function effect$1(_ref2) {
-    var state = _ref2.state;
-    var initialStyles = {
-        popper: {
-            position: state.options.strategy,
-            left: '0',
-            top: '0',
-            margin: '0'
-        },
-        arrow: {
-            position: 'absolute'
-        },
-        reference: {
-        }
-    };
-    Object.assign(state.elements.popper.style, initialStyles.popper);
-    state.styles = initialStyles;
-    if (state.elements.arrow) Object.assign(state.elements.arrow.style, initialStyles.arrow);
-    return function() {
-        Object.keys(state.elements).forEach(function(name) {
-            var element = state.elements[name];
-            var attributes = state.attributes[name] || {
-            };
-            var styleProperties = Object.keys(state.styles.hasOwnProperty(name) ? state.styles[name] : initialStyles[name]); // Set all values to an empty string to unset them
-            var style = styleProperties.reduce(function(style1, property) {
-                style1[property] = '';
-                return style1;
-            }, {
-            }); // arrow is optional + virtual elements
-            if (!isHTMLElement(element) || !getNodeName(element)) return;
-            Object.assign(element.style, style);
-            Object.keys(attributes).forEach(function(attribute) {
-                element.removeAttribute(attribute);
-            });
-        });
-    };
-} // eslint-disable-next-line import/no-unused-modules
-var applyStyles$1 = {
-    name: 'applyStyles',
-    enabled: true,
-    phase: 'write',
-    fn: applyStyles,
-    effect: effect$1,
-    requires: [
-        'computeStyles'
-    ]
-};
-function distanceAndSkiddingToXY(placement, rects, offset) {
-    var basePlacement = getBasePlacement(placement);
-    var invertDistance = [
-        left,
-        top
-    ].indexOf(basePlacement) >= 0 ? -1 : 1;
-    var _ref = typeof offset === 'function' ? offset(Object.assign({
-    }, rects, {
-        placement: placement
-    })) : offset, skidding = _ref[0], distance = _ref[1];
-    skidding = skidding || 0;
-    distance = (distance || 0) * invertDistance;
-    return [
-        left,
-        right
-    ].indexOf(basePlacement) >= 0 ? {
-        x: distance,
-        y: skidding
-    } : {
-        x: skidding,
-        y: distance
-    };
-}
-function offset(_ref2) {
-    var state = _ref2.state, options = _ref2.options, name = _ref2.name;
-    var _options$offset = options.offset, offset1 = _options$offset === void 0 ? [
-        0,
-        0
-    ] : _options$offset;
-    var data = placements.reduce(function(acc, placement) {
-        acc[placement] = distanceAndSkiddingToXY(placement, state.rects, offset1);
-        return acc;
-    }, {
-    });
-    var _data$state$placement = data[state.placement], x = _data$state$placement.x, y = _data$state$placement.y;
-    if (state.modifiersData.popperOffsets != null) {
-        state.modifiersData.popperOffsets.x += x;
-        state.modifiersData.popperOffsets.y += y;
-    }
-    state.modifiersData[name] = data;
-} // eslint-disable-next-line import/no-unused-modules
-var offset$1 = {
-    name: 'offset',
-    enabled: true,
-    phase: 'main',
-    requires: [
-        'popperOffsets'
-    ],
-    fn: offset
-};
-var hash$1 = {
-    left: 'right',
-    right: 'left',
-    bottom: 'top',
-    top: 'bottom'
-};
-function getOppositePlacement(placement) {
-    return placement.replace(/left|right|bottom|top/g, function(matched) {
-        return hash$1[matched];
-    });
-}
-var hash = {
-    start: 'end',
-    end: 'start'
-};
-function getOppositeVariationPlacement(placement) {
-    return placement.replace(/start|end/g, function(matched) {
-        return hash[matched];
-    });
-}
-function computeAutoPlacement(state, options) {
-    if (options === void 0) options = {
-    };
-    var _options = options, placement = _options.placement, boundary = _options.boundary, rootBoundary = _options.rootBoundary, padding = _options.padding, flipVariations = _options.flipVariations, _options$allowedAutoP = _options.allowedAutoPlacements, allowedAutoPlacements = _options$allowedAutoP === void 0 ? placements : _options$allowedAutoP;
-    var variation = getVariation(placement);
-    var placements$1 = variation ? flipVariations ? variationPlacements : variationPlacements.filter(function(placement1) {
-        return getVariation(placement1) === variation;
-    }) : basePlacements;
-    var allowedPlacements = placements$1.filter(function(placement1) {
-        return allowedAutoPlacements.indexOf(placement1) >= 0;
-    });
-    if (allowedPlacements.length === 0) {
-        allowedPlacements = placements$1;
-        console.error([
-            'Popper: The `allowedAutoPlacements` option did not allow any',
-            'placements. Ensure the `placement` option matches the variation',
-            'of the allowed placements.',
-            'For example, "auto" cannot be used to allow "bottom-start".',
-            'Use "auto-start" instead.'
-        ].join(' '));
-    } // $FlowFixMe[incompatible-type]: Flow seems to have problems with two array unions...
-    var overflows = allowedPlacements.reduce(function(acc, placement1) {
-        acc[placement1] = detectOverflow(state, {
-            placement: placement1,
-            boundary: boundary,
-            rootBoundary: rootBoundary,
-            padding: padding
-        })[getBasePlacement(placement1)];
-        return acc;
-    }, {
-    });
-    return Object.keys(overflows).sort(function(a, b) {
-        return overflows[a] - overflows[b];
-    });
-}
-function getExpandedFallbackPlacements(placement) {
-    if (getBasePlacement(placement) === auto) return [];
-    var oppositePlacement = getOppositePlacement(placement);
-    return [
-        getOppositeVariationPlacement(placement),
-        oppositePlacement,
-        getOppositeVariationPlacement(oppositePlacement)
-    ];
-}
-function flip(_ref) {
-    var state = _ref.state, options = _ref.options, name = _ref.name;
-    if (state.modifiersData[name]._skip) return;
-    var _options$mainAxis = options.mainAxis, checkMainAxis = _options$mainAxis === void 0 ? true : _options$mainAxis, _options$altAxis = options.altAxis, checkAltAxis = _options$altAxis === void 0 ? true : _options$altAxis, specifiedFallbackPlacements = options.fallbackPlacements, padding = options.padding, boundary = options.boundary, rootBoundary = options.rootBoundary, altBoundary = options.altBoundary, _options$flipVariatio = options.flipVariations, flipVariations = _options$flipVariatio === void 0 ? true : _options$flipVariatio, allowedAutoPlacements = options.allowedAutoPlacements;
-    var preferredPlacement = state.options.placement;
-    var basePlacement = getBasePlacement(preferredPlacement);
-    var isBasePlacement = basePlacement === preferredPlacement;
-    var fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipVariations ? [
-        getOppositePlacement(preferredPlacement)
-    ] : getExpandedFallbackPlacements(preferredPlacement));
-    var placements1 = [
-        preferredPlacement
-    ].concat(fallbackPlacements).reduce(function(acc, placement) {
-        return acc.concat(getBasePlacement(placement) === auto ? computeAutoPlacement(state, {
-            placement: placement,
-            boundary: boundary,
-            rootBoundary: rootBoundary,
-            padding: padding,
-            flipVariations: flipVariations,
-            allowedAutoPlacements: allowedAutoPlacements
-        }) : placement);
-    }, []);
-    var referenceRect = state.rects.reference;
-    var popperRect = state.rects.popper;
-    var checksMap = new Map();
-    var makeFallbackChecks = true;
-    var firstFittingPlacement = placements1[0];
-    for(var i = 0; i < placements1.length; i++){
-        var placement = placements1[i];
-        var _basePlacement = getBasePlacement(placement);
-        var isStartVariation = getVariation(placement) === start;
-        var isVertical = [
-            top,
-            bottom
-        ].indexOf(_basePlacement) >= 0;
-        var len = isVertical ? 'width' : 'height';
-        var overflow = detectOverflow(state, {
-            placement: placement,
-            boundary: boundary,
-            rootBoundary: rootBoundary,
-            altBoundary: altBoundary,
-            padding: padding
-        });
-        var mainVariationSide = isVertical ? isStartVariation ? right : left : isStartVariation ? bottom : top;
-        if (referenceRect[len] > popperRect[len]) mainVariationSide = getOppositePlacement(mainVariationSide);
-        var altVariationSide = getOppositePlacement(mainVariationSide);
-        var checks = [];
-        if (checkMainAxis) checks.push(overflow[_basePlacement] <= 0);
-        if (checkAltAxis) checks.push(overflow[mainVariationSide] <= 0, overflow[altVariationSide] <= 0);
-        if (checks.every(function(check) {
-            return check;
-        })) {
-            firstFittingPlacement = placement;
-            makeFallbackChecks = false;
-            break;
-        }
-        checksMap.set(placement, checks);
-    }
-    if (makeFallbackChecks) {
-        // `2` may be desired in some cases – research later
-        var numberOfChecks = flipVariations ? 3 : 1;
-        var _loop = function _loop1(_i) {
-            var fittingPlacement = placements1.find(function(placement) {
-                var checks = checksMap.get(placement);
-                if (checks) return checks.slice(0, _i).every(function(check) {
-                    return check;
-                });
-            });
-            if (fittingPlacement) {
-                firstFittingPlacement = fittingPlacement;
-                return "break";
-            }
-        };
-        for(var _i = numberOfChecks; _i > 0; _i--){
-            var _ret = _loop(_i);
-            if (_ret === "break") break;
-        }
-    }
-    if (state.placement !== firstFittingPlacement) {
-        state.modifiersData[name]._skip = true;
-        state.placement = firstFittingPlacement;
-        state.reset = true;
-    }
-} // eslint-disable-next-line import/no-unused-modules
-var flip$1 = {
-    name: 'flip',
-    enabled: true,
-    phase: 'main',
-    fn: flip,
-    requiresIfExists: [
-        'offset'
-    ],
-    data: {
-        _skip: false
-    }
-};
-function getAltAxis(axis) {
-    return axis === 'x' ? 'y' : 'x';
-}
-function within(min$1, value, max$1) {
-    return max(min$1, min(value, max$1));
-}
-function preventOverflow(_ref) {
-    var state = _ref.state, options = _ref.options, name = _ref.name;
-    var _options$mainAxis = options.mainAxis, checkMainAxis = _options$mainAxis === void 0 ? true : _options$mainAxis, _options$altAxis = options.altAxis, checkAltAxis = _options$altAxis === void 0 ? false : _options$altAxis, boundary = options.boundary, rootBoundary = options.rootBoundary, altBoundary = options.altBoundary, padding = options.padding, _options$tether = options.tether, tether = _options$tether === void 0 ? true : _options$tether, _options$tetherOffset = options.tetherOffset, tetherOffset = _options$tetherOffset === void 0 ? 0 : _options$tetherOffset;
-    var overflow = detectOverflow(state, {
-        boundary: boundary,
-        rootBoundary: rootBoundary,
-        padding: padding,
-        altBoundary: altBoundary
-    });
-    var basePlacement = getBasePlacement(state.placement);
-    var variation = getVariation(state.placement);
-    var isBasePlacement = !variation;
-    var mainAxis = getMainAxisFromPlacement(basePlacement);
-    var altAxis = getAltAxis(mainAxis);
-    var popperOffsets1 = state.modifiersData.popperOffsets;
-    var referenceRect = state.rects.reference;
-    var popperRect = state.rects.popper;
-    var tetherOffsetValue = typeof tetherOffset === 'function' ? tetherOffset(Object.assign({
-    }, state.rects, {
-        placement: state.placement
-    })) : tetherOffset;
-    var data = {
-        x: 0,
-        y: 0
-    };
-    if (!popperOffsets1) return;
-    if (checkMainAxis || checkAltAxis) {
-        var mainSide = mainAxis === 'y' ? top : left;
-        var altSide = mainAxis === 'y' ? bottom : right;
-        var len = mainAxis === 'y' ? 'height' : 'width';
-        var offset1 = popperOffsets1[mainAxis];
-        var min$1 = popperOffsets1[mainAxis] + overflow[mainSide];
-        var max$1 = popperOffsets1[mainAxis] - overflow[altSide];
-        var additive = tether ? -popperRect[len] / 2 : 0;
-        var minLen = variation === start ? referenceRect[len] : popperRect[len];
-        var maxLen = variation === start ? -popperRect[len] : -referenceRect[len]; // We need to include the arrow in the calculation so the arrow doesn't go
-        // outside the reference bounds
-        var arrowElement = state.elements.arrow;
-        var arrowRect = tether && arrowElement ? getLayoutRect(arrowElement) : {
-            width: 0,
-            height: 0
-        };
-        var arrowPaddingObject = state.modifiersData['arrow#persistent'] ? state.modifiersData['arrow#persistent'].padding : getFreshSideObject();
-        var arrowPaddingMin = arrowPaddingObject[mainSide];
-        var arrowPaddingMax = arrowPaddingObject[altSide]; // If the reference length is smaller than the arrow length, we don't want
-        // to include its full size in the calculation. If the reference is small
-        // and near the edge of a boundary, the popper can overflow even if the
-        // reference is not overflowing as well (e.g. virtual elements with no
-        // width or height)
-        var arrowLen = within(0, referenceRect[len], arrowRect[len]);
-        var minOffset = isBasePlacement ? referenceRect[len] / 2 - additive - arrowLen - arrowPaddingMin - tetherOffsetValue : minLen - arrowLen - arrowPaddingMin - tetherOffsetValue;
-        var maxOffset = isBasePlacement ? -referenceRect[len] / 2 + additive + arrowLen + arrowPaddingMax + tetherOffsetValue : maxLen + arrowLen + arrowPaddingMax + tetherOffsetValue;
-        var arrowOffsetParent = state.elements.arrow && getOffsetParent(state.elements.arrow);
-        var clientOffset = arrowOffsetParent ? mainAxis === 'y' ? arrowOffsetParent.clientTop || 0 : arrowOffsetParent.clientLeft || 0 : 0;
-        var offsetModifierValue = state.modifiersData.offset ? state.modifiersData.offset[state.placement][mainAxis] : 0;
-        var tetherMin = popperOffsets1[mainAxis] + minOffset - offsetModifierValue - clientOffset;
-        var tetherMax = popperOffsets1[mainAxis] + maxOffset - offsetModifierValue;
-        if (checkMainAxis) {
-            var preventedOffset = within(tether ? min(min$1, tetherMin) : min$1, offset1, tether ? max(max$1, tetherMax) : max$1);
-            popperOffsets1[mainAxis] = preventedOffset;
-            data[mainAxis] = preventedOffset - offset1;
-        }
-        if (checkAltAxis) {
-            var _mainSide = mainAxis === 'x' ? top : left;
-            var _altSide = mainAxis === 'x' ? bottom : right;
-            var _offset = popperOffsets1[altAxis];
-            var _min = _offset + overflow[_mainSide];
-            var _max = _offset - overflow[_altSide];
-            var _preventedOffset = within(tether ? min(_min, tetherMin) : _min, _offset, tether ? max(_max, tetherMax) : _max);
-            popperOffsets1[altAxis] = _preventedOffset;
-            data[altAxis] = _preventedOffset - _offset;
-        }
-    }
-    state.modifiersData[name] = data;
-} // eslint-disable-next-line import/no-unused-modules
-var preventOverflow$1 = {
-    name: 'preventOverflow',
-    enabled: true,
-    phase: 'main',
-    fn: preventOverflow,
-    requiresIfExists: [
-        'offset'
-    ]
-};
-var toPaddingObject = function toPaddingObject1(padding, state) {
-    padding = typeof padding === 'function' ? padding(Object.assign({
-    }, state.rects, {
-        placement: state.placement
-    })) : padding;
-    return mergePaddingObject(typeof padding !== 'number' ? padding : expandToHashMap(padding, basePlacements));
-};
-function arrow(_ref) {
-    var _state$modifiersData$;
-    var state = _ref.state, name = _ref.name, options = _ref.options;
-    var arrowElement = state.elements.arrow;
-    var popperOffsets1 = state.modifiersData.popperOffsets;
-    var basePlacement = getBasePlacement(state.placement);
-    var axis = getMainAxisFromPlacement(basePlacement);
-    var isVertical = [
-        left,
-        right
-    ].indexOf(basePlacement) >= 0;
-    var len = isVertical ? 'height' : 'width';
-    if (!arrowElement || !popperOffsets1) return;
-    var paddingObject = toPaddingObject(options.padding, state);
-    var arrowRect = getLayoutRect(arrowElement);
-    var minProp = axis === 'y' ? top : left;
-    var maxProp = axis === 'y' ? bottom : right;
-    var endDiff = state.rects.reference[len] + state.rects.reference[axis] - popperOffsets1[axis] - state.rects.popper[len];
-    var startDiff = popperOffsets1[axis] - state.rects.reference[axis];
-    var arrowOffsetParent = getOffsetParent(arrowElement);
-    var clientSize = arrowOffsetParent ? axis === 'y' ? arrowOffsetParent.clientHeight || 0 : arrowOffsetParent.clientWidth || 0 : 0;
-    var centerToReference = endDiff / 2 - startDiff / 2; // Make sure the arrow doesn't overflow the popper if the center point is
-    // outside of the popper bounds
-    var min1 = paddingObject[minProp];
-    var max1 = clientSize - arrowRect[len] - paddingObject[maxProp];
-    var center = clientSize / 2 - arrowRect[len] / 2 + centerToReference;
-    var offset2 = within(min1, center, max1); // Prevents breaking syntax highlighting...
-    var axisProp = axis;
-    state.modifiersData[name] = (_state$modifiersData$ = {
-    }, _state$modifiersData$[axisProp] = offset2, _state$modifiersData$.centerOffset = offset2 - center, _state$modifiersData$);
-}
-function effect(_ref2) {
-    var state = _ref2.state, options = _ref2.options;
-    var _options$element = options.element, arrowElement = _options$element === void 0 ? '[data-popper-arrow]' : _options$element;
-    if (arrowElement == null) return;
-     // CSS selector
-    if (typeof arrowElement === 'string') {
-        arrowElement = state.elements.popper.querySelector(arrowElement);
-        if (!arrowElement) return;
-    }
-    if (!isHTMLElement(arrowElement)) console.error([
-        'Popper: "arrow" element must be an HTMLElement (not an SVGElement).',
-        'To use an SVG arrow, wrap it in an HTMLElement that will be used as',
-        'the arrow.'
-    ].join(' '));
-    if (!contains(state.elements.popper, arrowElement)) {
-        console.error([
-            'Popper: "arrow" modifier\'s `element` must be a child of the popper',
-            'element.'
-        ].join(' '));
-        return;
-    }
-    state.elements.arrow = arrowElement;
-} // eslint-disable-next-line import/no-unused-modules
-var arrow$1 = {
-    name: 'arrow',
-    enabled: true,
-    phase: 'main',
-    fn: arrow,
-    effect: effect,
-    requires: [
-        'popperOffsets'
-    ],
-    requiresIfExists: [
-        'preventOverflow'
-    ]
-};
-function getSideOffsets(overflow, rect, preventedOffsets) {
-    if (preventedOffsets === void 0) preventedOffsets = {
-        x: 0,
-        y: 0
-    };
-    return {
-        top: overflow.top - rect.height - preventedOffsets.y,
-        right: overflow.right - rect.width + preventedOffsets.x,
-        bottom: overflow.bottom - rect.height + preventedOffsets.y,
-        left: overflow.left - rect.width - preventedOffsets.x
-    };
-}
-function isAnySideFullyClipped(overflow) {
-    return [
-        top,
-        right,
-        bottom,
-        left
-    ].some(function(side) {
-        return overflow[side] >= 0;
-    });
-}
-function hide(_ref) {
-    var state = _ref.state, name = _ref.name;
-    var referenceRect = state.rects.reference;
-    var popperRect = state.rects.popper;
-    var preventedOffsets = state.modifiersData.preventOverflow;
-    var referenceOverflow = detectOverflow(state, {
-        elementContext: 'reference'
-    });
-    var popperAltOverflow = detectOverflow(state, {
-        altBoundary: true
-    });
-    var referenceClippingOffsets = getSideOffsets(referenceOverflow, referenceRect);
-    var popperEscapeOffsets = getSideOffsets(popperAltOverflow, popperRect, preventedOffsets);
-    var isReferenceHidden = isAnySideFullyClipped(referenceClippingOffsets);
-    var hasPopperEscaped = isAnySideFullyClipped(popperEscapeOffsets);
-    state.modifiersData[name] = {
-        referenceClippingOffsets: referenceClippingOffsets,
-        popperEscapeOffsets: popperEscapeOffsets,
-        isReferenceHidden: isReferenceHidden,
-        hasPopperEscaped: hasPopperEscaped
-    };
-    state.attributes.popper = Object.assign({
-    }, state.attributes.popper, {
-        'data-popper-reference-hidden': isReferenceHidden,
-        'data-popper-escaped': hasPopperEscaped
-    });
-} // eslint-disable-next-line import/no-unused-modules
-var hide$1 = {
-    name: 'hide',
-    enabled: true,
-    phase: 'main',
-    requiresIfExists: [
-        'preventOverflow'
-    ],
-    fn: hide
-};
-var defaultModifiers$1 = [
-    eventListeners,
-    popperOffsets$1,
-    computeStyles$1,
-    applyStyles$1
-];
-var createPopper$1 = /*#__PURE__*/ popperGenerator({
-    defaultModifiers: defaultModifiers$1
-}); // eslint-disable-next-line import/no-unused-modules
-var defaultModifiers = [
-    eventListeners,
-    popperOffsets$1,
-    computeStyles$1,
-    applyStyles$1,
-    offset$1,
-    flip$1,
-    preventOverflow$1,
-    arrow$1,
-    hide$1
-];
-var createPopper = /*#__PURE__*/ popperGenerator({
-    defaultModifiers: defaultModifiers
-}); // eslint-disable-next-line import/no-unused-modules
-exports.applyStyles = applyStyles$1;
-exports.arrow = arrow$1;
-exports.computeStyles = computeStyles$1;
-exports.createPopper = createPopper;
-exports.createPopperLite = createPopper$1;
-exports.defaultModifiers = defaultModifiers;
-exports.detectOverflow = detectOverflow;
-exports.eventListeners = eventListeners;
-exports.flip = flip$1;
-exports.hide = hide$1;
-exports.offset = offset$1;
-exports.popperGenerator = popperGenerator;
-exports.popperOffsets = popperOffsets$1;
-exports.preventOverflow = preventOverflow$1;
-
-},{}],"39pvM":[function(require,module,exports) {
+},{"react":"3b2NM","axios":"7rA65","prop-types":"4dfy5","react-bootstrap":"4n7hB","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","./profile-view.scss":"77f84"}],"77f84":[function() {},{}],"39pvM":[function(require,module,exports) {
 var helpers = require("../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -45491,6 +40341,2108 @@ exports.default = NavBar;
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"3b2NM","react-router-dom":"1PMSK","react-bootstrap":"4n7hB","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","./navbar-view.scss":"2VvSP"}],"2VvSP":[function() {},{}],"2Fm7j":[function() {},{}]},["1j6wU","4M3T8","55JMZ"], "55JMZ", "parcelRequire279c")
+},{"react":"3b2NM","react-router-dom":"1PMSK","react-bootstrap":"4n7hB","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","./navbar-view.scss":"2VvSP"}],"2VvSP":[function() {},{}],"2Fm7j":[function() {},{}],"7GDa4":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+var _Provider = _interopRequireDefault(require("./components/Provider"));
+exports.Provider = _Provider["default"];
+var _connectAdvanced = _interopRequireDefault(require("./components/connectAdvanced"));
+exports.connectAdvanced = _connectAdvanced["default"];
+var _Context = require("./components/Context");
+exports.ReactReduxContext = _Context.ReactReduxContext;
+var _connect = _interopRequireDefault(require("./connect/connect"));
+exports.connect = _connect["default"];
+var _useDispatch = require("./hooks/useDispatch");
+exports.useDispatch = _useDispatch.useDispatch;
+exports.createDispatchHook = _useDispatch.createDispatchHook;
+var _useSelector = require("./hooks/useSelector");
+exports.useSelector = _useSelector.useSelector;
+exports.createSelectorHook = _useSelector.createSelectorHook;
+var _useStore = require("./hooks/useStore");
+exports.useStore = _useStore.useStore;
+exports.createStoreHook = _useStore.createStoreHook;
+var _batch = require("./utils/batch");
+var _reactBatchedUpdates = require("./utils/reactBatchedUpdates");
+exports.batch = _reactBatchedUpdates.unstable_batchedUpdates;
+var _shallowEqual = _interopRequireDefault(require("./utils/shallowEqual"));
+exports.shallowEqual = _shallowEqual["default"];
+_batch.setBatch(_reactBatchedUpdates.unstable_batchedUpdates);
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","./components/Provider":"3bhyH","./components/connectAdvanced":"SPrTN","./components/Context":"6ScOK","./connect/connect":"1HacB","./hooks/useDispatch":"4H7HK","./hooks/useSelector":"6dv0a","./hooks/useStore":"5zPKn","./utils/batch":"XOS5r","./utils/reactBatchedUpdates":"12gEH","./utils/shallowEqual":"1BbL9"}],"3bhyH":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
+exports.__esModule = true;
+exports["default"] = void 0;
+var _react = _interopRequireWildcard(require("react"));
+var _propTypes = _interopRequireDefault(require("prop-types"));
+var _Context = require("./Context");
+var _Subscription = _interopRequireDefault(require("../utils/Subscription"));
+var _useIsomorphicLayoutEffect = require("../utils/useIsomorphicLayoutEffect");
+function Provider(_ref) {
+    var store = _ref.store, context = _ref.context, children = _ref.children;
+    var contextValue = _react.useMemo(function() {
+        var subscription = new _Subscription["default"](store);
+        subscription.onStateChange = subscription.notifyNestedSubs;
+        return {
+            store: store,
+            subscription: subscription
+        };
+    }, [
+        store
+    ]);
+    var previousState = _react.useMemo(function() {
+        return store.getState();
+    }, [
+        store
+    ]);
+    _useIsomorphicLayoutEffect.useIsomorphicLayoutEffect(function() {
+        var subscription = contextValue.subscription;
+        subscription.trySubscribe();
+        if (previousState !== store.getState()) subscription.notifyNestedSubs();
+        return function() {
+            subscription.tryUnsubscribe();
+            subscription.onStateChange = null;
+        };
+    }, [
+        contextValue,
+        previousState
+    ]);
+    var Context = context || _Context.ReactReduxContext;
+    return(/*#__PURE__*/ _react["default"].createElement(Context.Provider, {
+        value: contextValue
+    }, children));
+}
+Provider.propTypes = {
+    store: _propTypes["default"].shape({
+        subscribe: _propTypes["default"].func.isRequired,
+        dispatch: _propTypes["default"].func.isRequired,
+        getState: _propTypes["default"].func.isRequired
+    }),
+    context: _propTypes["default"].object,
+    children: _propTypes["default"].any
+};
+var _default = Provider;
+exports["default"] = _default;
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/interopRequireWildcard":"28En5","react":"3b2NM","prop-types":"4dfy5","./Context":"6ScOK","../utils/Subscription":"Y1J0m","../utils/useIsomorphicLayoutEffect":"64Bcp"}],"6ScOK":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports["default"] = exports.ReactReduxContext = void 0;
+var _react = _interopRequireDefault(require("react"));
+var ReactReduxContext = /*#__PURE__*/ _react["default"].createContext(null);
+exports.ReactReduxContext = ReactReduxContext;
+ReactReduxContext.displayName = 'ReactRedux';
+var _default = ReactReduxContext;
+exports["default"] = _default;
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","react":"3b2NM"}],"Y1J0m":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports["default"] = void 0;
+var _batch = require("./batch");
+// encapsulates the subscription logic for connecting a component to the redux store, as
+// well as nesting subscriptions of descendant components, so that we can ensure the
+// ancestor components re-render before descendants
+var nullListeners = {
+    notify: function notify() {
+    }
+};
+function createListenerCollection() {
+    var batch = _batch.getBatch();
+    var first = null;
+    var last = null;
+    return {
+        clear: function clear() {
+            first = null;
+            last = null;
+        },
+        notify: function notify() {
+            batch(function() {
+                var listener = first;
+                while(listener){
+                    listener.callback();
+                    listener = listener.next;
+                }
+            });
+        },
+        get: function get() {
+            var listeners = [];
+            var listener = first;
+            while(listener){
+                listeners.push(listener);
+                listener = listener.next;
+            }
+            return listeners;
+        },
+        subscribe: function subscribe(callback) {
+            var isSubscribed = true;
+            var listener = last = {
+                callback: callback,
+                next: null,
+                prev: last
+            };
+            if (listener.prev) listener.prev.next = listener;
+            else first = listener;
+            return function unsubscribe() {
+                if (!isSubscribed || first === null) return;
+                isSubscribed = false;
+                if (listener.next) listener.next.prev = listener.prev;
+                else last = listener.prev;
+                if (listener.prev) listener.prev.next = listener.next;
+                else first = listener.next;
+            };
+        }
+    };
+}
+var Subscription = /*#__PURE__*/ function() {
+    function Subscription1(store, parentSub) {
+        this.store = store;
+        this.parentSub = parentSub;
+        this.unsubscribe = null;
+        this.listeners = nullListeners;
+        this.handleChangeWrapper = this.handleChangeWrapper.bind(this);
+    }
+    var _proto = Subscription1.prototype;
+    _proto.addNestedSub = function addNestedSub(listener) {
+        this.trySubscribe();
+        return this.listeners.subscribe(listener);
+    };
+    _proto.notifyNestedSubs = function notifyNestedSubs() {
+        this.listeners.notify();
+    };
+    _proto.handleChangeWrapper = function handleChangeWrapper() {
+        if (this.onStateChange) this.onStateChange();
+    };
+    _proto.isSubscribed = function isSubscribed() {
+        return Boolean(this.unsubscribe);
+    };
+    _proto.trySubscribe = function trySubscribe() {
+        if (!this.unsubscribe) {
+            this.unsubscribe = this.parentSub ? this.parentSub.addNestedSub(this.handleChangeWrapper) : this.store.subscribe(this.handleChangeWrapper);
+            this.listeners = createListenerCollection();
+        }
+    };
+    _proto.tryUnsubscribe = function tryUnsubscribe() {
+        if (this.unsubscribe) {
+            this.unsubscribe();
+            this.unsubscribe = null;
+            this.listeners.clear();
+            this.listeners = nullListeners;
+        }
+    };
+    return Subscription1;
+}();
+exports["default"] = Subscription;
+
+},{"./batch":"XOS5r"}],"XOS5r":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports.getBatch = exports.setBatch = void 0;
+// Default to a dummy "batch" implementation that just runs the callback
+function defaultNoopBatch(callback) {
+    callback();
+}
+var batch = defaultNoopBatch; // Allow injecting another batching function later
+var setBatch = function setBatch1(newBatch) {
+    return batch = newBatch;
+}; // Supply a getter just to skip dealing with ESM bindings
+exports.setBatch = setBatch;
+var getBatch = function getBatch1() {
+    return batch;
+};
+exports.getBatch = getBatch;
+
+},{}],"64Bcp":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports.useIsomorphicLayoutEffect = void 0;
+var _react = require("react");
+// React currently throws a warning when using useLayoutEffect on the server.
+// To get around it, we can conditionally useEffect on the server (no-op) and
+// useLayoutEffect in the browser. We need useLayoutEffect to ensure the store
+// subscription callback always has the selector from the latest render commit
+// available, otherwise a store update may happen between render and the effect,
+// which may cause missed updates; we also must ensure the store subscription
+// is created synchronously, otherwise a store update may occur before the
+// subscription is created and an inconsistent state may be observed
+var useIsomorphicLayoutEffect = typeof window !== 'undefined' && typeof window.document !== 'undefined' && typeof window.document.createElement !== 'undefined' ? _react.useLayoutEffect : _react.useEffect;
+exports.useIsomorphicLayoutEffect = useIsomorphicLayoutEffect;
+
+},{"react":"3b2NM"}],"SPrTN":[function(require,module,exports) {
+"use strict";
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports["default"] = connectAdvanced;
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
+var _hoistNonReactStatics = _interopRequireDefault(require("hoist-non-react-statics"));
+var _react = _interopRequireWildcard(require("react"));
+var _reactIs = require("react-is");
+var _Subscription = _interopRequireDefault(require("../utils/Subscription"));
+var _useIsomorphicLayoutEffect = require("../utils/useIsomorphicLayoutEffect");
+var _Context = require("./Context");
+// Define some constant arrays just to avoid re-creating these
+var EMPTY_ARRAY = [];
+var NO_SUBSCRIPTION_ARRAY = [
+    null,
+    null
+];
+var stringifyComponent = function stringifyComponent1(Comp) {
+    try {
+        return JSON.stringify(Comp);
+    } catch (err) {
+        return String(Comp);
+    }
+};
+function storeStateUpdatesReducer(state, action) {
+    var updateCount = state[1];
+    return [
+        action.payload,
+        updateCount + 1
+    ];
+}
+function useIsomorphicLayoutEffectWithArgs(effectFunc, effectArgs, dependencies) {
+    _useIsomorphicLayoutEffect.useIsomorphicLayoutEffect(function() {
+        return effectFunc.apply(void 0, effectArgs);
+    }, dependencies);
+}
+function captureWrapperProps(lastWrapperProps, lastChildProps, renderIsScheduled, wrapperProps, actualChildProps, childPropsFromStoreUpdate, notifyNestedSubs) {
+    // We want to capture the wrapper props and child props we used for later comparisons
+    lastWrapperProps.current = wrapperProps;
+    lastChildProps.current = actualChildProps;
+    renderIsScheduled.current = false; // If the render was from a store update, clear out that reference and cascade the subscriber update
+    if (childPropsFromStoreUpdate.current) {
+        childPropsFromStoreUpdate.current = null;
+        notifyNestedSubs();
+    }
+}
+function subscribeUpdates(shouldHandleStateChanges, store, subscription, childPropsSelector, lastWrapperProps, lastChildProps, renderIsScheduled, childPropsFromStoreUpdate, notifyNestedSubs, forceComponentUpdateDispatch) {
+    // If we're not subscribed to the store, nothing to do here
+    if (!shouldHandleStateChanges) return; // Capture values for checking if and when this component unmounts
+    var didUnsubscribe = false;
+    var lastThrownError = null; // We'll run this callback every time a store subscription update propagates to this component
+    var checkForUpdates = function checkForUpdates1() {
+        if (didUnsubscribe) // Don't run stale listeners.
+        // Redux doesn't guarantee unsubscriptions happen until next dispatch.
+        return;
+        var latestStoreState = store.getState();
+        var newChildProps, error;
+        try {
+            // Actually run the selector with the most recent store state and wrapper props
+            // to determine what the child props should be
+            newChildProps = childPropsSelector(latestStoreState, lastWrapperProps.current);
+        } catch (e) {
+            error = e;
+            lastThrownError = e;
+        }
+        if (!error) lastThrownError = null;
+         // If the child props haven't changed, nothing to do here - cascade the subscription update
+        if (newChildProps === lastChildProps.current) {
+            if (!renderIsScheduled.current) notifyNestedSubs();
+        } else {
+            // Save references to the new child props.  Note that we track the "child props from store update"
+            // as a ref instead of a useState/useReducer because we need a way to determine if that value has
+            // been processed.  If this went into useState/useReducer, we couldn't clear out the value without
+            // forcing another re-render, which we don't want.
+            lastChildProps.current = newChildProps;
+            childPropsFromStoreUpdate.current = newChildProps;
+            renderIsScheduled.current = true; // If the child props _did_ change (or we caught an error), this wrapper component needs to re-render
+            forceComponentUpdateDispatch({
+                type: 'STORE_UPDATED',
+                payload: {
+                    error: error
+                }
+            });
+        }
+    }; // Actually subscribe to the nearest connected ancestor (or store)
+    subscription.onStateChange = checkForUpdates;
+    subscription.trySubscribe(); // Pull data from the store after first render in case the store has
+    // changed since we began.
+    checkForUpdates();
+    var unsubscribeWrapper = function unsubscribeWrapper1() {
+        didUnsubscribe = true;
+        subscription.tryUnsubscribe();
+        subscription.onStateChange = null;
+        if (lastThrownError) // It's possible that we caught an error due to a bad mapState function, but the
+        // parent re-rendered without this component and we're about to unmount.
+        // This shouldn't happen as long as we do top-down subscriptions correctly, but
+        // if we ever do those wrong, this throw will surface the error in our tests.
+        // In that case, throw the error from here so it doesn't get lost.
+        throw lastThrownError;
+    };
+    return unsubscribeWrapper;
+}
+var initStateUpdates = function initStateUpdates1() {
+    return [
+        null,
+        0
+    ];
+};
+function connectAdvanced(/*
+  selectorFactory is a func that is responsible for returning the selector function used to
+  compute new props from state, props, and dispatch. For example:
+      export default connectAdvanced((dispatch, options) => (state, props) => ({
+      thing: state.things[props.thingId],
+      saveThing: fields => dispatch(actionCreators.saveThing(props.thingId, fields)),
+    }))(YourComponent)
+    Access to dispatch is provided to the factory so selectorFactories can bind actionCreators
+  outside of their selector as an optimization. Options passed to connectAdvanced are passed to
+  the selectorFactory, along with displayName and WrappedComponent, as the second argument.
+    Note that selectorFactory is responsible for all caching/memoization of inbound and outbound
+  props. Do not use connectAdvanced directly without memoizing results between calls to your
+  selector, otherwise the Connect component will re-render on every state or props change.
+*/ selectorFactory, _ref) {
+    if (_ref === void 0) _ref = {
+    };
+    var _ref2 = _ref, _ref2$getDisplayName = _ref2.getDisplayName, getDisplayName = _ref2$getDisplayName === void 0 ? function(name) {
+        return "ConnectAdvanced(" + name + ")";
+    } : _ref2$getDisplayName, _ref2$methodName = _ref2.methodName, methodName = _ref2$methodName === void 0 ? 'connectAdvanced' : _ref2$methodName, _ref2$renderCountProp = _ref2.renderCountProp, renderCountProp = _ref2$renderCountProp === void 0 ? undefined : _ref2$renderCountProp, _ref2$shouldHandleSta = _ref2.shouldHandleStateChanges, shouldHandleStateChanges = _ref2$shouldHandleSta === void 0 ? true : _ref2$shouldHandleSta, _ref2$storeKey = _ref2.storeKey, storeKey = _ref2$storeKey === void 0 ? 'store' : _ref2$storeKey, _ref2$withRef = _ref2.withRef, withRef = _ref2$withRef === void 0 ? false : _ref2$withRef, _ref2$forwardRef = _ref2.forwardRef, forwardRef = _ref2$forwardRef === void 0 ? false : _ref2$forwardRef, _ref2$context = _ref2.context, context = _ref2$context === void 0 ? _Context.ReactReduxContext : _ref2$context, connectOptions = _objectWithoutPropertiesLoose2["default"](_ref2, [
+        "getDisplayName",
+        "methodName",
+        "renderCountProp",
+        "shouldHandleStateChanges",
+        "storeKey",
+        "withRef",
+        "forwardRef",
+        "context"
+    ]);
+    if (renderCountProp !== undefined) throw new Error("renderCountProp is removed. render counting is built into the latest React Dev Tools profiling extension");
+    if (withRef) throw new Error('withRef is removed. To access the wrapped instance, use a ref on the connected component');
+    var customStoreWarningMessage = "To use a custom Redux store for specific components, create a custom React context with React.createContext(), and pass the context object to React Redux's Provider and specific components like: <Provider context={MyContext}><ConnectedComponent context={MyContext} /></Provider>. You may also pass a {context : MyContext} option to connect";
+    if (storeKey !== 'store') throw new Error('storeKey has been removed and does not do anything. ' + customStoreWarningMessage);
+    var Context = context;
+    return function wrapWithConnect(WrappedComponent) {
+        if (!_reactIs.isValidElementType(WrappedComponent)) throw new Error("You must pass a component to the function returned by " + (methodName + ". Instead received " + stringifyComponent(WrappedComponent)));
+        var wrappedComponentName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
+        var displayName = getDisplayName(wrappedComponentName);
+        var selectorFactoryOptions = _extends2["default"]({
+        }, connectOptions, {
+            getDisplayName: getDisplayName,
+            methodName: methodName,
+            renderCountProp: renderCountProp,
+            shouldHandleStateChanges: shouldHandleStateChanges,
+            storeKey: storeKey,
+            displayName: displayName,
+            wrappedComponentName: wrappedComponentName,
+            WrappedComponent: WrappedComponent
+        });
+        var pure = connectOptions.pure;
+        function createChildSelector(store) {
+            return selectorFactory(store.dispatch, selectorFactoryOptions);
+        } // If we aren't running in "pure" mode, we don't want to memoize values.
+        // To avoid conditionally calling hooks, we fall back to a tiny wrapper
+        // that just executes the given callback immediately.
+        var usePureOnlyMemo = pure ? _react.useMemo : function(callback) {
+            return callback();
+        };
+        function ConnectFunction(props) {
+            var _useMemo = _react.useMemo(function() {
+                // Distinguish between actual "data" props that were passed to the wrapper component,
+                // and values needed to control behavior (forwarded refs, alternate context instances).
+                // To maintain the wrapperProps object reference, memoize this destructuring.
+                var reactReduxForwardedRef = props.reactReduxForwardedRef, wrapperProps = _objectWithoutPropertiesLoose2["default"](props, [
+                    "reactReduxForwardedRef"
+                ]);
+                return [
+                    props.context,
+                    reactReduxForwardedRef,
+                    wrapperProps
+                ];
+            }, [
+                props
+            ]), propsContext = _useMemo[0], reactReduxForwardedRef = _useMemo[1], wrapperProps = _useMemo[2];
+            var ContextToUse = _react.useMemo(function() {
+                // Users may optionally pass in a custom context instance to use instead of our ReactReduxContext.
+                // Memoize the check that determines which context instance we should use.
+                return propsContext && propsContext.Consumer && _reactIs.isContextConsumer(/*#__PURE__*/ _react["default"].createElement(propsContext.Consumer, null)) ? propsContext : Context;
+            }, [
+                propsContext,
+                Context
+            ]); // Retrieve the store and ancestor subscription via context, if available
+            var contextValue = _react.useContext(ContextToUse); // The store _must_ exist as either a prop or in context.
+            // We'll check to see if it _looks_ like a Redux store first.
+            // This allows us to pass through a `store` prop that is just a plain value.
+            var didStoreComeFromProps = Boolean(props.store) && Boolean(props.store.getState) && Boolean(props.store.dispatch);
+            var didStoreComeFromContext = Boolean(contextValue) && Boolean(contextValue.store);
+            if (!didStoreComeFromProps && !didStoreComeFromContext) throw new Error("Could not find \"store\" in the context of " + ("\"" + displayName + "\". Either wrap the root component in a <Provider>, ") + "or pass a custom React context provider to <Provider> and the corresponding " + ("React context consumer to " + displayName + " in connect options."));
+             // Based on the previous check, one of these must be true
+            var store = didStoreComeFromProps ? props.store : contextValue.store;
+            var childPropsSelector = _react.useMemo(function() {
+                // The child props selector needs the store reference as an input.
+                // Re-create this selector whenever the store changes.
+                return createChildSelector(store);
+            }, [
+                store
+            ]);
+            var _useMemo2 = _react.useMemo(function() {
+                if (!shouldHandleStateChanges) return NO_SUBSCRIPTION_ARRAY; // This Subscription's source should match where store came from: props vs. context. A component
+                // connected to the store via props shouldn't use subscription from context, or vice versa.
+                var subscription = new _Subscription["default"](store, didStoreComeFromProps ? null : contextValue.subscription); // `notifyNestedSubs` is duplicated to handle the case where the component is unmounted in
+                // the middle of the notification loop, where `subscription` will then be null. This can
+                // probably be avoided if Subscription's listeners logic is changed to not call listeners
+                // that have been unsubscribed in the  middle of the notification loop.
+                var notifyNestedSubs = subscription.notifyNestedSubs.bind(subscription);
+                return [
+                    subscription,
+                    notifyNestedSubs
+                ];
+            }, [
+                store,
+                didStoreComeFromProps,
+                contextValue
+            ]), subscription = _useMemo2[0], notifyNestedSubs = _useMemo2[1]; // Determine what {store, subscription} value should be put into nested context, if necessary,
+            // and memoize that value to avoid unnecessary context updates.
+            var overriddenContextValue = _react.useMemo(function() {
+                if (didStoreComeFromProps) // This component is directly subscribed to a store from props.
+                // We don't want descendants reading from this store - pass down whatever
+                // the existing context value is from the nearest connected ancestor.
+                return contextValue;
+                 // Otherwise, put this component's subscription instance into context, so that
+                // connected descendants won't update until after this component is done
+                return _extends2["default"]({
+                }, contextValue, {
+                    subscription: subscription
+                });
+            }, [
+                didStoreComeFromProps,
+                contextValue,
+                subscription
+            ]); // We need to force this wrapper component to re-render whenever a Redux store update
+            // causes a change to the calculated child component props (or we caught an error in mapState)
+            var _useReducer = _react.useReducer(storeStateUpdatesReducer, EMPTY_ARRAY, initStateUpdates), _useReducer$ = _useReducer[0], previousStateUpdateResult = _useReducer$[0], forceComponentUpdateDispatch = _useReducer[1]; // Propagate any mapState/mapDispatch errors upwards
+            if (previousStateUpdateResult && previousStateUpdateResult.error) throw previousStateUpdateResult.error;
+             // Set up refs to coordinate values between the subscription effect and the render logic
+            var lastChildProps = _react.useRef();
+            var lastWrapperProps = _react.useRef(wrapperProps);
+            var childPropsFromStoreUpdate = _react.useRef();
+            var renderIsScheduled = _react.useRef(false);
+            var actualChildProps = usePureOnlyMemo(function() {
+                // Tricky logic here:
+                // - This render may have been triggered by a Redux store update that produced new child props
+                // - However, we may have gotten new wrapper props after that
+                // If we have new child props, and the same wrapper props, we know we should use the new child props as-is.
+                // But, if we have new wrapper props, those might change the child props, so we have to recalculate things.
+                // So, we'll use the child props from store update only if the wrapper props are the same as last time.
+                if (childPropsFromStoreUpdate.current && wrapperProps === lastWrapperProps.current) return childPropsFromStoreUpdate.current;
+                 // TODO We're reading the store directly in render() here. Bad idea?
+                // This will likely cause Bad Things (TM) to happen in Concurrent Mode.
+                // Note that we do this because on renders _not_ caused by store updates, we need the latest store state
+                // to determine what the child props should be.
+                return childPropsSelector(store.getState(), wrapperProps);
+            }, [
+                store,
+                previousStateUpdateResult,
+                wrapperProps
+            ]); // We need this to execute synchronously every time we re-render. However, React warns
+            // about useLayoutEffect in SSR, so we try to detect environment and fall back to
+            // just useEffect instead to avoid the warning, since neither will run anyway.
+            useIsomorphicLayoutEffectWithArgs(captureWrapperProps, [
+                lastWrapperProps,
+                lastChildProps,
+                renderIsScheduled,
+                wrapperProps,
+                actualChildProps,
+                childPropsFromStoreUpdate,
+                notifyNestedSubs
+            ]); // Our re-subscribe logic only runs when the store/subscription setup changes
+            useIsomorphicLayoutEffectWithArgs(subscribeUpdates, [
+                shouldHandleStateChanges,
+                store,
+                subscription,
+                childPropsSelector,
+                lastWrapperProps,
+                lastChildProps,
+                renderIsScheduled,
+                childPropsFromStoreUpdate,
+                notifyNestedSubs,
+                forceComponentUpdateDispatch
+            ], [
+                store,
+                subscription,
+                childPropsSelector
+            ]); // Now that all that's done, we can finally try to actually render the child component.
+            // We memoize the elements for the rendered child component as an optimization.
+            var renderedWrappedComponent = _react.useMemo(function() {
+                return(/*#__PURE__*/ _react["default"].createElement(WrappedComponent, _extends2["default"]({
+                }, actualChildProps, {
+                    ref: reactReduxForwardedRef
+                })));
+            }, [
+                reactReduxForwardedRef,
+                WrappedComponent,
+                actualChildProps
+            ]); // If React sees the exact same element reference as last time, it bails out of re-rendering
+            // that child, same as if it was wrapped in React.memo() or returned false from shouldComponentUpdate.
+            var renderedChild = _react.useMemo(function() {
+                if (shouldHandleStateChanges) // If this component is subscribed to store updates, we need to pass its own
+                // subscription instance down to our descendants. That means rendering the same
+                // Context instance, and putting a different value into the context.
+                return(/*#__PURE__*/ _react["default"].createElement(ContextToUse.Provider, {
+                    value: overriddenContextValue
+                }, renderedWrappedComponent));
+                return renderedWrappedComponent;
+            }, [
+                ContextToUse,
+                renderedWrappedComponent,
+                overriddenContextValue
+            ]);
+            return renderedChild;
+        } // If we're in "pure" mode, ensure our wrapper component only re-renders when incoming props have changed.
+        var Connect = pure ? _react["default"].memo(ConnectFunction) : ConnectFunction;
+        Connect.WrappedComponent = WrappedComponent;
+        Connect.displayName = ConnectFunction.displayName = displayName;
+        if (forwardRef) {
+            var forwarded = _react["default"].forwardRef(function forwardConnectRef(props, ref) {
+                return(/*#__PURE__*/ _react["default"].createElement(Connect, _extends2["default"]({
+                }, props, {
+                    reactReduxForwardedRef: ref
+                })));
+            });
+            forwarded.displayName = displayName;
+            forwarded.WrappedComponent = WrappedComponent;
+            return _hoistNonReactStatics["default"](forwarded, WrappedComponent);
+        }
+        return _hoistNonReactStatics["default"](Connect, WrappedComponent);
+    };
+}
+
+},{"@babel/runtime/helpers/interopRequireWildcard":"28En5","@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","hoist-non-react-statics":"3nUHV","react":"3b2NM","react-is":"68QIU","../utils/Subscription":"Y1J0m","../utils/useIsomorphicLayoutEffect":"64Bcp","./Context":"6ScOK"}],"1HacB":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.createConnect = createConnect;
+exports["default"] = void 0;
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
+var _connectAdvanced = _interopRequireDefault(require("../components/connectAdvanced"));
+var _shallowEqual = _interopRequireDefault(require("../utils/shallowEqual"));
+var _mapDispatchToProps = _interopRequireDefault(require("./mapDispatchToProps"));
+var _mapStateToProps = _interopRequireDefault(require("./mapStateToProps"));
+var _mergeProps = _interopRequireDefault(require("./mergeProps"));
+var _selectorFactory = _interopRequireDefault(require("./selectorFactory"));
+/*
+  connect is a facade over connectAdvanced. It turns its args into a compatible
+  selectorFactory, which has the signature:
+
+    (dispatch, options) => (nextState, nextOwnProps) => nextFinalProps
+  
+  connect passes its args to connectAdvanced as options, which will in turn pass them to
+  selectorFactory each time a Connect component instance is instantiated or hot reloaded.
+
+  selectorFactory returns a final props selector from its mapStateToProps,
+  mapStateToPropsFactories, mapDispatchToProps, mapDispatchToPropsFactories, mergeProps,
+  mergePropsFactories, and pure args.
+
+  The resulting final props selector is called by the Connect component instance whenever
+  it receives new props or store state.
+ */ function match(arg, factories, name) {
+    for(var i = factories.length - 1; i >= 0; i--){
+        var result = factories[i](arg);
+        if (result) return result;
+    }
+    return function(dispatch, options) {
+        throw new Error("Invalid value of type " + typeof arg + " for " + name + " argument when connecting component " + options.wrappedComponentName + ".");
+    };
+}
+function strictEqual(a, b) {
+    return a === b;
+} // createConnect with default args builds the 'official' connect behavior. Calling it with
+// different options opens up some testing and extensibility scenarios
+function createConnect(_temp) {
+    var _ref = _temp === void 0 ? {
+    } : _temp, _ref$connectHOC = _ref.connectHOC, connectHOC = _ref$connectHOC === void 0 ? _connectAdvanced["default"] : _ref$connectHOC, _ref$mapStateToPropsF = _ref.mapStateToPropsFactories, mapStateToPropsFactories = _ref$mapStateToPropsF === void 0 ? _mapStateToProps["default"] : _ref$mapStateToPropsF, _ref$mapDispatchToPro = _ref.mapDispatchToPropsFactories, mapDispatchToPropsFactories = _ref$mapDispatchToPro === void 0 ? _mapDispatchToProps["default"] : _ref$mapDispatchToPro, _ref$mergePropsFactor = _ref.mergePropsFactories, mergePropsFactories = _ref$mergePropsFactor === void 0 ? _mergeProps["default"] : _ref$mergePropsFactor, _ref$selectorFactory = _ref.selectorFactory, selectorFactory = _ref$selectorFactory === void 0 ? _selectorFactory["default"] : _ref$selectorFactory;
+    return function connect(mapStateToProps, mapDispatchToProps, mergeProps, _ref2) {
+        if (_ref2 === void 0) _ref2 = {
+        };
+        var _ref3 = _ref2, _ref3$pure = _ref3.pure, pure = _ref3$pure === void 0 ? true : _ref3$pure, _ref3$areStatesEqual = _ref3.areStatesEqual, areStatesEqual = _ref3$areStatesEqual === void 0 ? strictEqual : _ref3$areStatesEqual, _ref3$areOwnPropsEqua = _ref3.areOwnPropsEqual, areOwnPropsEqual = _ref3$areOwnPropsEqua === void 0 ? _shallowEqual["default"] : _ref3$areOwnPropsEqua, _ref3$areStatePropsEq = _ref3.areStatePropsEqual, areStatePropsEqual = _ref3$areStatePropsEq === void 0 ? _shallowEqual["default"] : _ref3$areStatePropsEq, _ref3$areMergedPropsE = _ref3.areMergedPropsEqual, areMergedPropsEqual = _ref3$areMergedPropsE === void 0 ? _shallowEqual["default"] : _ref3$areMergedPropsE, extraOptions = _objectWithoutPropertiesLoose2["default"](_ref3, [
+            "pure",
+            "areStatesEqual",
+            "areOwnPropsEqual",
+            "areStatePropsEqual",
+            "areMergedPropsEqual"
+        ]);
+        var initMapStateToProps = match(mapStateToProps, mapStateToPropsFactories, 'mapStateToProps');
+        var initMapDispatchToProps = match(mapDispatchToProps, mapDispatchToPropsFactories, 'mapDispatchToProps');
+        var initMergeProps = match(mergeProps, mergePropsFactories, 'mergeProps');
+        return connectHOC(selectorFactory, _extends2["default"]({
+            // used in error messages
+            methodName: 'connect',
+            // used to compute Connect's displayName from the wrapped component's displayName.
+            getDisplayName: function getDisplayName(name) {
+                return "Connect(" + name + ")";
+            },
+            // if mapStateToProps is falsy, the Connect component doesn't subscribe to store state changes
+            shouldHandleStateChanges: Boolean(mapStateToProps),
+            // passed through to selectorFactory
+            initMapStateToProps: initMapStateToProps,
+            initMapDispatchToProps: initMapDispatchToProps,
+            initMergeProps: initMergeProps,
+            pure: pure,
+            areStatesEqual: areStatesEqual,
+            areOwnPropsEqual: areOwnPropsEqual,
+            areStatePropsEqual: areStatePropsEqual,
+            areMergedPropsEqual: areMergedPropsEqual
+        }, extraOptions));
+    };
+}
+var _default = /*#__PURE__*/ createConnect();
+exports["default"] = _default;
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","../components/connectAdvanced":"SPrTN","../utils/shallowEqual":"1BbL9","./mapDispatchToProps":"aHbco","./mapStateToProps":"6esSH","./mergeProps":"4XiYM","./selectorFactory":"XQRNr"}],"1BbL9":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports["default"] = shallowEqual;
+function is(x, y) {
+    if (x === y) return x !== 0 || y !== 0 || 1 / x === 1 / y;
+    else return x !== x && y !== y;
+}
+function shallowEqual(objA, objB) {
+    if (is(objA, objB)) return true;
+    if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) return false;
+    var keysA = Object.keys(objA);
+    var keysB = Object.keys(objB);
+    if (keysA.length !== keysB.length) return false;
+    for(var i = 0; i < keysA.length; i++){
+        if (!Object.prototype.hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) return false;
+    }
+    return true;
+}
+
+},{}],"aHbco":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.whenMapDispatchToPropsIsFunction = whenMapDispatchToPropsIsFunction;
+exports.whenMapDispatchToPropsIsMissing = whenMapDispatchToPropsIsMissing;
+exports.whenMapDispatchToPropsIsObject = whenMapDispatchToPropsIsObject;
+exports["default"] = void 0;
+var _bindActionCreators = _interopRequireDefault(require("../utils/bindActionCreators"));
+var _wrapMapToProps = require("./wrapMapToProps");
+function whenMapDispatchToPropsIsFunction(mapDispatchToProps) {
+    return typeof mapDispatchToProps === 'function' ? _wrapMapToProps.wrapMapToPropsFunc(mapDispatchToProps, 'mapDispatchToProps') : undefined;
+}
+function whenMapDispatchToPropsIsMissing(mapDispatchToProps) {
+    return !mapDispatchToProps ? _wrapMapToProps.wrapMapToPropsConstant(function(dispatch) {
+        return {
+            dispatch: dispatch
+        };
+    }) : undefined;
+}
+function whenMapDispatchToPropsIsObject(mapDispatchToProps) {
+    return mapDispatchToProps && typeof mapDispatchToProps === 'object' ? _wrapMapToProps.wrapMapToPropsConstant(function(dispatch) {
+        return _bindActionCreators["default"](mapDispatchToProps, dispatch);
+    }) : undefined;
+}
+var _default = [
+    whenMapDispatchToPropsIsFunction,
+    whenMapDispatchToPropsIsMissing,
+    whenMapDispatchToPropsIsObject
+];
+exports["default"] = _default;
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","../utils/bindActionCreators":"21ucm","./wrapMapToProps":"7rpe9"}],"21ucm":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports["default"] = bindActionCreators;
+function bindActionCreators(actionCreators, dispatch) {
+    var boundActionCreators = {
+    };
+    var _loop = function _loop1(key) {
+        var actionCreator = actionCreators[key];
+        if (typeof actionCreator === 'function') boundActionCreators[key] = function() {
+            return dispatch(actionCreator.apply(void 0, arguments));
+        };
+    };
+    for(var key in actionCreators)_loop(key);
+    return boundActionCreators;
+}
+
+},{}],"7rpe9":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.wrapMapToPropsConstant = wrapMapToPropsConstant;
+exports.getDependsOnOwnProps = getDependsOnOwnProps;
+exports.wrapMapToPropsFunc = wrapMapToPropsFunc;
+var _verifyPlainObject = _interopRequireDefault(require("../utils/verifyPlainObject"));
+function wrapMapToPropsConstant(getConstant) {
+    return function initConstantSelector(dispatch, options) {
+        var constant = getConstant(dispatch, options);
+        function constantSelector() {
+            return constant;
+        }
+        constantSelector.dependsOnOwnProps = false;
+        return constantSelector;
+    };
+} // dependsOnOwnProps is used by createMapToPropsProxy to determine whether to pass props as args
+// to the mapToProps function being wrapped. It is also used by makePurePropsSelector to determine
+// whether mapToProps needs to be invoked when props have changed.
+//
+// A length of one signals that mapToProps does not depend on props from the parent component.
+// A length of zero is assumed to mean mapToProps is getting args via arguments or ...args and
+// therefore not reporting its length accurately..
+function getDependsOnOwnProps(mapToProps) {
+    return mapToProps.dependsOnOwnProps !== null && mapToProps.dependsOnOwnProps !== undefined ? Boolean(mapToProps.dependsOnOwnProps) : mapToProps.length !== 1;
+} // Used by whenMapStateToPropsIsFunction and whenMapDispatchToPropsIsFunction,
+// this function wraps mapToProps in a proxy function which does several things:
+//
+//  * Detects whether the mapToProps function being called depends on props, which
+//    is used by selectorFactory to decide if it should reinvoke on props changes.
+//
+//  * On first call, handles mapToProps if returns another function, and treats that
+//    new function as the true mapToProps for subsequent calls.
+//
+//  * On first call, verifies the first result is a plain object, in order to warn
+//    the developer that their mapToProps function is not returning a valid result.
+//
+function wrapMapToPropsFunc(mapToProps, methodName) {
+    return function initProxySelector(dispatch, _ref) {
+        var displayName = _ref.displayName;
+        var proxy = function mapToPropsProxy(stateOrDispatch, ownProps) {
+            return proxy.dependsOnOwnProps ? proxy.mapToProps(stateOrDispatch, ownProps) : proxy.mapToProps(stateOrDispatch);
+        }; // allow detectFactoryAndVerify to get ownProps
+        proxy.dependsOnOwnProps = true;
+        proxy.mapToProps = function detectFactoryAndVerify(stateOrDispatch, ownProps) {
+            proxy.mapToProps = mapToProps;
+            proxy.dependsOnOwnProps = getDependsOnOwnProps(mapToProps);
+            var props = proxy(stateOrDispatch, ownProps);
+            if (typeof props === 'function') {
+                proxy.mapToProps = props;
+                proxy.dependsOnOwnProps = getDependsOnOwnProps(props);
+                props = proxy(stateOrDispatch, ownProps);
+            }
+            _verifyPlainObject["default"](props, displayName, methodName);
+            return props;
+        };
+        return proxy;
+    };
+}
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","../utils/verifyPlainObject":"4G4Zn"}],"4G4Zn":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports["default"] = verifyPlainObject;
+var _isPlainObject = _interopRequireDefault(require("./isPlainObject"));
+var _warning = _interopRequireDefault(require("./warning"));
+function verifyPlainObject(value, displayName, methodName) {
+    if (!_isPlainObject["default"](value)) _warning["default"](methodName + "() in " + displayName + " must return a plain object. Instead received " + value + ".");
+}
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","./isPlainObject":"Gqg7l","./warning":"2YNtu"}],"Gqg7l":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports["default"] = isPlainObject;
+/**
+ * @param {any} obj The object to inspect.
+ * @returns {boolean} True if the argument appears to be a plain object.
+ */ function isPlainObject(obj) {
+    if (typeof obj !== 'object' || obj === null) return false;
+    var proto = Object.getPrototypeOf(obj);
+    if (proto === null) return true;
+    var baseProto = proto;
+    while(Object.getPrototypeOf(baseProto) !== null)baseProto = Object.getPrototypeOf(baseProto);
+    return proto === baseProto;
+}
+
+},{}],"2YNtu":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports["default"] = warning;
+/**
+ * Prints a warning in the console if it exists.
+ *
+ * @param {String} message The warning message.
+ * @returns {void}
+ */ function warning(message) {
+    /* eslint-disable no-console */ if (typeof console !== 'undefined' && typeof console.error === 'function') console.error(message);
+    /* eslint-enable no-console */ try {
+        // This error was thrown as a convenience so that if you enable
+        // "break on all exceptions" in your console,
+        // it would pause the execution at this line.
+        throw new Error(message);
+    /* eslint-disable no-empty */ } catch (e) {
+    }
+/* eslint-enable no-empty */ }
+
+},{}],"6esSH":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports.whenMapStateToPropsIsFunction = whenMapStateToPropsIsFunction;
+exports.whenMapStateToPropsIsMissing = whenMapStateToPropsIsMissing;
+exports["default"] = void 0;
+var _wrapMapToProps = require("./wrapMapToProps");
+function whenMapStateToPropsIsFunction(mapStateToProps) {
+    return typeof mapStateToProps === 'function' ? _wrapMapToProps.wrapMapToPropsFunc(mapStateToProps, 'mapStateToProps') : undefined;
+}
+function whenMapStateToPropsIsMissing(mapStateToProps) {
+    return !mapStateToProps ? _wrapMapToProps.wrapMapToPropsConstant(function() {
+        return {
+        };
+    }) : undefined;
+}
+var _default = [
+    whenMapStateToPropsIsFunction,
+    whenMapStateToPropsIsMissing
+];
+exports["default"] = _default;
+
+},{"./wrapMapToProps":"7rpe9"}],"4XiYM":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.defaultMergeProps = defaultMergeProps;
+exports.wrapMergePropsFunc = wrapMergePropsFunc;
+exports.whenMergePropsIsFunction = whenMergePropsIsFunction;
+exports.whenMergePropsIsOmitted = whenMergePropsIsOmitted;
+exports["default"] = void 0;
+var _extends2 = _interopRequireDefault(require("@babel/runtime/helpers/extends"));
+var _verifyPlainObject = _interopRequireDefault(require("../utils/verifyPlainObject"));
+function defaultMergeProps(stateProps, dispatchProps, ownProps) {
+    return _extends2["default"]({
+    }, ownProps, stateProps, dispatchProps);
+}
+function wrapMergePropsFunc(mergeProps) {
+    return function initMergePropsProxy(dispatch, _ref) {
+        var displayName = _ref.displayName, pure = _ref.pure, areMergedPropsEqual = _ref.areMergedPropsEqual;
+        var hasRunOnce = false;
+        var mergedProps;
+        return function mergePropsProxy(stateProps, dispatchProps, ownProps) {
+            var nextMergedProps = mergeProps(stateProps, dispatchProps, ownProps);
+            if (hasRunOnce) {
+                if (!pure || !areMergedPropsEqual(nextMergedProps, mergedProps)) mergedProps = nextMergedProps;
+            } else {
+                hasRunOnce = true;
+                mergedProps = nextMergedProps;
+                _verifyPlainObject["default"](mergedProps, displayName, 'mergeProps');
+            }
+            return mergedProps;
+        };
+    };
+}
+function whenMergePropsIsFunction(mergeProps) {
+    return typeof mergeProps === 'function' ? wrapMergePropsFunc(mergeProps) : undefined;
+}
+function whenMergePropsIsOmitted(mergeProps) {
+    return !mergeProps ? function() {
+        return defaultMergeProps;
+    } : undefined;
+}
+var _default = [
+    whenMergePropsIsFunction,
+    whenMergePropsIsOmitted
+];
+exports["default"] = _default;
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/extends":"3krLJ","../utils/verifyPlainObject":"4G4Zn"}],"XQRNr":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.impureFinalPropsSelectorFactory = impureFinalPropsSelectorFactory;
+exports.pureFinalPropsSelectorFactory = pureFinalPropsSelectorFactory;
+exports["default"] = finalPropsSelectorFactory;
+var _objectWithoutPropertiesLoose2 = _interopRequireDefault(require("@babel/runtime/helpers/objectWithoutPropertiesLoose"));
+var _verifySubselectors = _interopRequireDefault(require("./verifySubselectors"));
+function impureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch) {
+    return function impureFinalPropsSelector(state, ownProps) {
+        return mergeProps(mapStateToProps(state, ownProps), mapDispatchToProps(dispatch, ownProps), ownProps);
+    };
+}
+function pureFinalPropsSelectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, _ref) {
+    var areStatesEqual = _ref.areStatesEqual, areOwnPropsEqual = _ref.areOwnPropsEqual, areStatePropsEqual = _ref.areStatePropsEqual;
+    var hasRunAtLeastOnce = false;
+    var state;
+    var ownProps;
+    var stateProps;
+    var dispatchProps;
+    var mergedProps;
+    function handleFirstCall(firstState, firstOwnProps) {
+        state = firstState;
+        ownProps = firstOwnProps;
+        stateProps = mapStateToProps(state, ownProps);
+        dispatchProps = mapDispatchToProps(dispatch, ownProps);
+        mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
+        hasRunAtLeastOnce = true;
+        return mergedProps;
+    }
+    function handleNewPropsAndNewState() {
+        stateProps = mapStateToProps(state, ownProps);
+        if (mapDispatchToProps.dependsOnOwnProps) dispatchProps = mapDispatchToProps(dispatch, ownProps);
+        mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
+        return mergedProps;
+    }
+    function handleNewProps() {
+        if (mapStateToProps.dependsOnOwnProps) stateProps = mapStateToProps(state, ownProps);
+        if (mapDispatchToProps.dependsOnOwnProps) dispatchProps = mapDispatchToProps(dispatch, ownProps);
+        mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
+        return mergedProps;
+    }
+    function handleNewState() {
+        var nextStateProps = mapStateToProps(state, ownProps);
+        var statePropsChanged = !areStatePropsEqual(nextStateProps, stateProps);
+        stateProps = nextStateProps;
+        if (statePropsChanged) mergedProps = mergeProps(stateProps, dispatchProps, ownProps);
+        return mergedProps;
+    }
+    function handleSubsequentCalls(nextState, nextOwnProps) {
+        var propsChanged = !areOwnPropsEqual(nextOwnProps, ownProps);
+        var stateChanged = !areStatesEqual(nextState, state);
+        state = nextState;
+        ownProps = nextOwnProps;
+        if (propsChanged && stateChanged) return handleNewPropsAndNewState();
+        if (propsChanged) return handleNewProps();
+        if (stateChanged) return handleNewState();
+        return mergedProps;
+    }
+    return function pureFinalPropsSelector(nextState, nextOwnProps) {
+        return hasRunAtLeastOnce ? handleSubsequentCalls(nextState, nextOwnProps) : handleFirstCall(nextState, nextOwnProps);
+    };
+} // TODO: Add more comments
+// If pure is true, the selector returned by selectorFactory will memoize its results,
+// allowing connectAdvanced's shouldComponentUpdate to return false if final
+// props have not changed. If false, the selector will always return a new
+// object and shouldComponentUpdate will always return true.
+function finalPropsSelectorFactory(dispatch, _ref2) {
+    var initMapStateToProps = _ref2.initMapStateToProps, initMapDispatchToProps = _ref2.initMapDispatchToProps, initMergeProps = _ref2.initMergeProps, options = _objectWithoutPropertiesLoose2["default"](_ref2, [
+        "initMapStateToProps",
+        "initMapDispatchToProps",
+        "initMergeProps"
+    ]);
+    var mapStateToProps = initMapStateToProps(dispatch, options);
+    var mapDispatchToProps = initMapDispatchToProps(dispatch, options);
+    var mergeProps = initMergeProps(dispatch, options);
+    _verifySubselectors["default"](mapStateToProps, mapDispatchToProps, mergeProps, options.displayName);
+    var selectorFactory = options.pure ? pureFinalPropsSelectorFactory : impureFinalPropsSelectorFactory;
+    return selectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, options);
+}
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","@babel/runtime/helpers/objectWithoutPropertiesLoose":"3Yx9V","./verifySubselectors":"5MUxF"}],"5MUxF":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports["default"] = verifySubselectors;
+var _warning = _interopRequireDefault(require("../utils/warning"));
+function verify(selector, methodName, displayName) {
+    if (!selector) throw new Error("Unexpected value for " + methodName + " in " + displayName + ".");
+    else if (methodName === 'mapStateToProps' || methodName === 'mapDispatchToProps') {
+        if (!Object.prototype.hasOwnProperty.call(selector, 'dependsOnOwnProps')) _warning["default"]("The selector for " + methodName + " of " + displayName + " did not specify a value for dependsOnOwnProps.");
+    }
+}
+function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, displayName) {
+    verify(mapStateToProps, 'mapStateToProps', displayName);
+    verify(mapDispatchToProps, 'mapDispatchToProps', displayName);
+    verify(mergeProps, 'mergeProps', displayName);
+}
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","../utils/warning":"2YNtu"}],"4H7HK":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports.createDispatchHook = createDispatchHook;
+exports.useDispatch = void 0;
+var _Context = require("../components/Context");
+var _useStore = require("./useStore");
+/**
+ * Hook factory, which creates a `useDispatch` hook bound to a given context.
+ *
+ * @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
+ * @returns {Function} A `useDispatch` hook bound to the specified context.
+ */ function createDispatchHook(context) {
+    if (context === void 0) context = _Context.ReactReduxContext;
+    var useStore = context === _Context.ReactReduxContext ? _useStore.useStore : _useStore.createStoreHook(context);
+    return function useDispatch() {
+        var store = useStore();
+        return store.dispatch;
+    };
+}
+/**
+ * A hook to access the redux `dispatch` function.
+ *
+ * @returns {any|function} redux store's `dispatch` function
+ *
+ * @example
+ *
+ * import React, { useCallback } from 'react'
+ * import { useDispatch } from 'react-redux'
+ *
+ * export const CounterComponent = ({ value }) => {
+ *   const dispatch = useDispatch()
+ *   const increaseCounter = useCallback(() => dispatch({ type: 'increase-counter' }), [])
+ *   return (
+ *     <div>
+ *       <span>{value}</span>
+ *       <button onClick={increaseCounter}>Increase counter</button>
+ *     </div>
+ *   )
+ * }
+ */ var useDispatch = /*#__PURE__*/ createDispatchHook();
+exports.useDispatch = useDispatch;
+
+},{"../components/Context":"6ScOK","./useStore":"5zPKn"}],"5zPKn":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports.createStoreHook = createStoreHook;
+exports.useStore = void 0;
+var _react = require("react");
+var _Context = require("../components/Context");
+var _useReduxContext2 = require("./useReduxContext");
+/**
+ * Hook factory, which creates a `useStore` hook bound to a given context.
+ *
+ * @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
+ * @returns {Function} A `useStore` hook bound to the specified context.
+ */ function createStoreHook(context) {
+    if (context === void 0) context = _Context.ReactReduxContext;
+    var useReduxContext = context === _Context.ReactReduxContext ? _useReduxContext2.useReduxContext : function() {
+        return _react.useContext(context);
+    };
+    return function useStore() {
+        var _useReduxContext = useReduxContext(), store = _useReduxContext.store;
+        return store;
+    };
+}
+/**
+ * A hook to access the redux store.
+ *
+ * @returns {any} the redux store
+ *
+ * @example
+ *
+ * import React from 'react'
+ * import { useStore } from 'react-redux'
+ *
+ * export const ExampleComponent = () => {
+ *   const store = useStore()
+ *   return <div>{store.getState()}</div>
+ * }
+ */ var useStore = /*#__PURE__*/ createStoreHook();
+exports.useStore = useStore;
+
+},{"react":"3b2NM","../components/Context":"6ScOK","./useReduxContext":"46ppV"}],"46ppV":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports.useReduxContext = useReduxContext;
+var _react = require("react");
+var _Context = require("../components/Context");
+/**
+ * A hook to access the value of the `ReactReduxContext`. This is a low-level
+ * hook that you should usually not need to call directly.
+ *
+ * @returns {any} the value of the `ReactReduxContext`
+ *
+ * @example
+ *
+ * import React from 'react'
+ * import { useReduxContext } from 'react-redux'
+ *
+ * export const CounterComponent = ({ value }) => {
+ *   const { store } = useReduxContext()
+ *   return <div>{store.getState()}</div>
+ * }
+ */ function useReduxContext() {
+    var contextValue = _react.useContext(_Context.ReactReduxContext);
+    if (!contextValue) throw new Error('could not find react-redux context value; please ensure the component is wrapped in a <Provider>');
+    return contextValue;
+}
+
+},{"react":"3b2NM","../components/Context":"6ScOK"}],"6dv0a":[function(require,module,exports) {
+"use strict";
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+exports.__esModule = true;
+exports.createSelectorHook = createSelectorHook;
+exports.useSelector = void 0;
+var _react = require("react");
+var _useReduxContext2 = require("./useReduxContext");
+var _Subscription = _interopRequireDefault(require("../utils/Subscription"));
+var _useIsomorphicLayoutEffect = require("../utils/useIsomorphicLayoutEffect");
+var _Context = require("../components/Context");
+var refEquality = function refEquality1(a, b) {
+    return a === b;
+};
+function useSelectorWithStoreAndSubscription(selector, equalityFn, store, contextSub) {
+    var _useReducer = _react.useReducer(function(s) {
+        return s + 1;
+    }, 0), forceRender = _useReducer[1];
+    var subscription = _react.useMemo(function() {
+        return new _Subscription["default"](store, contextSub);
+    }, [
+        store,
+        contextSub
+    ]);
+    var latestSubscriptionCallbackError = _react.useRef();
+    var latestSelector = _react.useRef();
+    var latestStoreState = _react.useRef();
+    var latestSelectedState = _react.useRef();
+    var storeState = store.getState();
+    var selectedState;
+    try {
+        if (selector !== latestSelector.current || storeState !== latestStoreState.current || latestSubscriptionCallbackError.current) {
+            var newSelectedState = selector(storeState); // ensure latest selected state is reused so that a custom equality function can result in identical references
+            if (latestSelectedState.current === undefined || !equalityFn(newSelectedState, latestSelectedState.current)) selectedState = newSelectedState;
+            else selectedState = latestSelectedState.current;
+        } else selectedState = latestSelectedState.current;
+    } catch (err) {
+        if (latestSubscriptionCallbackError.current) err.message += "\nThe error may be correlated with this previous error:\n" + latestSubscriptionCallbackError.current.stack + "\n\n";
+        throw err;
+    }
+    _useIsomorphicLayoutEffect.useIsomorphicLayoutEffect(function() {
+        latestSelector.current = selector;
+        latestStoreState.current = storeState;
+        latestSelectedState.current = selectedState;
+        latestSubscriptionCallbackError.current = undefined;
+    });
+    _useIsomorphicLayoutEffect.useIsomorphicLayoutEffect(function() {
+        function checkForUpdates() {
+            try {
+                var newStoreState = store.getState();
+                var _newSelectedState = latestSelector.current(newStoreState);
+                if (equalityFn(_newSelectedState, latestSelectedState.current)) return;
+                latestSelectedState.current = _newSelectedState;
+                latestStoreState.current = newStoreState;
+            } catch (err) {
+                // we ignore all errors here, since when the component
+                // is re-rendered, the selectors are called again, and
+                // will throw again, if neither props nor store state
+                // changed
+                latestSubscriptionCallbackError.current = err;
+            }
+            forceRender();
+        }
+        subscription.onStateChange = checkForUpdates;
+        subscription.trySubscribe();
+        checkForUpdates();
+        return function() {
+            return subscription.tryUnsubscribe();
+        };
+    }, [
+        store,
+        subscription
+    ]);
+    return selectedState;
+}
+/**
+ * Hook factory, which creates a `useSelector` hook bound to a given context.
+ *
+ * @param {React.Context} [context=ReactReduxContext] Context passed to your `<Provider>`.
+ * @returns {Function} A `useSelector` hook bound to the specified context.
+ */ function createSelectorHook(context) {
+    if (context === void 0) context = _Context.ReactReduxContext;
+    var useReduxContext = context === _Context.ReactReduxContext ? _useReduxContext2.useReduxContext : function() {
+        return _react.useContext(context);
+    };
+    return function useSelector(selector, equalityFn) {
+        if (equalityFn === void 0) equalityFn = refEquality;
+        if (!selector) throw new Error("You must pass a selector to useSelector");
+        if (typeof selector !== 'function') throw new Error("You must pass a function as a selector to useSelector");
+        if (typeof equalityFn !== 'function') throw new Error("You must pass a function as an equality function to useSelector");
+        var _useReduxContext = useReduxContext(), store = _useReduxContext.store, contextSub = _useReduxContext.subscription;
+        var selectedState = useSelectorWithStoreAndSubscription(selector, equalityFn, store, contextSub);
+        _react.useDebugValue(selectedState);
+        return selectedState;
+    };
+}
+/**
+ * A hook to access the redux store's state. This hook takes a selector function
+ * as an argument. The selector is called with the store state.
+ *
+ * This hook takes an optional equality comparison function as the second parameter
+ * that allows you to customize the way the selected state is compared to determine
+ * whether the component needs to be re-rendered.
+ *
+ * @param {Function} selector the selector function
+ * @param {Function=} equalityFn the function that will be used to determine equality
+ *
+ * @returns {any} the selected state
+ *
+ * @example
+ *
+ * import React from 'react'
+ * import { useSelector } from 'react-redux'
+ *
+ * export const CounterComponent = () => {
+ *   const counter = useSelector(state => state.counter)
+ *   return <div>{counter}</div>
+ * }
+ */ var useSelector = /*#__PURE__*/ createSelectorHook();
+exports.useSelector = useSelector;
+
+},{"@babel/runtime/helpers/interopRequireDefault":"4ttVj","react":"3b2NM","./useReduxContext":"46ppV","../utils/Subscription":"Y1J0m","../utils/useIsomorphicLayoutEffect":"64Bcp","../components/Context":"6ScOK"}],"12gEH":[function(require,module,exports) {
+"use strict";
+exports.__esModule = true;
+exports.unstable_batchedUpdates = void 0;
+var _reactDom = require("react-dom");
+exports.unstable_batchedUpdates = _reactDom.unstable_batchedUpdates;
+
+},{"react-dom":"2sg1U"}],"5S6cN":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SET_MOVIES", ()=>SET_MOVIES
+);
+parcelHelpers.export(exports, "SET_FILTER", ()=>SET_FILTER
+);
+parcelHelpers.export(exports, "SET_USER", ()=>SET_USER
+);
+parcelHelpers.export(exports, "UPDATE_USER", ()=>UPDATE_USER
+);
+parcelHelpers.export(exports, "UPDATE_FAVORITE", ()=>UPDATE_FAVORITE
+);
+parcelHelpers.export(exports, "setMovies", ()=>setMovies
+);
+parcelHelpers.export(exports, "setFilter", ()=>setFilter
+);
+//user returned from DB
+parcelHelpers.export(exports, "setUser", ()=>setUser
+);
+//update the user info
+parcelHelpers.export(exports, "updateUser", ()=>updateUser
+);
+//update favourite movies
+parcelHelpers.export(exports, "updateFavorite", ()=>updateFavorite
+);
+const SET_MOVIES = 'SET_MOVIES';
+const SET_FILTER = 'SET_FILTER';
+const SET_USER = 'SET_USER';
+const UPDATE_USER = 'UPDATE_USER';
+const UPDATE_FAVORITE = 'UPDATE_FAVORITE';
+function setMovies(value) {
+    return {
+        type: SET_MOVIES,
+        value
+    };
+}
+function setFilter(value) {
+    return {
+        type: SET_FILTER,
+        value
+    };
+}
+function setUser(value) {
+    return {
+        type: SET_USER,
+        value
+    };
+}
+function updateUser(value) {
+    return {
+        type: UPDATE_USER,
+        value
+    };
+}
+function updateFavorite(value) {
+    return {
+        type: UPDATE_FAVORITE,
+        value
+    };
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2"}],"4ceqd":[function(require,module,exports) {
+var helpers = require("../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+helpers.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _reactBootstrap = require("react-bootstrap");
+var _reactRedux = require("react-redux");
+var _visibilityFilterInput = require("../visibility-filter-input/visibility-filter-input");
+var _visibilityFilterInputDefault = parcelHelpers.interopDefault(_visibilityFilterInput);
+var _movieCard = require("../movie-card/movie-card");
+const mapStateToProps = (state)=>{
+    const { visibilityFilter  } = state;
+    return {
+        visibilityFilter
+    };
+};
+function MoviesList(props) {
+    const { movies , visibilityFilter  } = props;
+    let filteredMovies = movies;
+    if (visibilityFilter !== '') filteredMovies = movies.filter((m)=>m.Title.toLowerCase().includes(visibilityFilter.toLowerCase())
+    );
+    if (!movies) return(/*#__PURE__*/ _reactDefault.default.createElement("div", {
+        className: "main-view",
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movies-list\\movies-list.jsx",
+            lineNumber: 20
+        },
+        __self: this
+    }));
+    return(/*#__PURE__*/ _reactDefault.default.createElement(_reactDefault.default.Fragment, null, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Col, {
+        md: 12,
+        style: {
+            margin: '1em'
+        },
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movies-list\\movies-list.jsx",
+            lineNumber: 23
+        },
+        __self: this
+    }, /*#__PURE__*/ _reactDefault.default.createElement(_visibilityFilterInputDefault.default, {
+        visibilityFilter: visibilityFilter,
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movies-list\\movies-list.jsx",
+            lineNumber: 24
+        },
+        __self: this
+    })), filteredMovies.map((m)=>/*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Col, {
+            md: 3,
+            key: m._id,
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movies-list\\movies-list.jsx",
+                lineNumber: 27
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_movieCard.MovieCard, {
+            movie: m,
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movies-list\\movies-list.jsx",
+                lineNumber: 28
+            },
+            __self: this
+        }))
+    )));
+}
+_c = MoviesList;
+exports.default = _reactRedux.connect(mapStateToProps)(MoviesList);
+var _c;
+$RefreshReg$(_c, "MoviesList");
+
+  helpers.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react":"3b2NM","react-bootstrap":"4n7hB","react-redux":"7GDa4","../movie-card/movie-card":"2kqAF","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","../visibility-filter-input/visibility-filter-input":"522T1"}],"2kqAF":[function(require,module,exports) {
+var helpers = require("../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+helpers.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "MovieCard", ()=>MovieCard
+);
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _propTypes = require("prop-types");
+var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
+var _button = require("react-bootstrap/Button");
+var _buttonDefault = parcelHelpers.interopDefault(_button);
+var _card = require("react-bootstrap/Card");
+var _cardDefault = parcelHelpers.interopDefault(_card);
+var _movieCardScss = require("./movie-card.scss");
+var _reactRouterDom = require("react-router-dom");
+class MovieCard extends _reactDefault.default.Component {
+    render() {
+        const { movie  } = this.props;
+        return(/*#__PURE__*/ _reactDefault.default.createElement(_cardDefault.default, {
+            className: "text-center",
+            border: "warning",
+            style: {
+                margin: '5%'
+            },
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
+                lineNumber: 15
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_cardDefault.default.Img, {
+            variant: "top",
+            src: movie.ImagePath,
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
+                lineNumber: 16
+            },
+            __self: this
+        }), /*#__PURE__*/ _reactDefault.default.createElement(_cardDefault.default.Body, {
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
+                lineNumber: 17
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_cardDefault.default.Title, {
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
+                lineNumber: 18
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement("h2", {
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
+                lineNumber: 18
+            },
+            __self: this
+        }, movie.Title)), /*#__PURE__*/ _reactDefault.default.createElement(_cardDefault.default.Text, {
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
+                lineNumber: 19
+            },
+            __self: this
+        }, movie.Description), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Link, {
+            to: `/movies/${movie._id}`,
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
+                lineNumber: 20
+            },
+            __self: this
+        }, /*#__PURE__*/ _reactDefault.default.createElement(_buttonDefault.default, {
+            variant: "warning",
+            __source: {
+                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-card\\movie-card.jsx",
+                lineNumber: 21
+            },
+            __self: this
+        }, "Open")))));
+    }
+}
+MovieCard.propTypes = {
+    movie: _propTypesDefault.default.shape({
+        Title: _propTypesDefault.default.string.isRequired,
+        Description: _propTypesDefault.default.string.isRequired,
+        ImagePath: _propTypesDefault.default.string.isRequired,
+        Featured: _propTypesDefault.default.bool.isRequired
+    }).isRequired
+};
+
+  helpers.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react":"3b2NM","prop-types":"4dfy5","react-bootstrap/Button":"1ru0l","react-bootstrap/Card":"1CZWQ","./movie-card.scss":"2OCFK","react-router-dom":"1PMSK","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH"}],"2OCFK":[function() {},{}],"522T1":[function(require,module,exports) {
+var helpers = require("../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+helpers.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _reactRedux = require("react-redux");
+var _form = require("react-bootstrap/Form");
+var _formDefault = parcelHelpers.interopDefault(_form);
+var _actions = require("../../actions/actions");
+function VisibilityFilterInput(props) {
+    return(/*#__PURE__*/ _reactDefault.default.createElement(_formDefault.default.Control, {
+        onChange: (e)=>props.setFilter(e.target.value)
+        ,
+        value: props.visibilityFilter,
+        placeholder: "filter",
+        __source: {
+            fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\visibility-filter-input\\visibility-filter-input.jsx",
+            lineNumber: 8
+        },
+        __self: this
+    }));
+}
+_c = VisibilityFilterInput;
+exports.default = _reactRedux.connect(null, {
+    setFilter: _actions.setFilter
+})(VisibilityFilterInput);
+var _c;
+$RefreshReg$(_c, "VisibilityFilterInput");
+
+  helpers.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react":"3b2NM","react-redux":"7GDa4","react-bootstrap/Form":"6A5ko","../../actions/actions":"5S6cN","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH"}],"7panR":[function(require,module,exports) {
+'use strict';
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+var _objectSpread = require('@babel/runtime/helpers/objectSpread2');
+function _interopDefaultLegacy(e) {
+    return e && typeof e === 'object' && 'default' in e ? e : {
+        'default': e
+    };
+}
+var _objectSpread__default = /*#__PURE__*/ _interopDefaultLegacy(_objectSpread);
+/**
+ * Adapted from React: https://github.com/facebook/react/blob/master/packages/shared/formatProdErrorMessage.js
+ *
+ * Do not require this module directly! Use normal throw error calls. These messages will be replaced with error codes
+ * during build.
+ * @param {number} code
+ */ function formatProdErrorMessage(code) {
+    return "Minified Redux error #" + code + "; visit https://redux.js.org/Errors?code=" + code + " for the full message or " + 'use the non-minified dev environment for full errors. ';
+}
+// Inlined version of the `symbol-observable` polyfill
+var $$observable = function() {
+    return typeof Symbol === 'function' && Symbol.observable || '@@observable';
+}();
+/**
+ * These are private action types reserved by Redux.
+ * For any unknown actions, you must return the current state.
+ * If the current state is undefined, you must return the initial state.
+ * Do not reference these action types directly in your code.
+ */ var randomString = function randomString1() {
+    return Math.random().toString(36).substring(7).split('').join('.');
+};
+var ActionTypes = {
+    INIT: "@@redux/INIT" + randomString(),
+    REPLACE: "@@redux/REPLACE" + randomString(),
+    PROBE_UNKNOWN_ACTION: function PROBE_UNKNOWN_ACTION() {
+        return "@@redux/PROBE_UNKNOWN_ACTION" + randomString();
+    }
+};
+/**
+ * @param {any} obj The object to inspect.
+ * @returns {boolean} True if the argument appears to be a plain object.
+ */ function isPlainObject(obj) {
+    if (typeof obj !== 'object' || obj === null) return false;
+    var proto = obj;
+    while(Object.getPrototypeOf(proto) !== null)proto = Object.getPrototypeOf(proto);
+    return Object.getPrototypeOf(obj) === proto;
+}
+// Inlined / shortened version of `kindOf` from https://github.com/jonschlinkert/kind-of
+function miniKindOf(val) {
+    if (val === void 0) return 'undefined';
+    if (val === null) return 'null';
+    var type = typeof val;
+    switch(type){
+        case 'boolean':
+        case 'string':
+        case 'number':
+        case 'symbol':
+        case 'function':
+            return type;
+    }
+    if (Array.isArray(val)) return 'array';
+    if (isDate(val)) return 'date';
+    if (isError(val)) return 'error';
+    var constructorName = ctorName(val);
+    switch(constructorName){
+        case 'Symbol':
+        case 'Promise':
+        case 'WeakMap':
+        case 'WeakSet':
+        case 'Map':
+        case 'Set':
+            return constructorName;
+    } // other
+    return type.slice(8, -1).toLowerCase().replace(/\s/g, '');
+}
+function ctorName(val) {
+    return typeof val.constructor === 'function' ? val.constructor.name : null;
+}
+function isError(val) {
+    return val instanceof Error || typeof val.message === 'string' && val.constructor && typeof val.constructor.stackTraceLimit === 'number';
+}
+function isDate(val) {
+    if (val instanceof Date) return true;
+    return typeof val.toDateString === 'function' && typeof val.getDate === 'function' && typeof val.setDate === 'function';
+}
+function kindOf(val) {
+    var typeOfVal = typeof val;
+    typeOfVal = miniKindOf(val);
+    return typeOfVal;
+}
+/**
+ * Creates a Redux store that holds the state tree.
+ * The only way to change the data in the store is to call `dispatch()` on it.
+ *
+ * There should only be a single store in your app. To specify how different
+ * parts of the state tree respond to actions, you may combine several reducers
+ * into a single reducer function by using `combineReducers`.
+ *
+ * @param {Function} reducer A function that returns the next state tree, given
+ * the current state tree and the action to handle.
+ *
+ * @param {any} [preloadedState] The initial state. You may optionally specify it
+ * to hydrate the state from the server in universal apps, or to restore a
+ * previously serialized user session.
+ * If you use `combineReducers` to produce the root reducer function, this must be
+ * an object with the same shape as `combineReducers` keys.
+ *
+ * @param {Function} [enhancer] The store enhancer. You may optionally specify it
+ * to enhance the store with third-party capabilities such as middleware,
+ * time travel, persistence, etc. The only store enhancer that ships with Redux
+ * is `applyMiddleware()`.
+ *
+ * @returns {Store} A Redux store that lets you read the state, dispatch actions
+ * and subscribe to changes.
+ */ function createStore(reducer, preloadedState, enhancer) {
+    var _ref2;
+    if (typeof preloadedState === 'function' && typeof enhancer === 'function' || typeof enhancer === 'function' && typeof arguments[3] === 'function') throw new Error("It looks like you are passing several store enhancers to createStore(). This is not supported. Instead, compose them together to a single function. See https://redux.js.org/tutorials/fundamentals/part-4-store#creating-a-store-with-enhancers for an example.");
+    if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
+        enhancer = preloadedState;
+        preloadedState = undefined;
+    }
+    if (typeof enhancer !== 'undefined') {
+        if (typeof enhancer !== 'function') throw new Error("Expected the enhancer to be a function. Instead, received: '" + kindOf(enhancer) + "'");
+        return enhancer(createStore)(reducer, preloadedState);
+    }
+    if (typeof reducer !== 'function') throw new Error("Expected the root reducer to be a function. Instead, received: '" + kindOf(reducer) + "'");
+    var currentReducer = reducer;
+    var currentState = preloadedState;
+    var currentListeners = [];
+    var nextListeners = currentListeners;
+    var isDispatching = false;
+    /**
+   * This makes a shallow copy of currentListeners so we can use
+   * nextListeners as a temporary list while dispatching.
+   *
+   * This prevents any bugs around consumers calling
+   * subscribe/unsubscribe in the middle of a dispatch.
+   */ function ensureCanMutateNextListeners() {
+        if (nextListeners === currentListeners) nextListeners = currentListeners.slice();
+    }
+    /**
+   * Reads the state tree managed by the store.
+   *
+   * @returns {any} The current state tree of your application.
+   */ function getState() {
+        if (isDispatching) throw new Error("You may not call store.getState() while the reducer is executing. The reducer has already received the state as an argument. Pass it down from the top reducer instead of reading it from the store.");
+        return currentState;
+    }
+    /**
+   * Adds a change listener. It will be called any time an action is dispatched,
+   * and some part of the state tree may potentially have changed. You may then
+   * call `getState()` to read the current state tree inside the callback.
+   *
+   * You may call `dispatch()` from a change listener, with the following
+   * caveats:
+   *
+   * 1. The subscriptions are snapshotted just before every `dispatch()` call.
+   * If you subscribe or unsubscribe while the listeners are being invoked, this
+   * will not have any effect on the `dispatch()` that is currently in progress.
+   * However, the next `dispatch()` call, whether nested or not, will use a more
+   * recent snapshot of the subscription list.
+   *
+   * 2. The listener should not expect to see all state changes, as the state
+   * might have been updated multiple times during a nested `dispatch()` before
+   * the listener is called. It is, however, guaranteed that all subscribers
+   * registered before the `dispatch()` started will be called with the latest
+   * state by the time it exits.
+   *
+   * @param {Function} listener A callback to be invoked on every dispatch.
+   * @returns {Function} A function to remove this change listener.
+   */ function subscribe(listener) {
+        if (typeof listener !== 'function') throw new Error("Expected the listener to be a function. Instead, received: '" + kindOf(listener) + "'");
+        if (isDispatching) throw new Error("You may not call store.subscribe() while the reducer is executing. If you would like to be notified after the store has been updated, subscribe from a component and invoke store.getState() in the callback to access the latest state. See https://redux.js.org/api/store#subscribelistener for more details.");
+        var isSubscribed = true;
+        ensureCanMutateNextListeners();
+        nextListeners.push(listener);
+        return function unsubscribe() {
+            if (!isSubscribed) return;
+            if (isDispatching) throw new Error("You may not unsubscribe from a store listener while the reducer is executing. See https://redux.js.org/api/store#subscribelistener for more details.");
+            isSubscribed = false;
+            ensureCanMutateNextListeners();
+            var index = nextListeners.indexOf(listener);
+            nextListeners.splice(index, 1);
+            currentListeners = null;
+        };
+    }
+    /**
+   * Dispatches an action. It is the only way to trigger a state change.
+   *
+   * The `reducer` function, used to create the store, will be called with the
+   * current state tree and the given `action`. Its return value will
+   * be considered the **next** state of the tree, and the change listeners
+   * will be notified.
+   *
+   * The base implementation only supports plain object actions. If you want to
+   * dispatch a Promise, an Observable, a thunk, or something else, you need to
+   * wrap your store creating function into the corresponding middleware. For
+   * example, see the documentation for the `redux-thunk` package. Even the
+   * middleware will eventually dispatch plain object actions using this method.
+   *
+   * @param {Object} action A plain object representing “what changed”. It is
+   * a good idea to keep actions serializable so you can record and replay user
+   * sessions, or use the time travelling `redux-devtools`. An action must have
+   * a `type` property which may not be `undefined`. It is a good idea to use
+   * string constants for action types.
+   *
+   * @returns {Object} For convenience, the same action object you dispatched.
+   *
+   * Note that, if you use a custom middleware, it may wrap `dispatch()` to
+   * return something else (for example, a Promise you can await).
+   */ function dispatch(action) {
+        if (!isPlainObject(action)) throw new Error("Actions must be plain objects. Instead, the actual type was: '" + kindOf(action) + "'. You may need to add middleware to your store setup to handle dispatching other values, such as 'redux-thunk' to handle dispatching functions. See https://redux.js.org/tutorials/fundamentals/part-4-store#middleware and https://redux.js.org/tutorials/fundamentals/part-6-async-logic#using-the-redux-thunk-middleware for examples.");
+        if (typeof action.type === 'undefined') throw new Error('Actions may not have an undefined "type" property. You may have misspelled an action type string constant.');
+        if (isDispatching) throw new Error('Reducers may not dispatch actions.');
+        try {
+            isDispatching = true;
+            currentState = currentReducer(currentState, action);
+        } finally{
+            isDispatching = false;
+        }
+        var listeners = currentListeners = nextListeners;
+        for(var i = 0; i < listeners.length; i++){
+            var listener = listeners[i];
+            listener();
+        }
+        return action;
+    }
+    /**
+   * Replaces the reducer currently used by the store to calculate the state.
+   *
+   * You might need this if your app implements code splitting and you want to
+   * load some of the reducers dynamically. You might also need this if you
+   * implement a hot reloading mechanism for Redux.
+   *
+   * @param {Function} nextReducer The reducer for the store to use instead.
+   * @returns {void}
+   */ function replaceReducer(nextReducer) {
+        if (typeof nextReducer !== 'function') throw new Error("Expected the nextReducer to be a function. Instead, received: '" + kindOf(nextReducer));
+        currentReducer = nextReducer; // This action has a similiar effect to ActionTypes.INIT.
+        // Any reducers that existed in both the new and old rootReducer
+        // will receive the previous state. This effectively populates
+        // the new state tree with any relevant data from the old one.
+        dispatch({
+            type: ActionTypes.REPLACE
+        });
+    }
+    /**
+   * Interoperability point for observable/reactive libraries.
+   * @returns {observable} A minimal observable of state changes.
+   * For more information, see the observable proposal:
+   * https://github.com/tc39/proposal-observable
+   */ function observable() {
+        var _ref;
+        var outerSubscribe = subscribe;
+        return _ref = {
+            /**
+       * The minimal observable subscription method.
+       * @param {Object} observer Any object that can be used as an observer.
+       * The observer object should have a `next` method.
+       * @returns {subscription} An object with an `unsubscribe` method that can
+       * be used to unsubscribe the observable from the store, and prevent further
+       * emission of values from the observable.
+       */ subscribe: function subscribe1(observer) {
+                if (typeof observer !== 'object' || observer === null) throw new Error("Expected the observer to be an object. Instead, received: '" + kindOf(observer) + "'");
+                function observeState() {
+                    if (observer.next) observer.next(getState());
+                }
+                observeState();
+                var unsubscribe = outerSubscribe(observeState);
+                return {
+                    unsubscribe: unsubscribe
+                };
+            }
+        }, _ref[$$observable] = function() {
+            return this;
+        }, _ref;
+    } // When a store is created, an "INIT" action is dispatched so that every
+    // reducer returns their initial state. This effectively populates
+    // the initial state tree.
+    dispatch({
+        type: ActionTypes.INIT
+    });
+    return _ref2 = {
+        dispatch: dispatch,
+        subscribe: subscribe,
+        getState: getState,
+        replaceReducer: replaceReducer
+    }, _ref2[$$observable] = observable, _ref2;
+}
+/**
+ * Prints a warning in the console if it exists.
+ *
+ * @param {String} message The warning message.
+ * @returns {void}
+ */ function warning(message) {
+    /* eslint-disable no-console */ if (typeof console !== 'undefined' && typeof console.error === 'function') console.error(message);
+    /* eslint-enable no-console */ try {
+        // This error was thrown as a convenience so that if you enable
+        // "break on all exceptions" in your console,
+        // it would pause the execution at this line.
+        throw new Error(message);
+    } catch (e) {
+    } // eslint-disable-line no-empty
+}
+function getUnexpectedStateShapeWarningMessage(inputState, reducers, action, unexpectedKeyCache) {
+    var reducerKeys = Object.keys(reducers);
+    var argumentName = action && action.type === ActionTypes.INIT ? 'preloadedState argument passed to createStore' : 'previous state received by the reducer';
+    if (reducerKeys.length === 0) return "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers.";
+    if (!isPlainObject(inputState)) return "The " + argumentName + " has unexpected type of \"" + kindOf(inputState) + "\". Expected argument to be an object with the following " + ("keys: \"" + reducerKeys.join('", "') + "\"");
+    var unexpectedKeys = Object.keys(inputState).filter(function(key) {
+        return !reducers.hasOwnProperty(key) && !unexpectedKeyCache[key];
+    });
+    unexpectedKeys.forEach(function(key) {
+        unexpectedKeyCache[key] = true;
+    });
+    if (action && action.type === ActionTypes.REPLACE) return;
+    if (unexpectedKeys.length > 0) return "Unexpected " + (unexpectedKeys.length > 1 ? 'keys' : 'key') + " " + ("\"" + unexpectedKeys.join('", "') + "\" found in " + argumentName + ". ") + "Expected to find one of the known reducer keys instead: " + ("\"" + reducerKeys.join('", "') + "\". Unexpected keys will be ignored.");
+}
+function assertReducerShape(reducers) {
+    Object.keys(reducers).forEach(function(key) {
+        var reducer = reducers[key];
+        var initialState = reducer(undefined, {
+            type: ActionTypes.INIT
+        });
+        if (typeof initialState === 'undefined') throw new Error("The slice reducer for key \"" + key + "\" returned undefined during initialization. " + "If the state passed to the reducer is undefined, you must " + "explicitly return the initial state. The initial state may " + "not be undefined. If you don't want to set a value for this reducer, " + "you can use null instead of undefined.");
+        if (typeof reducer(undefined, {
+            type: ActionTypes.PROBE_UNKNOWN_ACTION()
+        }) === 'undefined') throw new Error("The slice reducer for key \"" + key + "\" returned undefined when probed with a random type. " + ("Don't try to handle '" + ActionTypes.INIT + "' or other actions in \"redux/*\" ") + "namespace. They are considered private. Instead, you must return the " + "current state for any unknown actions, unless it is undefined, " + "in which case you must return the initial state, regardless of the " + "action type. The initial state may not be undefined, but can be null.");
+    });
+}
+/**
+ * Turns an object whose values are different reducer functions, into a single
+ * reducer function. It will call every child reducer, and gather their results
+ * into a single state object, whose keys correspond to the keys of the passed
+ * reducer functions.
+ *
+ * @param {Object} reducers An object whose values correspond to different
+ * reducer functions that need to be combined into one. One handy way to obtain
+ * it is to use ES6 `import * as reducers` syntax. The reducers may never return
+ * undefined for any action. Instead, they should return their initial state
+ * if the state passed to them was undefined, and the current state for any
+ * unrecognized action.
+ *
+ * @returns {Function} A reducer function that invokes every reducer inside the
+ * passed object, and builds a state object with the same shape.
+ */ function combineReducers(reducers) {
+    var reducerKeys = Object.keys(reducers);
+    var finalReducers = {
+    };
+    for(var i = 0; i < reducerKeys.length; i++){
+        var key = reducerKeys[i];
+        if (typeof reducers[key] === 'undefined') warning("No reducer provided for key \"" + key + "\"");
+        if (typeof reducers[key] === 'function') finalReducers[key] = reducers[key];
+    }
+    var finalReducerKeys = Object.keys(finalReducers); // This is used to make sure we don't warn about the same
+    // keys multiple times.
+    var unexpectedKeyCache;
+    unexpectedKeyCache = {
+    };
+    var shapeAssertionError;
+    try {
+        assertReducerShape(finalReducers);
+    } catch (e) {
+        shapeAssertionError = e;
+    }
+    return function combination(state, action) {
+        if (state === void 0) state = {
+        };
+        if (shapeAssertionError) throw shapeAssertionError;
+        var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action, unexpectedKeyCache);
+        if (warningMessage) warning(warningMessage);
+        var hasChanged = false;
+        var nextState = {
+        };
+        for(var _i = 0; _i < finalReducerKeys.length; _i++){
+            var _key = finalReducerKeys[_i];
+            var reducer = finalReducers[_key];
+            var previousStateForKey = state[_key];
+            var nextStateForKey = reducer(previousStateForKey, action);
+            if (typeof nextStateForKey === 'undefined') {
+                var actionType = action && action.type;
+                throw new Error("When called with an action of type " + (actionType ? "\"" + String(actionType) + "\"" : '(unknown type)') + ", the slice reducer for key \"" + _key + "\" returned undefined. " + "To ignore an action, you must explicitly return the previous state. " + "If you want this reducer to hold no value, you can return null instead of undefined.");
+            }
+            nextState[_key] = nextStateForKey;
+            hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
+        }
+        hasChanged = hasChanged || finalReducerKeys.length !== Object.keys(state).length;
+        return hasChanged ? nextState : state;
+    };
+}
+function bindActionCreator(actionCreator, dispatch) {
+    return function() {
+        return dispatch(actionCreator.apply(this, arguments));
+    };
+}
+/**
+ * Turns an object whose values are action creators, into an object with the
+ * same keys, but with every function wrapped into a `dispatch` call so they
+ * may be invoked directly. This is just a convenience method, as you can call
+ * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
+ *
+ * For convenience, you can also pass an action creator as the first argument,
+ * and get a dispatch wrapped function in return.
+ *
+ * @param {Function|Object} actionCreators An object whose values are action
+ * creator functions. One handy way to obtain it is to use ES6 `import * as`
+ * syntax. You may also pass a single function.
+ *
+ * @param {Function} dispatch The `dispatch` function available on your Redux
+ * store.
+ *
+ * @returns {Function|Object} The object mimicking the original object, but with
+ * every action creator wrapped into the `dispatch` call. If you passed a
+ * function as `actionCreators`, the return value will also be a single
+ * function.
+ */ function bindActionCreators(actionCreators, dispatch) {
+    if (typeof actionCreators === 'function') return bindActionCreator(actionCreators, dispatch);
+    if (typeof actionCreators !== 'object' || actionCreators === null) throw new Error("bindActionCreators expected an object or a function, but instead received: '" + kindOf(actionCreators) + "'. " + "Did you write \"import ActionCreators from\" instead of \"import * as ActionCreators from\"?");
+    var boundActionCreators = {
+    };
+    for(var key in actionCreators){
+        var actionCreator = actionCreators[key];
+        if (typeof actionCreator === 'function') boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+    }
+    return boundActionCreators;
+}
+/**
+ * Composes single-argument functions from right to left. The rightmost
+ * function can take multiple arguments as it provides the signature for
+ * the resulting composite function.
+ *
+ * @param {...Function} funcs The functions to compose.
+ * @returns {Function} A function obtained by composing the argument functions
+ * from right to left. For example, compose(f, g, h) is identical to doing
+ * (...args) => f(g(h(...args))).
+ */ function compose() {
+    for(var _len = arguments.length, funcs = new Array(_len), _key = 0; _key < _len; _key++)funcs[_key] = arguments[_key];
+    if (funcs.length === 0) return function(arg) {
+        return arg;
+    };
+    if (funcs.length === 1) return funcs[0];
+    return funcs.reduce(function(a, b) {
+        return function() {
+            return a(b.apply(void 0, arguments));
+        };
+    });
+}
+/**
+ * Creates a store enhancer that applies middleware to the dispatch method
+ * of the Redux store. This is handy for a variety of tasks, such as expressing
+ * asynchronous actions in a concise manner, or logging every action payload.
+ *
+ * See `redux-thunk` package as an example of the Redux middleware.
+ *
+ * Because middleware is potentially asynchronous, this should be the first
+ * store enhancer in the composition chain.
+ *
+ * Note that each middleware will be given the `dispatch` and `getState` functions
+ * as named arguments.
+ *
+ * @param {...Function} middlewares The middleware chain to be applied.
+ * @returns {Function} A store enhancer applying the middleware.
+ */ function applyMiddleware() {
+    for(var _len = arguments.length, middlewares = new Array(_len), _key = 0; _key < _len; _key++)middlewares[_key] = arguments[_key];
+    return function(createStore1) {
+        return function() {
+            var store = createStore1.apply(void 0, arguments);
+            var _dispatch = function dispatch() {
+                throw new Error("Dispatching while constructing your middleware is not allowed. Other middleware would not be applied to this dispatch.");
+            };
+            var middlewareAPI = {
+                getState: store.getState,
+                dispatch: function dispatch1() {
+                    return _dispatch.apply(void 0, arguments);
+                }
+            };
+            var chain = middlewares.map(function(middleware) {
+                return middleware(middlewareAPI);
+            });
+            _dispatch = compose.apply(void 0, chain)(store.dispatch);
+            return _objectSpread__default['default'](_objectSpread__default['default']({
+            }, store), {
+            }, {
+                dispatch: _dispatch
+            });
+        };
+    };
+}
+/*
+ * This is a dummy function to check if the function name has been altered by minification.
+ * If the function has been minified and NODE_ENV !== 'production', warn the user.
+ */ function isCrushed() {
+}
+if (typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') warning("You are currently using minified code outside of NODE_ENV === \"production\". This means that you are running a slower development build of Redux. You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify or setting mode to production in webpack (https://webpack.js.org/concepts/mode/) to ensure you have the correct code for your production build.");
+exports.__DO_NOT_USE__ActionTypes = ActionTypes;
+exports.applyMiddleware = applyMiddleware;
+exports.bindActionCreators = bindActionCreators;
+exports.combineReducers = combineReducers;
+exports.compose = compose;
+exports.createStore = createStore;
+
+},{"@babel/runtime/helpers/objectSpread2":"3FdZf"}],"3FdZf":[function(require,module,exports) {
+var defineProperty = require("./defineProperty.js");
+function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+    if (Object.getOwnPropertySymbols) {
+        var symbols = Object.getOwnPropertySymbols(object);
+        if (enumerableOnly) symbols = symbols.filter(function(sym) {
+            return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        });
+        keys.push.apply(keys, symbols);
+    }
+    return keys;
+}
+function _objectSpread2(target) {
+    for(var i = 1; i < arguments.length; i++){
+        var source = arguments[i] != null ? arguments[i] : {
+        };
+        if (i % 2) ownKeys(Object(source), true).forEach(function(key) {
+            defineProperty(target, key, source[key]);
+        });
+        else if (Object.getOwnPropertyDescriptors) Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+        else ownKeys(Object(source)).forEach(function(key) {
+            Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+    }
+    return target;
+}
+module.exports = _objectSpread2;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
+
+},{"./defineProperty.js":"5PI63"}],"5PI63":[function(require,module,exports) {
+function _defineProperty(obj, key, value) {
+    if (key in obj) Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+    });
+    else obj[key] = value;
+    return obj;
+}
+module.exports = _defineProperty;
+module.exports["default"] = module.exports, module.exports.__esModule = true;
+
+},{}],"2736c":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _redux = require("redux");
+var _actions = require("../actions/actions");
+function visibilityFilter(state = '', action) {
+    switch(action.type){
+        case _actions.SET_FILTER:
+            return action.value;
+        default:
+            return state;
+    }
+}
+function movies(state = [], action) {
+    switch(action.type){
+        case _actions.SET_MOVIES:
+            return action.value;
+        default:
+            return state;
+    }
+}
+function user(state = null, action) {
+    switch(action.type){
+        case _actions.SET_USER:
+            return action.value;
+        case _actions.UPDATE_USER:
+            return action.value;
+        case _actions.UPDATE_FAVORITE:
+            return action.value;
+        default:
+            return state;
+    }
+}
+const moviesApp = _redux.combineReducers({
+    visibilityFilter,
+    movies,
+    user
+});
+exports.default = moviesApp;
+
+},{"redux":"7panR","../actions/actions":"5S6cN","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2"}]},["1j6wU","4M3T8","55JMZ"], "55JMZ", "parcelRequire279c")
 
 //# sourceMappingURL=index.055ec775.js.map
