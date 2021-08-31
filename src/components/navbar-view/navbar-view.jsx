@@ -42,11 +42,7 @@ export class NavBar extends React.Component {
             <Nav.Link to={'/'} onClick={this.onLoggedOut}>
               Log Out
             </Nav.Link>
-
           </Nav>
-          <Form inline>
-            <FormControl type="text" placeholder="Search" />
-          </Form>
         </Navbar.Collapse>
       </Navbar>
     );

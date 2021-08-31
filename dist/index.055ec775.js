@@ -22029,8 +22029,6 @@ var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
 var _axios = require("axios");
 var _axiosDefault = parcelHelpers.interopDefault(_axios);
-var _propTypes = require("prop-types");
-var _propTypesDefault = parcelHelpers.interopDefault(_propTypes);
 var _reactRedux = require("react-redux");
 var _actions = require("../../actions/actions");
 // React-Bootstrap Components
@@ -22038,8 +22036,9 @@ var _loginView = require("../login-view/login-view");
 var _registrationView = require("../registration-view/registration-view");
 var _movieView = require("../movie-view/movie-view");
 var _moviesList = require("../movies-list/movies-list");
-//import { MovieCard } from '../movie-card/movie-card';
+var _moviesListDefault = parcelHelpers.interopDefault(_moviesList);
 var _directorView = require("../director-view/director-view");
+var _directorViewDefault = parcelHelpers.interopDefault(_directorView);
 var _genreView = require("../genre-view/genre-view");
 var _profileView = require("../profile-view/profile-view");
 var _navbarView = require("../navbar-view/navbar-view");
@@ -22105,21 +22104,21 @@ class MainView extends _reactDefault.default.Component {
         return(/*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.BrowserRouter, {
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 89
+                lineNumber: 87
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_navbarView.NavBar, {
             user: user,
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 90
+                lineNumber: 88
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_rowDefault.default, {
             className: "main-view justify-content-md-center",
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 92
+                lineNumber: 90
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -22132,13 +22131,13 @@ class MainView extends _reactDefault.default.Component {
                 if (movies.length === 0) return(/*#__PURE__*/ _reactDefault.default.createElement("div", {
                     className: "main-view"
                 }));
-                return(/*#__PURE__*/ _reactDefault.default.createElement(_moviesList.MoviesList, {
+                return(/*#__PURE__*/ _reactDefault.default.createElement(_moviesListDefault.default, {
                     movies: movies
                 }));
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 94
+                lineNumber: 92
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -22152,7 +22151,7 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 102
+                lineNumber: 100
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -22163,7 +22162,7 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 109
+                lineNumber: 107
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -22186,7 +22185,7 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 115
+                lineNumber: 113
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -22201,7 +22200,7 @@ class MainView extends _reactDefault.default.Component {
                 }));
                 return(/*#__PURE__*/ _reactDefault.default.createElement(_colDefault.default, {
                     md: 8
-                }, /*#__PURE__*/ _reactDefault.default.createElement(_directorView.DirectorView, {
+                }, /*#__PURE__*/ _reactDefault.default.createElement(_directorViewDefault.default, {
                     director: movies.find((m)=>m.Director.Name === match.params.name
                     ).Director,
                     onBackClick: ()=>history.goBack()
@@ -22209,7 +22208,7 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 125
+                lineNumber: 123
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -22232,7 +22231,7 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 136
+                lineNumber: 134
             },
             __self: this
         }), /*#__PURE__*/ _reactDefault.default.createElement(_reactRouterDom.Route, {
@@ -22250,7 +22249,7 @@ class MainView extends _reactDefault.default.Component {
             },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\main-view\\main-view.jsx",
-                lineNumber: 146
+                lineNumber: 144
             },
             __self: this
         }))));
@@ -22273,7 +22272,7 @@ exports.default = _reactRedux.connect(mapStateToProps, {
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","../movie-view/movie-view":"5AIWW","axios":"7rA65","../login-view/login-view":"sGN9N","../registration-view/registration-view":"250pa","react-router-dom":"1PMSK","../director-view/director-view":"7oiM1","../genre-view/genre-view":"12t2z","../profile-view/profile-view":"32oCX","../navbar-view/navbar-view":"39pvM","react-bootstrap/Col":"2D0r8","react-bootstrap/Row":"3fzwD","react-bootstrap/Container":"3Mt3t","./main-view.scss":"2Fm7j","react-redux":"7GDa4","../../actions/actions":"5S6cN","../movies-list/movies-list":"4ceqd","prop-types":"4dfy5"}],"5AIWW":[function(require,module,exports) {
+},{"react":"3b2NM","@parcel/transformer-js/src/esmodule-helpers.js":"WhbI2","../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"3oehH","../movie-view/movie-view":"5AIWW","axios":"7rA65","../login-view/login-view":"sGN9N","../registration-view/registration-view":"250pa","react-router-dom":"1PMSK","../director-view/director-view":"7oiM1","../genre-view/genre-view":"12t2z","../profile-view/profile-view":"32oCX","../navbar-view/navbar-view":"39pvM","react-bootstrap/Col":"2D0r8","react-bootstrap/Row":"3fzwD","react-bootstrap/Container":"3Mt3t","./main-view.scss":"2Fm7j","react-redux":"7GDa4","../../actions/actions":"5S6cN","../movies-list/movies-list":"4ceqd"}],"5AIWW":[function(require,module,exports) {
 var helpers = require("../../../../../../../AppData/Roaming/nvm/v14.17.0/node_modules/parcel/node_modules/@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -40316,22 +40315,7 @@ class NavBar extends _reactDefault.default.Component {
                 lineNumber: 42
             },
             __self: this
-        }, "Log Out")), /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.Form, {
-            inline: true,
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\navbar-view\\navbar-view.jsx",
-                lineNumber: 47
-            },
-            __self: this
-        }, /*#__PURE__*/ _reactDefault.default.createElement(_reactBootstrap.FormControl, {
-            type: "text",
-            placeholder: "Search",
-            __source: {
-                fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\navbar-view\\navbar-view.jsx",
-                lineNumber: 48
-            },
-            __self: this
-        })))));
+        }, "Log Out")))));
     }
 }
 exports.default = NavBar;
@@ -41836,7 +41820,7 @@ function VisibilityFilterInput(props) {
         onChange: (e)=>props.setFilter(e.target.value)
         ,
         value: props.visibilityFilter,
-        placeholder: "filter",
+        placeholder: "Search movies..!",
         __source: {
             fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\visibility-filter-input\\visibility-filter-input.jsx",
             lineNumber: 8

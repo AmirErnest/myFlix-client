@@ -1,7 +1,6 @@
 // Modules
 import React from 'react';
 import axios from 'axios';
-import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setMovies, setUser } from '../../actions/actions';
 
@@ -9,9 +8,8 @@ import { setMovies, setUser } from '../../actions/actions';
 import { LoginView } from '../login-view/login-view';
 import { RegistrationView } from '../registration-view/registration-view';
 import { MovieView } from '../movie-view/movie-view';
-import { MoviesList } from '../movies-list/movies-list';
-//import { MovieCard } from '../movie-card/movie-card';
-import { DirectorView } from '../director-view/director-view';
+import  MoviesList  from '../movies-list/movies-list';
+import  DirectorView  from '../director-view/director-view';
 import { GenreView } from '../genre-view/genre-view';
 import { ProfileView } from '../profile-view/profile-view';
 import { NavBar } from '../navbar-view/navbar-view';
