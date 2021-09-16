@@ -14,9 +14,6 @@
   "bugs": {
     "url": "https://github.com/AmirErnest/myFlix-client/issues"
   },
-  "resolutions": {
-    "@babel/preset-env": "7.13.8"
-  },
   "homepage": "https://github.com/AmirErnest/myFlix-client#readme",
   "dependencies": {
     "axios": "^0.21.1",
