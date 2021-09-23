@@ -41,10 +41,10 @@ export class MovieView extends React.Component {
     return (
       <div className="movie-view">
         <div className="movie-poster">
-          <img src={movie.ImagePath} />
+          <img src={movie.ImagePath} style={{width: "300px", height: "400px", display: "block", margin: "auto"}}/>
         </div>
         <div className="movie-title">
-          <h1>
+          <h1 style={{backgroundColor: "black", marginTop: "15px"}}>
             <Badge bg="success">
               <span className="value">{movie.Title}</span>
             </Badge></h1>

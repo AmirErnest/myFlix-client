@@ -41602,6 +41602,12 @@ class MovieView extends _reactDefault.default.Component {
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement("img", {
             src: movie.ImagePath,
+            style: {
+                width: "300px",
+                height: "400px",
+                display: "block",
+                margin: "auto"
+            },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
                 lineNumber: 44
@@ -41615,6 +41621,10 @@ class MovieView extends _reactDefault.default.Component {
             },
             __self: this
         }, /*#__PURE__*/ _reactDefault.default.createElement("h1", {
+            style: {
+                backgroundColor: "black",
+                marginTop: "15px"
+            },
             __source: {
                 fileName: "C:\\Users\\Amirkher\\Downloads\\CareerFoundery\\Full-Stack Immersion\\myFlix-client\\src\\components\\movie-view\\movie-view.jsx",
                 lineNumber: 47
